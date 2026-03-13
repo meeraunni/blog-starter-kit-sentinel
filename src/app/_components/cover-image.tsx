@@ -15,26 +15,22 @@ export default function CoverImage({
   priority = false,
 }: Props) {
   const image = (
-    <div className="relative h-[160px] w-full overflow-hidden rounded-xl bg-neutral-100 md:h-[220px]">
+    <div className="relative h-[280px] w-full overflow-hidden border border-neutral-200 bg-white md:h-[420px]">
       <Image
         src={src}
         alt={`Cover image for ${title}`}
         fill
         priority={priority}
-        className="object-contain"
+        className="object-cover"
       />
     </div>
   );
 
-  return (
-    <div className="sm:mx-0">
-      {slug ? (
-        <Link href={`/posts/${slug}`} aria-label={title}>
-          {image}
-        </Link>
-      ) : (
-        image
-      )}
-    </div>
+  return slug ? (
+    <Link href={`/posts/${slug}`} aria-label={title} className="block">
+      {image}
+    </Link>
+  ) : (
+    image
   );
 }

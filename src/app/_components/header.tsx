@@ -23,15 +23,18 @@ export default function Header() {
           <Link href="/" className="text-sm font-medium text-neutral-700 hover:text-blue-700">
             Articles
           </Link>
-          <Link href="#services" className="text-sm font-medium text-neutral-700 hover:text-blue-700">
+          <Link href="/#services" className="text-sm font-medium text-neutral-700 hover:text-blue-700">
             Services
           </Link>
-          <Link href="#assessment-form" className="text-sm font-medium text-neutral-700 hover:text-blue-700">
+          <Link href="/#assessment-form" className="text-sm font-medium text-neutral-700 hover:text-blue-700">
             Assessment
           </Link>
-          <Link href="#contact" className="text-sm font-medium text-neutral-700 hover:text-blue-700">
+          <a
+            href="mailto:info@sentinelidentity.ca"
+            className="text-sm font-medium text-neutral-700 hover:text-blue-700"
+          >
             Contact
-          </Link>
+          </a>
         </nav>
       </div>
     </header>

@@ -1,15 +1,17 @@
 type Props = {
-  name: string;
-  picture: string;
+  name?: string;
+  picture?: string;
 };
 
-const Avatar = ({ name, picture }: Props) => {
+export default function Avatar({ name }: Props) {
+  const displayName = name?.trim() || "Sentinel Identity";
+
   return (
     <div className="flex items-center">
-      <img src={picture} className="w-12 h-12 rounded-full mr-4" alt={name} />
-      <div className="text-xl font-bold">{name}</div>
+      <div className="mr-3 flex h-10 w-10 items-center justify-center rounded-full bg-black text-white text-sm font-semibold">
+        SI
+      </div>
+      <div className="text-sm font-medium">{displayName}</div>
     </div>
   );
-};
-
-export default Avatar;
+}

@@ -2,7 +2,7 @@
 title: "Inside the Microsoft Entra Conditional Access Evaluation Pipeline"
 excerpt: "A detailed engineering-level explanation of how Conditional Access is evaluated in Microsoft Entra ID, how policy decisions influence token issuance, and why administrators often misread sign-in outcomes."
 date: "2026-03-12"
-coverImage: "/assets/blog/conditional-access-architecture.jpg"
+
 author:
   name: "Identity Engineering Notes"
 ---

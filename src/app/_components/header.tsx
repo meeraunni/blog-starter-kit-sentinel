@@ -2,19 +2,18 @@ import Link from "next/link";
 
 export default function Header() {
   return (
-    <header className="border-b border-neutral-200 bg-white">
+    <header className="border-b border-neutral-200 bg-white/95 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-gradient-to-br from-blue-600 to-indigo-600 text-sm font-bold text-white shadow-sm">
+        <Link href="/" className="flex items-center gap-4">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 via-indigo-600 to-cyan-500 text-sm font-bold text-white shadow-md shadow-blue-200">
             SI
           </div>
 
-          <div className="flex items-center gap-4">
-            <span className="text-2xl font-semibold tracking-tight text-black">
+          <div className="flex flex-col">
+            <span className="text-2xl font-semibold tracking-tight text-black md:text-3xl">
               Sentinel Identity
             </span>
-            <span className="hidden text-neutral-400 md:block">|</span>
-            <span className="hidden text-lg text-neutral-700 md:block">
+            <span className="text-sm text-neutral-500 md:text-base">
               Microsoft Identity Blog
             </span>
           </div>

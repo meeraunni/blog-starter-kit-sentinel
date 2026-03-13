@@ -4,7 +4,7 @@ type Props = {
   content: string;
 };
 
-export default function PostBody({ content }: Props) {
+export function PostBody({ content }: Props) {
   return (
     <div
       className={`mx-auto max-w-3xl prose prose-lg prose-neutral

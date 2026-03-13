@@ -7,17 +7,8 @@ type Props = {
 
 export function MoreStories({ posts }: Props) {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-16">
-      <div className="mb-10">
-        <p className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-blue-700">
-          Articles
-        </p>
-        <h2 className="text-3xl font-semibold tracking-tight text-black md:text-5xl">
-          More Stories
-        </h2>
-      </div>
-
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+    <section className="mx-auto max-w-6xl px-6 py-12">
+      <div className="grid gap-8 md:grid-cols-2">
         {posts.map((post) => (
           <div
             key={post.slug}

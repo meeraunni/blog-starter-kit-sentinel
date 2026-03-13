@@ -3,11 +3,11 @@ export function Intro() {
     <section className="border-b border-blue-100 bg-gradient-to-r from-blue-50 via-white to-indigo-50">
       <div className="mx-auto max-w-6xl px-6 py-12">
         <div className="max-w-4xl">
-          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-blue-700">
+          <p className="mb-4 text-lg font-semibold uppercase tracking-[0.18em] text-blue-700 md:text-xl">
             Sentinel Identity
           </p>
 
-          <h1 className="text-4xl font-semibold tracking-tight text-black md:text-6xl">
+          <h1 className="text-3xl font-semibold tracking-tight text-black md:text-5xl">
             Microsoft Identity Blog
           </h1>
 

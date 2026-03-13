@@ -1,4 +1,4 @@
-export default function Intro() {
+export function Intro() {
   return (
     <section className="mb-12 flex-col md:mb-16 md:flex-row flex items-start md:justify-between">
       <h1 className="text-4xl font-bold tracking-tight leading-tight md:text-5xl md:pr-8">

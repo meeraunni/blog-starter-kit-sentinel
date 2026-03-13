@@ -1,14 +1,17 @@
 import Link from "next/link";
 
-const Header = () => {
+export default function Header() {
   return (
-    <h2 className="text-2xl md:text-4xl font-bold tracking-tight md:tracking-tighter leading-tight mb-20 mt-8 flex items-center">
-      <Link href="/" className="hover:underline">
-        Blog
-      </Link>
-      .
-    </h2>
-  );
-};
+    <header className="mb-12">
+      <h1 className="text-3xl font-bold tracking-tight">
+        <Link href="/" className="hover:underline">
+          Sentinel Identity
+        </Link>
+      </h1>
 
-export default Header;
+      <p className="mt-2 text-sm text-neutral-600">
+        Identity Engineering Notes
+      </p>
+    </header>
+  );
+}

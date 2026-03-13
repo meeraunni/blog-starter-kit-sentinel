@@ -7,11 +7,10 @@
             <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-blue-700">
              Sentinel Identity
              </p>
-            </p>
-
-            <h1 className="text-4xl font-semibold tracking-tight text-black md:text-5xl">
-              Microsoft Identity and Security Insights
-            </h1>
+      
+             <h1 className="text-4xl font-semibold tracking-tight text-black md:text-6xl">
+             Microsoft Identity Blog
+              </h1>
 
             <p className="mt-4 max-w-3xl text-lg leading-8 text-neutral-700">
               Expert notes on Microsoft Entra, Conditional Access, tenant hardening,

@@ -23,19 +23,19 @@ export function HeroPost({
 }: Props) {
   return (
     <section className="mx-auto max-w-6xl px-6 py-10">
-      <div className="grid gap-8 md:grid-cols-[1.6fr_1fr]">
+      <div className="grid gap-8 md:grid-cols-[1.7fr_1fr]">
         <div>
-          <div className="mb-6">
+          <div className="mb-6 overflow-hidden rounded-2xl border border-blue-100 shadow-sm">
             <CoverImage title={title} src={coverImage} slug={slug} priority />
           </div>
 
-          <div className="border border-neutral-200 bg-white p-6">
+          <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
             <div className="mb-3 text-sm text-neutral-500">
               <DateFormatter dateString={date} />
             </div>
 
             <h2 className="text-3xl font-semibold leading-tight text-black md:text-4xl">
-              <Link href={`/posts/${slug}`} className="hover:underline">
+              <Link href={`/posts/${slug}`} className="hover:text-blue-700">
                 {title}
               </Link>
             </h2>
@@ -47,7 +47,7 @@ export function HeroPost({
             <div className="mt-6">
               <Link
                 href={`/posts/${slug}`}
-                className="inline-flex items-center text-sm font-medium text-black underline underline-offset-4"
+                className="inline-flex items-center rounded-md bg-blue-600 px-5 py-3 text-sm font-medium text-white hover:bg-blue-700"
               >
                 Read article
               </Link>
@@ -56,30 +56,37 @@ export function HeroPost({
         </div>
 
         <aside className="space-y-6">
-          <div className="border border-neutral-200 bg-neutral-50 p-6">
-            <p className="mb-2 text-sm font-semibold uppercase tracking-[0.16em] text-neutral-500">
-              Services
+          <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+            <p className="mb-2 text-sm font-semibold uppercase tracking-[0.16em] text-blue-700">
+              Featured
             </p>
             <h3 className="text-2xl font-semibold text-black">
-              Identity security consulting
+              Identity architecture and Conditional Access
             </h3>
             <p className="mt-3 text-base leading-7 text-neutral-700">
-              One-on-one support for Conditional Access design, Microsoft Entra reviews,
-              tenant hardening, MFA strategy, and identity troubleshooting.
+              Practical guidance for Microsoft Entra, authentication design,
+              tenant hardening, and identity security operations.
             </p>
           </div>
 
-          <div className="border border-neutral-200 bg-white p-6">
-            <p className="mb-2 text-sm font-semibold uppercase tracking-[0.16em] text-neutral-500">
-              Featured focus
+          <div className="rounded-2xl border border-neutral-200 bg-gradient-to-br from-blue-600 to-indigo-600 p-6 text-white shadow-sm">
+            <p className="mb-2 text-sm font-semibold uppercase tracking-[0.16em] text-blue-100">
+              Consulting
             </p>
-            <h3 className="text-2xl font-semibold text-black">
-              Microsoft Entra and Conditional Access
+            <h3 className="text-2xl font-semibold">
+              Book a tenant review
             </h3>
-            <p className="mt-3 text-base leading-7 text-neutral-700">
-              Practical write-ups and implementation guidance for admins, analysts,
-              and small to mid-sized organizations.
+            <p className="mt-3 text-base leading-7 text-blue-50">
+              One-on-one help with Microsoft Entra, Conditional Access,
+              MFA strategy, and tenant hardening.
             </p>
+
+            <a
+              href="#assessment-form"
+              className="mt-5 inline-flex items-center rounded-md bg-white px-5 py-3 text-sm font-medium text-blue-700 hover:bg-blue-50"
+            >
+              Request assessment
+            </a>
           </div>
         </aside>
       </div>

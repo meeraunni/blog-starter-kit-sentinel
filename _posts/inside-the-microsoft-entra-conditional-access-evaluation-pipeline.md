@@ -1,4 +1,4 @@
- ---
+---
 title: "Inside the Microsoft Entra Conditional Access Evaluation Pipeline"
 excerpt: "A detailed engineering-level explanation of how Conditional Access is evaluated in Microsoft Entra ID and how policy decisions influence token issuance."
 coverImage: "/assets/blog/preview/cover.jpg"
@@ -9,7 +9,6 @@ author:
 ogImage:
   url: "/assets/blog/preview/cover.jpg"
 ---
-
 
 ## Introduction
 

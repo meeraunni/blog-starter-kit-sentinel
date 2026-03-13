@@ -1,7 +1,7 @@
 import Avatar from "./avatar";
 import CoverImage from "./cover-image";
 import DateFormatter from "./date-formatter";
-import PostTitle from "./post-title";
+import { PostTitle } from "./post-title";
 
 type Props = {
   title: string;
@@ -13,7 +13,7 @@ type Props = {
   };
 };
 
-export default function PostHeader({
+export function PostHeader({
   title,
   coverImage,
   date,

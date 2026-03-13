@@ -1,12 +1,12 @@
 ---
 title: "Access Tokens and Refresh Tokens in Microsoft Identity"
 excerpt: "A practical explanation of what access tokens and refresh tokens are, and how token issuance works behind the scenes during Microsoft sign-ins."
-coverImage: "/assets/blog/conditional-access/cover.jpg"
+coverImage: "/assets/blog/access-tokens/cover.jpg"
 date: "2026-03-13T15:30:00.000Z"
 author:
   name: "Sentinel Identity"
 ogImage:
-  url: "/assets/blog/conditional-access/cover.jpg"
+  url: "/assets/blog/access-tokens/cover.jpg"
 ---
 
 ## Introduction

@@ -23,7 +23,7 @@ export function HeroPost({
 }: Props) {
   return (
     <section className="mx-auto max-w-6xl px-6 py-10">
-      <div className="grid gap-8 md:grid-cols-[1.7fr_1fr]">
+      <div className="grid gap-8">
         <div>
           <div className="mb-8 overflow-hidden rounded-2xl shadow-sm">
             <CoverImage title={title} src={coverImage} slug={slug} priority />
@@ -54,28 +54,6 @@ export function HeroPost({
             </div>
           </div>
         </div>
-
-        <aside className="space-y-6">
-          <div className="rounded-2xl border border-neutral-200 bg-gradient-to-br from-blue-600 to-indigo-600 p-6 text-white shadow-sm">
-            <p className="mb-2 text-sm font-semibold uppercase tracking-[0.16em] text-blue-100">
-              Consulting
-            </p>
-            <h3 className="text-2xl font-semibold">
-              Book a tenant review
-            </h3>
-            <p className="mt-3 text-base leading-7 text-blue-50">
-              One-on-one help with Microsoft Entra, Conditional Access,
-              MFA strategy, and tenant hardening.
-            </p>
-
-            <a
-              href="#assessment-form"
-              className="mt-5 inline-flex items-center rounded-md bg-white px-5 py-3 text-sm font-medium text-blue-700 hover:bg-blue-50"
-            >
-              Request assessment
-            </a>
-          </div>
-        </aside>
       </div>
     </section>
   );

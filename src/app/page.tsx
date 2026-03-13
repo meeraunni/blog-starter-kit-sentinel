@@ -26,6 +26,8 @@ export default async function Index() {
           />
         )}
 
+        {morePosts.length > 0 && <MoreStories posts={morePosts} />}
+
         <section
           id="services"
           className="mx-auto max-w-6xl border-t border-neutral-200 px-6 py-16"
@@ -76,7 +78,50 @@ export default async function Index() {
           </div>
         </section>
 
-        {morePosts.length > 0 && <MoreStories posts={morePosts} />}
+        <section
+          id="contact"
+          className="mx-auto max-w-6xl border-t border-neutral-200 px-6 py-16"
+        >
+          <div className="grid gap-10 md:grid-cols-2">
+            <div>
+              <p className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-blue-700">
+                Contact
+              </p>
+
+              <h2 className="text-3xl font-semibold tracking-tight text-black md:text-4xl">
+                Get in touch
+              </h2>
+
+              <p className="mt-4 text-lg leading-8 text-neutral-700">
+                Reach out for consulting, collaboration, or technical guidance on Microsoft Entra,
+                Conditional Access, Azure identity, and tenant security.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+              <div className="space-y-4 text-base text-neutral-700">
+                <p>
+                  <span className="font-medium text-black">Business:</span> Sentinel Identity
+                </p>
+                <p>
+                  <span className="font-medium text-black">Focus:</span> Microsoft Entra, identity security, and tenant hardening
+                </p>
+                <p>
+                  <span className="font-medium text-black">Email:</span>{" "}
+                  <a
+                    href="mailto:info@sentinelidentity.ca"
+                    className="text-blue-700 hover:underline"
+                  >
+                    info@sentinelidentity.ca
+                  </a>
+                </p>
+                <p>
+                  <span className="font-medium text-black">Response:</span> Initial replies within 1 to 2 business days
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <section
           id="assessment-form"

@@ -15,13 +15,13 @@ export default function CoverImage({
   priority = false,
 }: Props) {
   const image = (
-    <div className="relative h-[220px] w-full overflow-hidden rounded-xl bg-neutral-100 md:h-[320px]">
+    <div className="relative h-[160px] w-full overflow-hidden rounded-xl bg-neutral-100 md:h-[220px]">
       <Image
         src={src}
-        alt={`Cover Image for ${title}`}
-        className="object-cover"
+        alt={`Cover image for ${title}`}
         fill
         priority={priority}
+        className="object-contain"
       />
     </div>
   );

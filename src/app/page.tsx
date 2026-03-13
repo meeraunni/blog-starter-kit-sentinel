@@ -26,6 +26,56 @@ export default async function Index() {
           />
         )}
 
+        <section
+          id="services"
+          className="mx-auto max-w-6xl border-t border-neutral-200 px-6 py-16"
+        >
+          <div className="mb-10 max-w-3xl">
+            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-blue-700">
+              Services
+            </p>
+            <h2 className="text-3xl font-semibold tracking-tight text-black md:text-4xl">
+              Identity security consulting services
+            </h2>
+            <p className="mt-4 text-lg leading-8 text-neutral-700">
+              Practical one-on-one consulting for Microsoft Entra, Conditional Access,
+              MFA strategy, identity troubleshooting, and tenant hardening.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+              <h3 className="text-xl font-semibold text-black">
+                Conditional Access review
+              </h3>
+              <p className="mt-3 text-base leading-7 text-neutral-700">
+                Review existing policies, identify gaps, reduce user friction,
+                and improve access control design.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+              <h3 className="text-xl font-semibold text-black">
+                Entra tenant assessment
+              </h3>
+              <p className="mt-3 text-base leading-7 text-neutral-700">
+                Evaluate identity security posture, authentication controls,
+                admin exposure, and tenant hardening opportunities.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+              <h3 className="text-xl font-semibold text-black">
+                Identity troubleshooting
+              </h3>
+              <p className="mt-3 text-base leading-7 text-neutral-700">
+                Help with MFA issues, sign-in problems, access failures,
+                app registration confusion, and admin troubleshooting.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {morePosts.length > 0 && <MoreStories posts={morePosts} />}
 
         <section

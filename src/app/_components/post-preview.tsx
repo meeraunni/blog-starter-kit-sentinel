@@ -15,7 +15,7 @@ type Props = {
   slug: string;
 };
 
-export default function PostPreview({
+export function PostPreview({
   title,
   coverImage,
   date,

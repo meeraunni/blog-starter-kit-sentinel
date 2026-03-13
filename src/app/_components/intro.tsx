@@ -4,8 +4,9 @@
       <div className="mx-auto max-w-6xl px-6 py-10">
         <div className="grid gap-8 md:grid-cols-[1.4fr_1fr] md:items-start">
           <div>
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-neutral-500">
-              SentinelIdentity.ca
+            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-blue-700">
+             Sentinel Identity
+             </p>
             </p>
 
             <h1 className="text-4xl font-semibold tracking-tight text-black md:text-5xl">

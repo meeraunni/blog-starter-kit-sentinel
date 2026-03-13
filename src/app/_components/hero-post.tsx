@@ -1,5 +1,5 @@
 <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
-  <p className="mb-2 text-sm font-semibold uppercase tracking-[0.16em] text-blue-700">
+  <div className="mb-8 overflow-hidden rounded-2xl shadow-sm">
     Featured
   </p>
   <h3 className="text-2xl font-semibold text-black">

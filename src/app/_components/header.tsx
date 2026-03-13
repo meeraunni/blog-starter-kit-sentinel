@@ -29,12 +29,9 @@ export default function Header() {
           <Link href="/#assessment-form" className="text-sm font-medium text-neutral-700 hover:text-blue-700">
             Assessment
           </Link>
-          <a
-            href="mailto:info@sentinelidentity.ca"
-            className="text-sm font-medium text-neutral-700 hover:text-blue-700"
-          >
+          <Link href="/#contact" className="text-sm font-medium text-neutral-700 hover:text-blue-700">
             Contact
-          </a>
+          </Link>
         </nav>
       </div>
     </header>

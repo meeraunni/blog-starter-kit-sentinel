@@ -15,14 +15,15 @@ export default function CoverImage({
   priority = false,
 }: Props) {
   const image = (
-    <div className="relative h-[280px] w-full overflow-hidden border border-neutral-200 bg-white md:h-[420px]">
+    <div className="group relative h-[280px] w-full overflow-hidden rounded-[2rem] border border-slate-200/80 bg-slate-100 shadow-[0_24px_60px_rgba(15,23,42,0.12)] md:h-[420px]">
       <Image
         src={src}
         alt={`Cover image for ${title}`}
         fill
         priority={priority}
-        className="object-cover"
+        className="object-cover transition duration-700 group-hover:scale-[1.03]"
       />
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/25 via-transparent to-transparent" />
     </div>
   );
 

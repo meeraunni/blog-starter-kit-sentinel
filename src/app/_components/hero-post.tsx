@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Avatar from "./avatar";
 import CoverImage from "./cover-image";
 import DateFormatter from "./date-formatter";
 
@@ -19,39 +20,43 @@ export function HeroPost({
   coverImage,
   date,
   excerpt,
+  author,
   slug,
 }: Props) {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-10">
-      <div className="grid gap-8">
+    <section className="py-12 lg:py-16">
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,1.25fr)_minmax(320px,0.75fr)] lg:items-center">
         <div>
-          <div className="mb-8 overflow-hidden rounded-2xl shadow-sm">
-            <CoverImage title={title} src={coverImage} slug={slug} priority />
+          <CoverImage title={title} src={coverImage} slug={slug} priority />
+        </div>
+
+        <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-[0_32px_80px_rgba(15,23,42,0.10)] lg:p-10">
+          <div className="inline-flex rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-900">
+            Featured analysis
           </div>
 
-          <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
-            <div className="mb-3 text-sm text-neutral-500">
-              <DateFormatter dateString={date} />
+          <h2 className="mt-6 text-4xl font-semibold leading-[1.02] tracking-[-0.04em] text-slate-950 lg:text-5xl">
+            <Link href={`/posts/${slug}`} className="transition hover:text-cyan-800">
+              {title}
+            </Link>
+          </h2>
+
+          <p className="mt-5 text-lg leading-8 text-slate-600">{excerpt}</p>
+
+          <div className="mt-8 flex flex-col gap-5 border-t border-slate-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-3">
+              <div className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
+                <DateFormatter dateString={date} />
+              </div>
+              <Avatar name={author?.name || "Sentinel Identity"} />
             </div>
 
-            <h2 className="text-3xl font-semibold leading-tight text-black md:text-4xl">
-              <Link href={`/posts/${slug}`} className="hover:text-blue-700">
-                {title}
-              </Link>
-            </h2>
-
-            <p className="mt-4 text-lg leading-8 text-neutral-700">
-              {excerpt}
-            </p>
-
-            <div className="mt-6">
-              <Link
-                href={`/posts/${slug}`}
-                className="inline-flex items-center rounded-md bg-blue-600 px-5 py-3 text-sm font-medium text-white hover:bg-blue-700"
-              >
-                Read article
-              </Link>
-            </div>
+            <Link
+              href={`/posts/${slug}`}
+              className="inline-flex items-center justify-center rounded-full bg-slate-950 px-6 py-3 text-sm font-medium text-white transition hover:bg-cyan-900"
+            >
+              Read feature
+            </Link>
           </div>
         </div>
       </div>

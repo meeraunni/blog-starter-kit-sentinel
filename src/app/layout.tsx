@@ -1,6 +1,7 @@
 import Footer from "@/app/_components/footer";
 import { CMS_NAME, HOME_OG_IMAGE_URL } from "@/lib/constants";
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Inter } from "next/font/google";
 import cn from "classnames";
 import { ThemeSwitcher } from "./_components/theme-switcher";
@@ -10,8 +11,12 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: `Next.js Blog Example with ${CMS_NAME}`,
-  description: `A statically generated blog example using Next.js and ${CMS_NAME}.`,
+  title: {
+    default: `${CMS_NAME} | Microsoft Identity Journal`,
+    template: `%s | ${CMS_NAME}`,
+  },
+  description:
+    "Premium editorial analysis on Microsoft Entra, Conditional Access, MFA strategy, identity architecture, and tenant hardening.",
   openGraph: {
     images: [HOME_OG_IMAGE_URL],
   },
@@ -25,6 +30,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9915553948229076"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         <link
           rel="apple-touch-icon"
           sizes="180x180"
@@ -54,11 +65,14 @@ export default function RootLayout({
           name="msapplication-config"
           content="/favicon/browserconfig.xml"
         />
-        <meta name="theme-color" content="#000" />
+        <meta name="theme-color" content="#020617" />
         <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
       </head>
       <body
-        className={cn(inter.className, "dark:bg-slate-900 dark:text-slate-400")}
+        className={cn(
+          inter.className,
+          "min-h-screen bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.08),transparent_30%),linear-gradient(180deg,#f8fbff_0%,#ffffff_22%,#f8fafc_100%)] text-slate-700 antialiased",
+        )}
       >
         <ThemeSwitcher />
         <div className="min-h-screen">{children}</div>

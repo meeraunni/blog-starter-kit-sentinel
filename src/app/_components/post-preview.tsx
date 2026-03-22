@@ -24,24 +24,32 @@ export function PostPreview({
   slug,
 }: Props) {
   return (
-    <div className="mb-12">
-      <div className="mb-5">
-        <CoverImage title={title} src={coverImage} slug={slug} />
+    <article className="flex h-full flex-col gap-6 rounded-[2rem] border border-slate-200 bg-white p-5 shadow-[0_22px_50px_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_70px_rgba(15,23,42,0.12)] md:p-6">
+      <CoverImage title={title} src={coverImage} slug={slug} />
+
+      <div className="flex flex-1 flex-col">
+        <div className="mb-4 text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
+          <DateFormatter dateString={date} />
+        </div>
+
+        <h3 className="text-2xl font-semibold leading-tight tracking-[-0.03em] text-slate-950">
+          <Link href={`/posts/${slug}`} className="transition hover:text-cyan-800">
+            {title}
+          </Link>
+        </h3>
+
+        <p className="mt-4 flex-1 text-base leading-8 text-slate-600">{excerpt}</p>
+
+        <div className="mt-6 flex items-center justify-between gap-4 border-t border-slate-200 pt-5">
+          <Avatar name={author?.name || "Sentinel Identity"} />
+          <Link
+            href={`/posts/${slug}`}
+            className="text-sm font-medium text-cyan-900 transition hover:text-slate-950"
+          >
+            Read more →
+          </Link>
+        </div>
       </div>
-
-      <h3 className="mb-3 text-2xl font-bold leading-snug">
-        <Link href={`/posts/${slug}`} className="hover:underline">
-          {title}
-        </Link>
-      </h3>
-
-      <div className="mb-3 text-sm text-neutral-600">
-        <DateFormatter dateString={date} />
-      </div>
-
-      <p className="mb-4 text-base leading-7 text-neutral-700">{excerpt}</p>
-
-      <Avatar name={author?.name || "Sentinel Identity"} />
-    </div>
+    </article>
   );
 }

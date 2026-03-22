@@ -22,9 +22,9 @@ export default async function Post(props: Params) {
   return (
     <main>
       <Alert preview={post.preview} />
+      <Header />
       <Container>
-        <Header />
-        <article className="mb-32">
+        <article className="pb-20 pt-6 lg:pb-24">
           <PostHeader
             title={post.title}
             coverImage={post.coverImage}
@@ -52,7 +52,7 @@ export async function generateMetadata(props: Params): Promise<Metadata> {
     return notFound();
   }
 
-  const title = `${post.title} | Next.js Blog Example with ${CMS_NAME}`;
+  const title = `${post.title} | ${CMS_NAME}`;
 
   return {
     title,

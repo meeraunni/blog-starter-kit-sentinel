@@ -14,13 +14,13 @@ export function MoreStories({ posts }: Props) {
             Latest coverage
           </p>
           <h2 className="mt-3 max-w-3xl text-3xl font-semibold tracking-[-0.04em] text-slate-950 md:text-4xl">
-            A cleaner reading surface for identity teams that care about signal.
+            Recent articles from Sentinel Identity.
           </h2>
         </div>
 
         <p className="max-w-xl text-base leading-7 text-slate-600">
-          Explore sharp articles on Conditional Access, access-token handling, and Microsoft identity operations,
-          presented in a layout that feels more product-grade and less template-driven.
+          Writing focused on Microsoft identity operations, security decisions, and the details that matter in
+          production tenants.
         </p>
       </div>
 

@@ -1,4 +1,5 @@
 import Header from "@/app/_components/header";
+import ConsultingForm from "@/app/_components/consulting-form";
 
 const services = [
   {
@@ -81,52 +82,7 @@ export default function ServicesPage() {
             </p>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
-            <form className="space-y-5">
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">Name</label>
-                <input
-                  type="text"
-                  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-600"
-                  placeholder="Your name"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">Company</label>
-                <input
-                  type="text"
-                  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-600"
-                  placeholder="Company name"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">Email</label>
-                <input
-                  type="email"
-                  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-600"
-                  placeholder="you@company.com"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-medium text-slate-700">What do you need help with?</label>
-                <textarea
-                  rows={5}
-                  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-cyan-600"
-                  placeholder="Tell me about your Entra, Conditional Access, MFA, or tenant security needs."
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="inline-flex items-center rounded-full bg-slate-950 px-6 py-3 text-sm font-medium text-white transition hover:bg-cyan-900"
-              >
-                Submit request
-              </button>
-            </form>
-          </div>
+          <ConsultingForm />
         </div>
       </section>
     </main>

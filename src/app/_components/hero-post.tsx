@@ -43,16 +43,7 @@ export function HeroPost({
 
           <p className="mt-5 text-lg leading-8 text-slate-600">{excerpt}</p>
 
-          <div className="mt-8 grid gap-6 border-t border-slate-200 pt-6">
-            <div className="grid gap-4 rounded-[1.5rem] bg-slate-50 p-5 text-sm leading-7 text-slate-600">
-              <p className="font-semibold uppercase tracking-[0.24em] text-slate-500">Why this matters</p>
-              <p>
-                Strong homepage journalism starts with one clear feature. This lead story now anchors the page the
-                way a premium tech newsroom would.
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-8 flex flex-col gap-5 border-t border-slate-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-3">
               <div className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
                 <DateFormatter dateString={date} />
@@ -66,7 +57,6 @@ export function HeroPost({
             >
               Read feature
             </Link>
-          </div>
           </div>
         </div>
       </div>

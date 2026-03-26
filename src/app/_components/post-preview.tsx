@@ -24,7 +24,7 @@ export function PostPreview({
   slug,
 }: Props) {
   return (
-    <article className="flex h-full flex-col gap-6 rounded-[2rem] border border-slate-200 bg-white p-5 shadow-[0_22px_50px_rgba(15,23,42,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_70px_rgba(15,23,42,0.12)] md:p-6">
+    <article className="group flex h-full flex-col gap-6 rounded-[2rem] border border-slate-200/80 bg-white/95 p-5 shadow-[0_22px_50px_rgba(15,23,42,0.08)] ring-1 ring-white transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_70px_rgba(15,23,42,0.12)] md:p-6">
       <CoverImage title={title} src={coverImage} slug={slug} />
 
       <div className="flex flex-1 flex-col">
@@ -32,8 +32,8 @@ export function PostPreview({
           <DateFormatter dateString={date} />
         </div>
 
-        <h3 className="text-2xl font-semibold leading-tight tracking-[-0.03em] text-slate-950">
-          <Link href={`/posts/${slug}`} className="transition hover:text-cyan-800">
+        <h3 className="text-2xl font-semibold leading-tight tracking-[-0.035em] text-slate-950">
+          <Link href={`/posts/${slug}`} className="transition group-hover:text-cyan-800">
             {title}
           </Link>
         </h3>

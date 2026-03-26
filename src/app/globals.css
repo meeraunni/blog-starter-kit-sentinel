@@ -5,6 +5,9 @@
 @layer base {
   :root {
     color-scheme: light;
+    --page-ink: 15 23 42;
+    --page-accent: 8 145 178;
+    --page-surface: 248 250 252;
   }
 
   html {
@@ -12,6 +15,7 @@
   }
 
   body {
+    font-family: var(--font-sans), sans-serif;
     @apply bg-slate-50 text-slate-700;
   }
 
@@ -21,5 +25,14 @@
 
   a {
     @apply transition-colors;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display), var(--font-sans), sans-serif;
   }
 }

@@ -2,13 +2,21 @@ import Footer from "@/app/_components/footer";
 import { CMS_NAME, HOME_OG_IMAGE_URL } from "@/lib/constants";
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Inter } from "next/font/google";
+import { Manrope, Sora } from "next/font/google";
 import cn from "classnames";
 import { ThemeSwitcher } from "./_components/theme-switcher";
 
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
+
+const sora = Sora({
+  subsets: ["latin"],
+  variable: "--font-display",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -70,7 +78,8 @@ export default function RootLayout({
       </head>
       <body
         className={cn(
-          inter.className,
+          manrope.variable,
+          sora.variable,
           "min-h-screen bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.08),transparent_30%),linear-gradient(180deg,#f8fbff_0%,#ffffff_22%,#f8fafc_100%)] text-slate-700 antialiased",
         )}
       >

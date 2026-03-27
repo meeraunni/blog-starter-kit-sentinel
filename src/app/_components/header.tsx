@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 const navItems = [
-  { href: "/", label: "Journal" },
+  { href: "/", label: "Blog" },
   { href: "/services", label: "Advisory" },
 ];
 
@@ -19,7 +19,7 @@ export default function Header() {
               Sentinel Identity
             </span>
             <span className="text-xs uppercase tracking-[0.3em] text-slate-400">
-              Premium Identity Journal
+              Microsoft Entra Blog
             </span>
           </div>
         </Link>

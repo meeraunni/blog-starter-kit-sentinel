@@ -1,50 +1,38 @@
 import Container from "@/app/_components/container";
 import Header from "@/app/_components/header";
-import { HeroPost } from "@/app/_components/hero-post";
 import { MoreStories } from "@/app/_components/more-stories";
 import { getAllPosts } from "@/lib/api";
 
 export default async function Index() {
   const allPosts = getAllPosts();
 
-  const heroPost = allPosts[0];
-  const morePosts = allPosts.slice(1);
-
   return (
     <main className="relative overflow-hidden">
       <Header />
 
-      <Container>
-        <section className="border-b border-slate-200/80 py-10 lg:py-12">
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] lg:items-end">
+      <section className="border-b border-sky-700 bg-sky-600 text-white">
+        <Container>
+          <div className="grid gap-8 py-14 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-center lg:py-16">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-900/80">
-                Journal
-              </p>
-              <h1 className="mt-3 max-w-3xl text-4xl font-semibold tracking-[-0.05em] text-slate-950 md:text-5xl">
-                Microsoft identity articles, notes, and field observations.
+              <p className="text-sm font-medium text-sky-100">Sentinel Identity</p>
+              <h1 className="mt-4 text-4xl font-semibold tracking-[-0.05em] md:text-5xl">
+                Microsoft Entra Blog
               </h1>
             </div>
 
-            <p className="max-w-xl text-base leading-8 text-slate-600">
-              Sentinel Identity publishes focused writing on Entra ID, Conditional Access, authentication flows,
-              and tenant hardening.
-            </p>
+            <form className="rounded-xl bg-white p-2 shadow-[0_14px_30px_rgba(2,6,23,0.16)]">
+              <input
+                type="search"
+                placeholder="Search this blog"
+                className="w-full rounded-lg border border-slate-200 px-4 py-3 text-base text-slate-950 outline-none placeholder:text-slate-400"
+              />
+            </form>
           </div>
-        </section>
+        </Container>
+      </section>
 
-        {heroPost && (
-          <HeroPost
-            title={heroPost.title}
-            coverImage={heroPost.coverImage}
-            date={heroPost.date}
-            author={heroPost.author}
-            slug={heroPost.slug}
-            excerpt={heroPost.excerpt}
-          />
-        )}
-
-        {morePosts.length > 0 && <MoreStories posts={morePosts} />}
+      <Container>
+        {allPosts.length > 0 && <MoreStories posts={allPosts} />}
       </Container>
     </main>
   );

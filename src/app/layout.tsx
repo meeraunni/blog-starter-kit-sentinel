@@ -20,7 +20,7 @@ const sora = Sora({
 
 export const metadata: Metadata = {
   title: {
-    default: `${CMS_NAME} | Microsoft Identity Journal`,
+    default: `${CMS_NAME} | Microsoft Entra Blog`,
     template: `%s | ${CMS_NAME}`,
   },
   description:

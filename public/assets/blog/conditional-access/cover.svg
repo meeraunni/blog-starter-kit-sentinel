@@ -1,0 +1,31 @@
+<svg width="1600" height="1000" viewBox="0 0 1600 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="1000" rx="48" fill="#051126"/>
+  <rect x="58" y="58" width="1484" height="884" rx="40" fill="url(#bg)"/>
+  <circle cx="800" cy="500" r="260" fill="url(#glow)"/>
+  <circle cx="800" cy="500" r="328" stroke="#56C8FF" stroke-opacity=".2" stroke-width="3" stroke-dasharray="14 12"/>
+  <circle cx="800" cy="500" r="384" stroke="#8CD4FF" stroke-opacity=".12" stroke-width="2" stroke-dasharray="10 12"/>
+  <path d="M800 228L1024 344V554C1024 682 922 785 800 836C678 785 576 682 576 554V344L800 228Z" fill="#103E74" stroke="#8BD4FF" stroke-width="4"/>
+  <path d="M800 302L954 382V546C954 638 886 708 800 752C714 708 646 638 646 546V382L800 302Z" fill="#0C274A"/>
+  <circle cx="800" cy="503" r="76" fill="#D9F6FF"/>
+  <path d="M800 418C764 418 734 447 734 484V523H866V484C866 447 836 418 800 418Z" fill="#0A3557"/>
+  <path d="M708 523H892V584C892 645 850 694 800 716C750 694 708 645 708 584V523Z" fill="#0C5D87"/>
+  <rect x="235" y="282" width="214" height="110" rx="24" fill="#0D223E" stroke="#2F8BFF" stroke-opacity=".5" stroke-width="3"/>
+  <rect x="1136" y="314" width="224" height="112" rx="24" fill="#0D223E" stroke="#63E0FF" stroke-opacity=".55" stroke-width="3"/>
+  <rect x="1142" y="614" width="254" height="126" rx="26" fill="#122C52" stroke="#8BD4FF" stroke-opacity=".38" stroke-width="3"/>
+  <text x="272" y="348" fill="#E4F6FF" font-family="Arial, sans-serif" font-size="26" font-weight="700" letter-spacing="2">ACCESS</text>
+  <text x="1196" y="383" fill="#E4F6FF" font-family="Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="2">SIGN-IN</text>
+  <text x="1190" y="685" fill="#E4F6FF" font-family="Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="2">POLICY FLOW</text>
+  <path d="M449 337H565" stroke="#2F8BFF" stroke-width="5" stroke-linecap="round"/>
+  <path d="M1034 370H1133" stroke="#63E0FF" stroke-width="5" stroke-linecap="round"/>
+  <path d="M1028 646H1140" stroke="#8BD4FF" stroke-width="5" stroke-linecap="round"/>
+  <defs>
+    <linearGradient id="bg" x1="149" y1="111" x2="1431" y2="880" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#071A33"/>
+      <stop offset="1" stop-color="#08101B"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(800 500) rotate(90) scale(286)">
+      <stop stop-color="#29A8FF" stop-opacity=".38"/>
+      <stop offset="1" stop-color="#29A8FF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>

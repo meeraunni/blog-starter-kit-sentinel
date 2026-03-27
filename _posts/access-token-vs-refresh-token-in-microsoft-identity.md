@@ -1,12 +1,12 @@
 ---
 title: "Access Tokens and Refresh Tokens in Microsoft Identity"
 excerpt: "A practical IAM-focused explanation of what access tokens and refresh tokens are, how they work in Microsoft Entra ID, and what actually happens after sign-in."
-coverImage: "/assets/blog/access-tokens/cover.jpg"
+coverImage: "/assets/blog/access-tokens/cover.svg"
 date: "2026-03-13"
 author:
   name: "Sentinel Identity"
 ogImage:
-  url: "/assets/blog/access-tokens/cover.jpg"
+  url: "/assets/blog/access-tokens/cover.svg"
 ---
 
 ## Introduction

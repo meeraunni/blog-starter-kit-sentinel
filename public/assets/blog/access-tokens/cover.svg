@@ -1,0 +1,36 @@
+<svg width="1600" height="1000" viewBox="0 0 1600 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="1000" rx="48" fill="#031225"/>
+  <rect x="58" y="58" width="1484" height="884" rx="40" fill="url(#bg)"/>
+  <path d="M150 786C331 633 476 563 630 543C802 520 936 588 1128 518C1228 482 1318 423 1450 308" stroke="url(#line)" stroke-width="8" stroke-linecap="round"/>
+  <path d="M150 679C332 531 516 465 674 471C820 476 953 568 1096 562C1225 556 1340 494 1450 401" stroke="#30D5FF" stroke-opacity=".26" stroke-width="4" stroke-linecap="round"/>
+  <rect x="184" y="214" width="372" height="202" rx="28" fill="#0B2343" stroke="#2E87FF" stroke-opacity=".55" stroke-width="3"/>
+  <rect x="1082" y="545" width="286" height="164" rx="26" fill="#0B2A1B" stroke="#31C46C" stroke-opacity=".68" stroke-width="3"/>
+  <rect x="675" y="203" width="258" height="166" rx="32" fill="#0E3158" stroke="#61D0FF" stroke-opacity=".65" stroke-width="3"/>
+  <circle cx="804" cy="548" r="162" fill="url(#glow)" fill-opacity=".75"/>
+  <path d="M804 374C726 374 662 438 662 516V594C662 672 726 736 804 736C882 736 946 672 946 594V516C946 438 882 374 804 374ZM846 558V614H762V558C737 543 720 516 720 486C720 440 758 402 804 402C850 402 888 440 888 486C888 516 871 543 846 558Z" fill="#BDFBFF"/>
+  <path d="M777 584H831" stroke="#032B3A" stroke-width="12" stroke-linecap="round"/>
+  <path d="M804 486V544" stroke="#032B3A" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="804" cy="516" r="226" stroke="#33D2FF" stroke-opacity=".18" stroke-width="2" stroke-dasharray="10 14"/>
+  <circle cx="804" cy="516" r="284" stroke="#43F4C4" stroke-opacity=".14" stroke-width="2" stroke-dasharray="8 12"/>
+  <text x="244" y="294" fill="#DDF7FF" font-family="Arial, sans-serif" font-size="42" font-weight="700" letter-spacing="1.5">ACCESS</text>
+  <text x="244" y="346" fill="#DDF7FF" font-family="Arial, sans-serif" font-size="42" font-weight="700" letter-spacing="1.5">TOKEN</text>
+  <text x="1142" y="620" fill="#D8FFF0" font-family="Arial, sans-serif" font-size="36" font-weight="700" letter-spacing="1.4">REFRESH</text>
+  <text x="1190" y="668" fill="#D8FFF0" font-family="Arial, sans-serif" font-size="36" font-weight="700" letter-spacing="1.4">TOKEN</text>
+  <circle cx="1188" cy="223" r="84" fill="#0E3158" stroke="#61D0FF" stroke-opacity=".55" stroke-width="3"/>
+  <path d="M1188 170L1202 204H1238L1209 225L1221 259L1188 238L1155 259L1167 225L1138 204H1174L1188 170Z" fill="#BDFBFF"/>
+  <defs>
+    <linearGradient id="bg" x1="156" y1="108" x2="1431" y2="867" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#081B35"/>
+      <stop offset="1" stop-color="#07111F"/>
+    </linearGradient>
+    <linearGradient id="line" x1="150" y1="786" x2="1450" y2="308" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2E87FF"/>
+      <stop offset=".55" stop-color="#39D3FF"/>
+      <stop offset="1" stop-color="#43F4C4"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(804 548) rotate(90) scale(196)">
+      <stop stop-color="#32D7FF"/>
+      <stop offset="1" stop-color="#32D7FF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>

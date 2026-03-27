@@ -38,7 +38,7 @@ export default function Header() {
           </nav>
 
           <Link
-            href="mailto:info@sentinelidentity.ca"
+            href="/services#assessment"
             className="inline-flex items-center rounded-full border border-cyan-300/40 bg-white/5 px-4 py-2 text-sm font-medium text-cyan-50 transition hover:border-cyan-200 hover:bg-cyan-300/10 hover:text-white"
           >
             Contact

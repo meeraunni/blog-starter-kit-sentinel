@@ -69,7 +69,7 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      <section className="border-t border-slate-200 bg-white/80 backdrop-blur">
+      <section id="assessment" className="border-t border-slate-200 bg-white/80 backdrop-blur">
         <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 lg:grid-cols-[minmax(0,0.85fr)_minmax(320px,1fr)] lg:px-10 lg:py-20">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.28em] text-slate-500">Assessment</p>

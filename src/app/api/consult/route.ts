@@ -1,11 +1,5 @@
 import { NextResponse } from "next/server";
-import {
-  createTransporter,
-  getContactInbox,
-  getEmailFrom,
-  getMailerConfigError,
-  isMailerConfigured,
-} from "@/lib/mailer";
+import { sendFormSubmission } from "@/lib/formsubmit";
 
 function sanitize(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
@@ -27,50 +21,24 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!isMailerConfigured()) {
+  try {
+    await sendFormSubmission({
+      name,
+      company,
+      email,
+      website,
+      challenge,
+      _subject: `Sentinel Identity consulting request from ${name}`,
+      _replyto: email,
+      _template: "table",
+      _captcha: "false",
+    });
+  } catch {
     return NextResponse.json(
-      { error: getMailerConfigError() },
+      { error: "We could not send your request right now. Please try again shortly." },
       { status: 500 },
     );
   }
-
-  const transporter = createTransporter();
-  const inbox = getContactInbox();
-  const from = getEmailFrom();
-
-  await transporter.sendMail({
-    to: inbox,
-    from,
-    replyTo: email,
-    subject: `New Sentinel Identity consulting inquiry from ${name}`,
-    text: [
-      `Name: ${name}`,
-      `Company: ${company || "Not provided"}`,
-      `Email: ${email}`,
-      `Website: ${website || "Not provided"}`,
-      "",
-      "Assessment request:",
-      challenge,
-    ].join("\n"),
-  });
-
-  await transporter.sendMail({
-    to: email,
-    from,
-    replyTo: inbox,
-    subject: "We received your Sentinel Identity assessment request",
-    text: [
-      `Hi ${name},`,
-      "",
-      "Thanks for reaching out to Sentinel Identity.",
-      "We received your tenant assessment request and will review it shortly.",
-      "",
-      "If you need to add context, reply to this email.",
-      "",
-      "Sentinel Identity",
-      inbox,
-    ].join("\n"),
-  });
 
   return NextResponse.json({ ok: true });
 }

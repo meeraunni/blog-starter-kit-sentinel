@@ -24,8 +24,8 @@ export default function Footer() {
           <Link href="/services" className="transition hover:text-slate-950">
             Advisory services
           </Link>
-          <Link href="mailto:info@sentinelidentity.ca" className="transition hover:text-slate-950">
-            info@sentinelidentity.ca
+          <Link href="/services#assessment" className="transition hover:text-slate-950">
+            Request an assessment
           </Link>
           <p className="pt-4 text-xs uppercase tracking-[0.2em] text-slate-400">
             © 2026 Sentinel Identity. All rights reserved.

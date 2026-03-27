@@ -32,7 +32,7 @@ export default async function Index() {
 
         {morePosts.length > 0 && <MoreStories posts={morePosts} />}
 
-        <section className="pb-24 pt-6">
+        <section id="consulting" className="pb-24 pt-6">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(320px,1.1fr)]">
             <div className="rounded-[2rem] border border-slate-200/80 bg-slate-950 px-6 py-10 text-white shadow-[0_40px_100px_rgba(2,6,23,0.22)] lg:px-8 lg:py-10">
               <div>
@@ -47,8 +47,7 @@ export default async function Index() {
                   exposure, or broader tenant hardening concerns.
                 </p>
                 <div className="mt-8 rounded-[1.5rem] border border-white/10 bg-white/5 p-5 text-sm leading-7 text-slate-300">
-                  Every request goes to info@sentinelidentity.ca. You can forward that mailbox to
-                  meeraunni4@gmail.com from your email provider.
+                  Share the current issue, the scope of your tenant, and the type of review you need.
                 </div>
               </div>
             </div>
@@ -67,9 +66,7 @@ export default async function Index() {
                 Let readers subscribe for new posts.
               </h2>
               <p className="mt-4 max-w-xl text-base leading-8 text-slate-600">
-                This form captures subscriber emails and sends a confirmation email. For automatic notifications
-                on every new blog post, you will also need an email platform or a publish workflow that sends to
-                your subscriber list.
+                Readers can join the list here and you can manage follow-up publishing workflows separately.
               </p>
             </div>
 

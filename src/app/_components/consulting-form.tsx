@@ -62,8 +62,7 @@ export default function ConsultingForm() {
         Request a tenant assessment.
       </h3>
       <p className="mt-3 text-base leading-7 text-slate-600">
-        Share your Microsoft Entra environment, current pain points, or the review you need. The request will be
-        sent to info@sentinelidentity.ca.
+        Share your Microsoft Entra environment, current pain points, or the review you need.
       </p>
 
       <form className="mt-6 grid gap-4" onSubmit={handleSubmit}>

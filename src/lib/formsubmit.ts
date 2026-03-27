@@ -5,21 +5,21 @@ type SubmissionField = string | undefined;
 export async function sendFormSubmission(
   values: Record<string, SubmissionField>,
 ) {
-  const payload: Record<string, string> = {};
+  const payload = new URLSearchParams();
 
   for (const [key, value] of Object.entries(values)) {
     if (typeof value === "string" && value.trim()) {
-      payload[key] = value.trim();
+      payload.append(key, value.trim());
     }
   }
 
   const response = await fetch(FORM_ENDPOINT, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      "Content-Type": "application/x-www-form-urlencoded",
       Accept: "application/json",
     },
-    body: JSON.stringify(payload),
+    body: payload.toString(),
   });
 
   if (!response.ok) {

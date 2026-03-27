@@ -27,6 +27,15 @@ export default function Footer() {
           <Link href="/services#assessment" className="transition hover:text-slate-950">
             Request an assessment
           </Link>
+          <Link href="/privacy" className="transition hover:text-slate-950">
+            Privacy
+          </Link>
+          <Link href="/terms" className="transition hover:text-slate-950">
+            Terms of Use
+          </Link>
+          <Link href="/cookies" className="transition hover:text-slate-950">
+            Cookies
+          </Link>
           <p className="pt-4 text-xs uppercase tracking-[0.2em] text-slate-400">
             © 2026 Sentinel Identity. All rights reserved.
           </p>

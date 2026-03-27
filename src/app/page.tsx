@@ -2,6 +2,7 @@ import Container from "@/app/_components/container";
 import ConsultingForm from "@/app/_components/consulting-form";
 import Header from "@/app/_components/header";
 import { MoreStories } from "@/app/_components/more-stories";
+import SubscribeForm from "@/app/_components/subscribe-form";
 import { getAllPosts } from "@/lib/api";
 
 export default async function Index() {
@@ -11,7 +12,7 @@ export default async function Index() {
     <main className="relative overflow-hidden">
       <Header />
 
-      <section className="border-b border-slate-200/80 bg-white/80 backdrop-blur-sm">
+      <section className="border-b border-slate-200/80 bg-[linear-gradient(135deg,rgba(255,255,255,0.94),rgba(240,247,255,0.96))]">
         <Container>
           <div className="grid gap-8 py-14 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-center lg:py-16">
             <div>
@@ -21,9 +22,6 @@ export default async function Index() {
               <h1 className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-slate-950 md:text-5xl">
                 Microsoft Entra Blog
               </h1>
-              <p className="mt-4 max-w-2xl text-base leading-8 text-slate-600">
-                Practical writing on Entra ID, Conditional Access, identity design, and tenant hardening.
-              </p>
             </div>
 
             <form className="rounded-xl bg-white p-2 shadow-[0_14px_30px_rgba(2,6,23,0.16)]">
@@ -40,7 +38,22 @@ export default async function Index() {
       <Container>
         {allPosts.length > 0 && <MoreStories posts={allPosts} />}
 
-        <section id="consulting" className="pb-24 pt-6 lg:pt-10">
+        <section className="pb-16 pt-6 lg:pt-10">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(340px,1.05fr)] lg:items-start">
+            <div className="max-w-2xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-900/80">
+                Subscribe
+              </p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-slate-950 md:text-4xl">
+                Get new Microsoft Entra posts by email.
+              </h2>
+            </div>
+
+            <SubscribeForm />
+          </div>
+        </section>
+
+        <section id="consulting" className="pb-24 pt-2 lg:pt-6">
           <div className="mb-8 max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-900/80">
               Advisory

@@ -24,7 +24,6 @@ export async function POST(request: Request) {
       _subject: "New Sentinel Identity subscriber",
       _replyto: email,
       _template: "table",
-      _captcha: "false",
     });
   } catch {
     return NextResponse.json(

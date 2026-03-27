@@ -11,7 +11,6 @@ export async function POST(request: Request) {
   const name = sanitize(body.name);
   const company = sanitize(body.company);
   const email = sanitize(body.email);
-  const website = sanitize(body.website);
   const challenge = sanitize(body.challenge);
 
   if (!name || !email || !challenge) {
@@ -26,12 +25,10 @@ export async function POST(request: Request) {
       name,
       company,
       email,
-      website,
       challenge,
       _subject: `Sentinel Identity consulting request from ${name}`,
       _replyto: email,
       _template: "table",
-      _captcha: "false",
     });
   } catch {
     return NextResponse.json(

@@ -1,28 +1,34 @@
-const FORM_ENDPOINT = "https://formsubmit.co/info@sentinelidentity.ca";
+const FORM_ENDPOINT = "https://formsubmit.co/ajax/info@sentinelidentity.ca";
 
 type SubmissionField = string | undefined;
 
 export async function sendFormSubmission(
   values: Record<string, SubmissionField>,
 ) {
-  const body = new URLSearchParams();
+  const payload: Record<string, string> = {};
 
   for (const [key, value] of Object.entries(values)) {
     if (typeof value === "string" && value.trim()) {
-      body.append(key, value.trim());
+      payload[key] = value.trim();
     }
   }
 
   const response = await fetch(FORM_ENDPOINT, {
     method: "POST",
     headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
+      "Content-Type": "application/json",
       Accept: "application/json",
     },
-    body,
+    body: JSON.stringify(payload),
   });
 
   if (!response.ok) {
     throw new Error("Form delivery failed");
+  }
+
+  const result = await response.json();
+
+  if (!result.success || result.success === "false") {
+    throw new Error(result.message || "Form delivery failed");
   }
 }

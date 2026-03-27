@@ -6,7 +6,6 @@ type FormState = {
   name: string;
   company: string;
   email: string;
-  website: string;
   challenge: string;
 };
 
@@ -14,7 +13,6 @@ const initialState: FormState = {
   name: "",
   company: "",
   email: "",
-  website: "",
   challenge: "",
 };
 
@@ -86,14 +84,7 @@ export default function ConsultingForm() {
           required
           value={form.email}
           onChange={(event) => updateField("email", event.target.value)}
-          placeholder="Work email"
-          className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-cyan-600 focus:bg-white"
-        />
-        <input
-          type="url"
-          value={form.website}
-          onChange={(event) => updateField("website", event.target.value)}
-          placeholder="Company website"
+          placeholder="Email address"
           className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-cyan-600 focus:bg-white"
         />
         <textarea

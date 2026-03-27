@@ -1,4 +1,4 @@
-const FORM_ENDPOINT = "https://formsubmit.co/ajax/info@sentinelidentity.ca";
+const FORM_ENDPOINT = "https://formsubmit.co/ajax/meeraunni4@gmail.com";
 
 type SubmissionField = string | undefined;
 

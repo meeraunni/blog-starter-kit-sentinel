@@ -28,6 +28,7 @@ export async function POST(request: Request) {
       challenge,
       _subject: `Sentinel Identity consulting request from ${name}`,
       _replyto: email,
+      _cc: "info@sentinelidentity.ca",
       _template: "table",
     });
   } catch {

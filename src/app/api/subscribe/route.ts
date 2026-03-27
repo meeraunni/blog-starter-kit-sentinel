@@ -23,6 +23,7 @@ export async function POST(request: Request) {
       email,
       _subject: "New Sentinel Identity subscriber",
       _replyto: email,
+      _cc: "info@sentinelidentity.ca",
       _template: "table",
     });
   } catch {

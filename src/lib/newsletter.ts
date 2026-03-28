@@ -27,14 +27,8 @@ function getContactInbox() {
   return process.env.CONTACT_TO_EMAIL || "info@sentinelidentity.ca";
 }
 
-function getAudienceId() {
-  const audienceId = process.env.RESEND_AUDIENCE_ID;
-
-  if (!audienceId) {
-    throw new Error("Missing RESEND_AUDIENCE_ID");
-  }
-
-  return audienceId;
+function getSegmentId() {
+  return process.env.RESEND_SEGMENT_ID || "";
 }
 
 function escapeHtml(value: string) {
@@ -47,7 +41,7 @@ function escapeHtml(value: string) {
 }
 
 export function newsletterReady() {
-  return Boolean(process.env.RESEND_API_KEY && process.env.RESEND_AUDIENCE_ID);
+  return Boolean(process.env.RESEND_API_KEY);
 }
 
 async function getContactByEmail(email: string) {
@@ -58,7 +52,7 @@ async function getContactByEmail(email: string) {
 
 export async function registerSubscriber(email: string, name?: string) {
   const resend = getResend();
-  const audienceId = getAudienceId();
+  const segmentId = getSegmentId();
   const normalizedEmail = email.trim().toLowerCase();
   const firstName = name?.trim() || undefined;
 
@@ -67,8 +61,8 @@ export async function registerSubscriber(email: string, name?: string) {
   if (existing?.id) {
     await resend.contacts.update({
       id: existing.id,
-      firstName,
       unsubscribed: false,
+      properties: firstName ? { first_name: firstName } : undefined,
     });
 
     return {
@@ -82,7 +76,7 @@ export async function registerSubscriber(email: string, name?: string) {
     email: normalizedEmail,
     firstName,
     unsubscribed: false,
-    audienceId,
+    segments: segmentId ? [{ id: segmentId }] : undefined,
   });
 
   if (error) {
@@ -156,10 +150,14 @@ export async function syncLatestPostToSubscribers(post: Post | undefined) {
   const resend = getResend();
   const from = getMailFrom();
   const siteUrl = getSiteUrl();
-  const audienceId = getAudienceId();
+  const segmentId = getSegmentId();
+
+  if (!segmentId) {
+    return { status: "skipped" as const };
+  }
 
   const { data, error } = await resend.broadcasts.create({
-    segmentId: audienceId,
+    segmentId,
     from,
     subject: `${post.title} | Microsoft Entra Blog`,
     html: `

@@ -1,6 +1,6 @@
 ---
 title: "Access Tokens and Refresh Tokens in Microsoft Identity"
-excerpt: "A practical IAM-focused explanation of what access tokens and refresh tokens are, how they work in Microsoft Entra ID, and what actually happens after sign-in."
+excerpt: "An engineering-level explanation of access tokens and refresh tokens in Microsoft Entra ID, including token ownership, lifetime, renewal, revocation, and common troubleshooting patterns."
 coverImage: "/assets/blog/access-tokens/diagram.svg"
 date: "2026-03-13"
 author:
@@ -11,229 +11,267 @@ ogImage:
 
 ## Introduction
 
-When a user signs in to Microsoft 365, Azure, Teams, Outlook, or a custom application integrated with Microsoft Entra ID, the platform does not keep sending the user’s password to every downstream service. Instead, Microsoft Entra ID issues security tokens that applications use to access protected resources.
+Microsoft identity discussions often go wrong because people use the word "token" too loosely. An administrator may say a user is authenticated, an application owner may say the app has a token, and a support engineer may say the sign-in succeeded. Those statements are related, but they are not the same thing.
 
-For IAM engineers and Microsoft administrators, this is where sign-in becomes more than credential validation. It becomes a token issuance, authorization, and session continuity process. If you understand how tokens work, many Microsoft sign-in behaviors become much easier to explain and troubleshoot.
+In Microsoft Entra ID, the token model is the operational boundary between authentication, authorization, and session continuity. If you understand which token is being issued, who owns it, where it is sent, and how it is renewed, a large number of sign-in and API problems become much easier to reason about.
 
-This article focuses on two important token types.
+This article focuses on the two token types that create the most confusion in day-to-day administration:
 
-- Access Token  
-- Refresh Token  
+- access tokens
+- refresh tokens
 
-The goal is to explain what each one does, where it is used, and what happens behind the scenes during a Microsoft sign-in.
+The goal is not to give a shallow definition. The goal is to explain how these tokens behave in real Microsoft identity flows so an administrator can troubleshoot them confidently and explain them accurately to another engineer.
 
-## The high-level sign-in picture
+## The shortest useful explanation
 
-A simplified Microsoft Entra sign-in process usually looks like this.
+If you only remember one model, remember this:
 
-1. The user is redirected to Microsoft Entra ID  
-2. Entra ID authenticates the identity  
-3. Entra ID evaluates Conditional Access and other session controls  
-4. The client application receives tokens  
-5. The client uses the access token to call the target resource  
-6. When the access token expires, the client uses the refresh token to request a new access token  
-
-This is the core model used across Microsoft services such as Microsoft Graph, Exchange Online, SharePoint Online, and Azure Resource Manager.
-
-## What is an Access Token
-
-An access token is a short-lived security token issued by Microsoft Entra ID that allows a client application to access a protected resource on behalf of a user or service principal.
-
-During a sign-in flow, Entra ID authenticates the identity, evaluates policies such as Conditional Access, and then issues an access token targeted for a specific resource.
-
-A useful way to think about it is as a temporary authorization credential. It proves that authentication has already occurred and that the identity platform has granted the client permission to call a protected API.
-
-In the Microsoft ecosystem, protected resources commonly include.
-
-- Microsoft Graph  
-- Exchange Online APIs  
-- SharePoint APIs  
-- Azure Resource Manager  
-- Custom APIs protected by Microsoft Entra ID  
-
-The important point is that the access token is the token that gets presented to the resource.
-
-## Typical Access Token Claims
-
-An access token contains claims that describe the identity and authorization context.
-
-Common claims include.
-
-- aud — the intended resource or API  
-- tid — the tenant that issued the token  
-- appid or azp — the client application requesting the token  
-- scp — delegated permissions granted to the application  
-- roles — application roles or app permissions  
-- exp — token expiration time  
-- iat — token issuance time  
-- oid or sub — identifiers representing the user or service principal  
-
-These claims allow the resource server to validate the caller and enforce authorization decisions.
-
-For example, if a client requests an access token for Microsoft Graph, the audience claim should match Graph. If the audience is incorrect, the resource server should reject the request.
-
-## How Access Tokens Are Used
-
-Once the client application gets an access token, it sends it to the target resource in the HTTP Authorization header.
-
-Example HTTP header:
-
-Authorization: Bearer <access_token>
-
-The resource server then validates the token. At a high level it checks the following.
-
-- whether the token was issued by a trusted authority  
-- whether the token is meant for that specific resource  
-- whether the token has expired  
-- whether the required scopes or roles are present  
-
-Only after those checks does the resource decide whether to allow the request.
-
-This is why access tokens sit at the boundary between authentication and authorization. A user may have successfully signed in, but the resource still needs a valid access token to grant access.
-
-## What is a Refresh Token
-
-A refresh token is a longer-lived token that allows a client application to obtain a new access token without requiring the user to authenticate again.
-
-Refresh tokens are issued alongside access tokens during the authentication process.
-
-Instead of prompting the user to sign in again every time an access token expires, the client application can silently request a new access token by presenting the refresh token to Microsoft Entra ID.
-
-The refresh token is therefore never sent to Microsoft Graph or any other API.
-
-It is only sent to Microsoft Entra ID.
-
-This leads to an important distinction.
-
-- Access tokens are presented to the resource  
-- Refresh tokens are presented to the identity provider  
-
-## Why Refresh Tokens Exist
-
-Access tokens are intentionally short-lived for security reasons.
-
-If applications required the user to sign in every time an access token expired, the user experience would be extremely poor.
-
-Refresh tokens solve this problem by allowing applications to maintain a session while still rotating short-lived access tokens.
-
-This design balances usability and security.
-
-- short-lived access tokens reduce exposure  
-- refresh tokens allow the session to continue  
-- Conditional Access policies can still interrupt the session when risk changes  
-
-## Refresh Token Flow
-
-The token lifecycle typically follows these steps.
-
-1. The user signs in  
-2. Microsoft Entra ID issues an access token and a refresh token  
-3. The client application calls the API using the access token  
-4. The access token eventually expires  
-5. The client sends the refresh token to Entra ID  
-6. Entra ID validates the refresh token and issues a new access token  
-7. The application continues calling the resource without prompting the user again  
-
-This mechanism allows long-running sessions without repeatedly asking the user to log in.
-
-## What Actually Happens in the Backend
-
-After a user signs in, the resource server does not ask for the user’s password again. Instead, it trusts the access token issued by Microsoft Entra ID.
-
-The backend interaction generally follows this model.
-
-- the client authenticates against Microsoft Entra ID  
-- Entra ID issues an access token for a specific resource  
-- the client sends the access token to the resource  
-- the resource validates the token and its claims  
-- when the token expires the client exchanges the refresh token for a new access token  
-
-In this architecture.
-
-Microsoft Entra ID is responsible for authentication and token issuance.
-
-The resource server is responsible for validating access tokens and enforcing authorization.
-
-Understanding this separation is critical for troubleshooting identity issues.
-
-## Where Conditional Access Fits
-
-Conditional Access sits in the token issuance path.
-
-That means Microsoft Entra ID can require controls such as.
-
-- multi-factor authentication  
-- device compliance  
-- trusted network locations  
-- authentication strength policies  
-- risk-based sign-in evaluation  
-
-before issuing tokens.
-
-Successful authentication does not automatically mean successful resource access. The resource still depends on a valid access token being issued and presented.
-
-No token means no access.
-
-## Access Token vs Refresh Token
-
-A simplified comparison.
-
-| Token | Purpose | Sent to | Typical behavior |
+| Token | Primary purpose | Sent to | Owned by |
 | --- | --- | --- | --- |
-| Access Token | Authorize access to a resource | API or resource server | Short-lived |
-| Refresh Token | Obtain new access tokens | Microsoft Entra ID | Longer-lived |
+| Access token | Authorize a request to a protected resource | The target API or resource server | The resource identified by the `aud` claim |
+| Refresh token | Acquire new access tokens without interactive sign-in | Microsoft Entra ID | The Microsoft identity platform |
 
-The easiest way to remember this is.
+That distinction matters more than the popular but vague explanation that one token is "short-lived" and the other is "long-lived." Lifetime matters, but destination and ownership matter more.
 
-Access tokens are for resources.  
-Refresh tokens are for token renewal with Entra ID.
+## What happens during sign-in at a high level
 
-## Where Administrators Often Get Confused
+A standard Microsoft identity flow looks roughly like this:
 
-The user is signed in but the application fails.
+1. A client redirects the user to Microsoft Entra ID.
+2. Entra ID authenticates the user.
+3. Entra ID evaluates policy, such as Conditional Access.
+4. Entra ID returns token material to the client.
+5. The client uses an access token to call a specific resource.
+6. When needed, the client uses a refresh token to request a new access token.
 
-This often happens because successful sign-in does not mean the application has a valid access token for the required resource. The token may be expired, issued for the wrong audience, or missing the required scopes.
+This is the important operational point: after the sign-in itself, the application is not carrying the user's password around to each downstream service. It is carrying tokens.
 
-Users are prompted again unexpectedly.
+## Access tokens: what they are and what they are not
 
-This can happen when the refresh token is no longer valid, Conditional Access policies force reauthentication, sign-in frequency requirements are triggered, or the application cannot access the token cache.
+An access token is a security token used for authorization. It represents the fact that Microsoft Entra ID issued permission for a client to call a specific protected resource.
 
-Using ID tokens incorrectly.
+The resource can be:
 
-An ID token is meant for the client application's sign-in context. It should not be used to authorize calls to an API. APIs expect access tokens.
+- Microsoft Graph
+- Exchange Online APIs
+- SharePoint Online APIs
+- Azure Resource Manager
+- a custom API protected by Microsoft Entra ID
 
-## Why This Matters for IAM Engineers
+An access token is not a generic proof that "the user signed in." It is a token for a specific audience. That audience is expressed in the `aud` claim.
 
-Understanding the token model helps administrators.
+This is why access-token troubleshooting should start with the resource question:
 
-- troubleshoot repeated sign-in prompts  
-- understand Conditional Access outcomes  
-- debug API authorization failures  
-- explain why access works in one application but fails in another  
-- separate identity platform issues from application configuration issues  
+- Which API is the client trying to call?
+- Was the token issued for that exact API?
+- Does the resource accept the token version and claims it received?
 
-Tokens are not just theoretical protocol components. They are the operational backbone of Microsoft identity.
+If those answers do not line up, the request fails even if the user genuinely authenticated successfully.
 
-## Final Takeaway
+## Access-token ownership and why clients should treat them as opaque
 
-After a Microsoft sign-in, the password is not what applications keep using. The real work is done by tokens.
+Microsoft's guidance is very clear on this point: clients use access tokens, but resources own them.
 
-- **Access token**
-  Used for authorizing requests to APIs and protected resources.
+The client application should not assume it understands or controls the token format. For Microsoft identity, access tokens should generally be treated as opaque strings by the client. The resource server is the component that validates the token and decides whether to accept it.
 
-- **Refresh token**
-  Used by the client to obtain new access tokens from Microsoft Entra ID.
+This is one of the most common mistakes in application design and troubleshooting. People decode a JWT, see claims that look familiar, and start reasoning as though the client owns the token contract. It does not. The API does.
 
-- **ID token**
-  Used by the client application to represent the user’s authentication context.
+For a web API, the most basic access-token validation questions are:
 
-Once this separation becomes clear, many Microsoft Entra behaviors become much easier to reason about.
+- Does the `aud` claim match this API?
+- Was the token issued by the correct issuer?
+- Is the signature valid?
+- Is the token expired?
+- Are the required scopes or roles present?
+
+If the token is for a different audience, the resource should reject it even if everything else looks valid.
+
+## Common claims administrators should know
+
+Access tokens contain claims that describe the authorization context. The exact claims vary by token version and scenario, but these are the ones administrators most commonly encounter:
+
+- `aud`: the intended audience or resource
+- `iss`: the issuer
+- `tid`: the tenant ID
+- `scp`: delegated permissions
+- `roles`: app roles or application permissions
+- `exp`: expiration time
+- `iat`: issued-at time
+- `oid` or `sub`: identity identifiers
+- `azp` or `appid`: client application identifier
+
+Administrators do not need to memorize every claim, but they should understand which claims answer which troubleshooting question.
+
+## Access-token lifetimes
+
+Access tokens are intentionally short-lived. Microsoft Learn states that the default lifetime is variable, generally between 60 and 90 minutes, with about 75 minutes as the average in standard scenarios.
+
+That variation is deliberate. It spreads demand over time and prevents synchronized hourly spikes against Microsoft Entra ID.
+
+This means two important things operationally:
+
+- you should not assume every access token lasts exactly one hour
+- your application or troubleshooting logic should rely on token response metadata and expiry handling, not folklore
+
+In other words, "the token should still be valid because it has not been an hour yet" is not a reliable troubleshooting statement.
+
+## Refresh tokens: what they actually do
+
+A refresh token is used to obtain a new access token without forcing the user through an interactive sign-in every time an access token expires.
+
+Microsoft Learn also highlights another important behavior: refresh tokens are not tied to a single resource in the same way access tokens are. They are tied to the client-user relationship and can be used to request access tokens for resources where the client has permission.
+
+This is why refresh tokens are powerful and sensitive. They do not authorize a resource directly, but they let a client go back to the identity platform and request more access tokens.
+
+That is also why they must be stored carefully.
+
+## Where refresh tokens are sent
+
+A refresh token is sent only to Microsoft Entra ID.
+
+It is not sent to:
+
+- Microsoft Graph
+- your custom API
+- Exchange Online
+- SharePoint
+- Azure Resource Manager
+
+That is the clean mental model:
+
+- access tokens go to the resource
+- refresh tokens go back to the identity provider
+
+If someone says an API is receiving refresh tokens, either the explanation is wrong or the implementation has a serious problem.
+
+## Refresh-token lifetimes and behavior
+
+According to Microsoft Learn, refresh tokens generally have longer lifetimes than access tokens:
+
+- 24 hours for single-page applications
+- 24 hours for apps using email one-time passcode authentication flow
+- 90 days for many other scenarios
+
+Another operationally important detail is that refresh tokens replace themselves when used. Clients should securely remove old refresh tokens after receiving a new one.
+
+Administrators should also understand that refresh tokens can be revoked before their natural expiry. A token still being "inside its expected lifetime" does not guarantee that it still works.
+
+## When refresh tokens are revoked
+
+Microsoft documents several events that can revoke refresh tokens, including:
+
+- user password changes
+- self-service password reset
+- admin password reset
+- explicit refresh-token revocation by user or admin
+- sign-out in certain scenarios
+
+The exact behavior depends on token class and scenario, but the high-level lesson is straightforward:
+
+refresh-token validity depends on both time and state.
+
+That is why unexpected reauthentication prompts are not always application bugs. Sometimes the client is behaving correctly because the refresh token is no longer valid.
+
+## Where ID tokens fit
+
+Administrators often mix up access tokens and ID tokens.
+
+An ID token is for the client application to understand the authenticated user context. It is not meant to authorize API access. APIs expect access tokens, not ID tokens.
+
+A very common support issue sounds like this:
+
+"The user signed in successfully and I have a token, so why is the API denying the request?"
+
+Often the answer is that the application is holding the wrong kind of token, or the right token for the wrong audience.
+
+## A practical example: Microsoft Graph
+
+Suppose a web application needs to call Microsoft Graph on behalf of a user.
+
+At a high level:
+
+1. The user signs in through Microsoft Entra ID.
+2. The application receives token response data.
+3. The application acquires an access token whose audience is Microsoft Graph.
+4. The application sends that access token to Graph.
+5. When the access token expires, the application uses the refresh token to obtain a new Graph access token.
+
+If the app instead sends:
+
+- an ID token to Graph
+- an access token whose `aud` is some other API
+- an expired token
+
+the request should fail.
+
+That is normal, not surprising.
+
+## Why Conditional Access matters here
+
+Conditional Access sits in the token issuance path. That means Conditional Access can interrupt whether an access token is issued at all, or under what conditions.
+
+This matters because administrators sometimes describe the process as:
+
+"The user logged in, then Conditional Access checked them."
+
+That is not the right model. The better model is:
+
+"Conditional Access participates in the decision about whether token issuance proceeds."
+
+If policy requires stronger assurance and that assurance is not satisfied, no valid token is issued for the request. No token means no resource access.
+
+## Common admin misunderstandings
+
+### "The user signed in, so the API should work"
+
+Not necessarily. The API needs a valid access token for that resource, with the required scopes or roles.
+
+### "The token lasted an hour last time, so it should last an hour this time"
+
+Not necessarily. Default access-token lifetime is variable.
+
+### "If the refresh token exists, silent renewal should always work"
+
+Not necessarily. Refresh tokens can expire or be revoked.
+
+### "The client should validate the access token"
+
+Usually not. The resource validates access tokens. The client should treat them as opaque unless it is the resource or a scenario that specifically requires validation.
+
+### "Any token means the user is authorized"
+
+Not true. Token type, audience, scope, role, issuer, and lifetime all matter.
+
+## A solid operational model for administrators
+
+If you are explaining token behavior to another administrator, use this sequence:
+
+1. Identify the client.
+2. Identify the target resource.
+3. Ask which token type is in use.
+4. Ask whether the audience matches the target resource.
+5. Check whether the token is expired.
+6. Check whether the required scopes or roles are present.
+7. If renewal failed, ask whether the refresh token expired or was revoked.
+8. If no token was issued, investigate policy and sign-in conditions upstream.
+
+That sequence is far more reliable than starting with "the user says they are signed in."
+
+## Final takeaway
+
+Access tokens and refresh tokens are not interchangeable pieces of session state. They solve different problems.
+
+- **Access tokens** authorize calls to a specific protected resource.
+- **Refresh tokens** let the client request new access tokens from Microsoft Entra ID without forcing interactive sign-in every time.
+- **ID tokens** represent authentication context for the client and are not API authorization tokens.
+
+Once you separate token type, token destination, token ownership, and token lifetime, Microsoft identity behavior becomes much easier to explain and troubleshoot.
 
 ## Microsoft References
 
 - [Access tokens in the Microsoft identity platform](https://learn.microsoft.com/en-us/entra/identity-platform/access-tokens)
 - [Refresh tokens in the Microsoft identity platform](https://learn.microsoft.com/en-us/entra/identity-platform/refresh-tokens)
-- [Security tokens and claims in the Microsoft identity platform](https://learn.microsoft.com/en-us/entra/identity-platform/security-tokens)
+- [Tokens and claims overview](https://learn.microsoft.com/en-us/entra/identity-platform/security-tokens)
 - [Access token claims reference](https://learn.microsoft.com/en-us/entra/identity-platform/access-token-claims-reference)
 - [OAuth 2.0 authorization code flow in Microsoft identity platform](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow)
-- [OpenID Connect protocol in Microsoft identity platform](https://learn.microsoft.com/en-us/entra/identity-platform/v2-protocols-oidc)
+- [OpenID Connect protocol in the Microsoft identity platform](https://learn.microsoft.com/en-us/entra/identity-platform/v2-protocols-oidc)

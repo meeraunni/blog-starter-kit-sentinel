@@ -9,237 +9,156 @@ ogImage:
   url: "/assets/blog/passkey-signin/cover.svg"
 ---
 
-## Sign-in is where the passkey architecture becomes visible
+## Sign-in is where the passkey design is really tested
 
-Passkey rollout discussions often focus on registration, but the real operational success criterion is sign-in behavior across browsers, devices, and provider types.
+Registration success is not the same as deployment success. A tenant can register passkeys successfully and still fail at scale because the sign-in paths users actually need are not all equally supported. This is why Microsoft spreads the sign-in story across the sign-in article, the compatibility matrix, and the synced passkey FAQ instead of treating it as one simple user guide.
 
-Microsoft’s current sign-in and compatibility guidance is spread across:
+The operational question is not “do passkeys work in Entra?” The real operational question is:
 
-- [Sign in with a passkey (FIDO2)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-sign-in-passkey)
-- [Passkey (FIDO2) authentication matrix with Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-fido2-compatibility?tabs=web)
-- [Frequently asked questions about synced passkeys](https://learn.microsoft.com/en-us/entra/identity/authentication/synced-passkey-faq)
-- [How to enable passkeys (FIDO2) in Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkeys-fido2)
+**Which sign-in flows work for which browser, operating system, authenticator type, and user population?**
 
-To design this well, an Entra admin needs to understand three separate sign-in patterns:
-
-- same-device passkey sign-in
-- cross-device passkey sign-in
-- hardware security-key sign-in
+That is the reason the Microsoft compatibility matrix is so important.
 
 ![Passkey sign-in patterns](/assets/blog/passkey-signin/cover.svg)
 
-## The relying-party model in Microsoft Entra
+## The sign-in transaction from Entra’s point of view
 
-At sign-in time, Microsoft Entra is acting as the relying party for the registered credential. The user selects a passkey path, the client platform prompts the authenticator, and the authenticator signs a challenge with the private key corresponding to the public key registered in Entra.
+At sign-in time, Microsoft Entra is the relying party. The service needs proof that the authenticator holding the private key can satisfy a challenge bound to the account and current sign-in context. The browser or OS shows the user-facing prompt, but the real transaction is a cryptographic challenge-response using the public-key registration that Entra stored earlier.
 
-That is why the practical compatibility question is never only "Does the browser support passkeys?" The real question is:
+That is why compatibility cannot be reduced to “browser supports passkeys.” A working sign-in depends on the full chain:
 
-**Does this browser + OS + authenticator + Microsoft sign-in surface support the exact passkey flow the user is attempting?**
+- the Microsoft sign-in surface
+- the browser’s passkey implementation
+- the operating system’s authenticator plumbing
+- the actual authenticator or sync provider
+- the passkey type allowed by policy
 
-The Microsoft compatibility matrix exists because that answer changes by scenario.
+If any one of those layers does not support the chosen path, the user experiences a sign-in failure even though the passkey itself is valid.
 
-## Same-device sign-in
+## Same-device sign-in is the cleanest path
 
-Microsoft documents the baseline same-device flow in [Sign in with a passkey (FIDO2)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-sign-in-passkey):
+Microsoft documents the same-device sign-in flow in [Sign in with a passkey (FIDO2)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-sign-in-passkey). From the user’s point of view, the flow is simple: enter the username or choose sign-in options, select the passkey method, and satisfy the local verification prompt such as PIN, face, fingerprint, or security-key interaction.
 
-1. navigate to the target Microsoft sign-in surface
-2. enter the username, or use `Sign-in options`
-3. choose `Face, fingerprint, PIN, or security key`
-4. complete the OS or browser verification dialog
+From an engineering perspective, same-device sign-in is the cleanest path because the browser session and the authenticator are in the same client context. There is no QR handoff, no separate relay device, and no Bluetooth dependency. If you want the lowest-friction enterprise rollout, this is the scenario to optimize first.
 
-In the same-device case, the passkey provider is local to the device currently rendering the sign-in page. This is typically the cleanest experience because:
+This is also why same-device sign-in should be your baseline validation case during pilot. If even that path is unstable, the problem is not cross-device complexity. It is usually policy, provider compatibility, or sign-in surface mismatch.
 
-- there is no cross-device relay step
-- there is no QR handoff
-- Bluetooth is not part of the path
+## Cross-device sign-in is a different protocol shape
 
-From an engineering standpoint, same-device sign-in is the lowest-complexity path and should be the baseline expectation for most managed-user scenarios.
+Cross-device sign-in adds another layer of complexity because the browser session and the authenticator are no longer in the same place.
 
-## Cross-device sign-in
+Microsoft explains in [the sign-in guide](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-sign-in-passkey) that the user starts sign-in on one device, chooses the passkey option, selects the mobile-device path in the passkey prompt, scans a QR code, and completes the verification using the passkey stored on the second device. Microsoft also notes that Bluetooth and internet connectivity are required on both devices.
 
-Cross-device sign-in is more complex because the browser session and the authenticator live on different devices.
+That tells you something fundamental about the flow. Cross-device sign-in is not just same-device sign-in with a prettier UI. It relies on:
 
-Microsoft documents the flow in [the sign-in article](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-sign-in-passkey):
+- a session handoff from the primary browser
+- a QR-mediated bridge to the secondary device
+- local capability on the mobile side to satisfy the authenticator prompt
+- proximity signaling and connectivity sufficient for the transaction
 
-1. start sign-in on the primary device
-2. choose passkey sign-in
-3. select the mobile-device option in the OS/browser prompt
-4. scan the QR code with the mobile device
-5. continue sign-in with the passkey stored on that device
+This is why cross-device passkey failures feel less deterministic. There are simply more moving parts.
 
-Microsoft is explicit that:
+## Security-key sign-in remains the most explicit enterprise path
 
-- a QR code is used to bridge the session
-- Bluetooth must be enabled
-- internet connectivity must be present on both devices
+Hardware security keys still matter because they give the cleanest device-bound model. Microsoft includes security-key sign-in in the [same sign-in article](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-sign-in-passkey), and the reason enterprise teams keep coming back to this path is that it is easier to reason about from a control perspective.
 
-That means cross-device sign-in introduces dependency on:
+With a security key:
 
-- browser UX support
-- mobile-camera handoff
-- device proximity signaling
-- Bluetooth availability
+- the authenticator boundary is clear
+- the transport path is explicit
+- AAGUID-based governance is usually more straightforward
+- the lifecycle model resembles hardware issuance rather than ecosystem sync
 
-This is why cross-device passkey failures often feel inconsistent to users even when the credential itself is valid.
+This is one reason Microsoft continues to position device-bound approaches strongly for privileged users in the [synced passkey FAQ](https://learn.microsoft.com/en-us/entra/identity/authentication/synced-passkey-faq).
 
-## Security-key sign-in
+## The compatibility matrix is the real design document
 
-Security-key sign-in is the cleanest model for strict device-bound operation because the authenticator is explicit and portable.
+The Microsoft compatibility matrix in [Passkey (FIDO2) authentication matrix with Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-fido2-compatibility?tabs=web) is one of the most important documents in the entire passkey rollout story.
 
-Microsoft includes security-key sign-in as a first-class path in [the sign-in article](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-sign-in-passkey). Architecturally, this differs from synced-provider and Windows Hello flows because:
+Many passkey discussions stay at the level of “supported on web” or “works on mobile.” That is not enough. Microsoft’s matrix breaks support down by:
 
-- the credential is physically portable
-- attestation and AAGUID-based governance are usually clearer
-- lifecycle handling is closer to hardware issuance than consumer device sync
+- browser family
+- operating system
+- native app versus browser experience
+- passkey provider type
+- scenario-specific support
 
-This is one reason Microsoft continues to position device-bound authenticators strongly for privileged users.
+Architecturally, the matrix is telling you that support is not an abstract property of passkeys. Support is a property of a **specific implementation path**.
 
-## Why the compatibility matrix matters more than marketing claims
+If your tenant supports:
 
-The Microsoft passkey compatibility matrix exists because "passkeys supported" is too vague for enterprise planning.
+- Edge on managed Windows laptops
+- Chrome on unmanaged macOS devices
+- Safari on iPhone
+- mobile-mediated cross-device sign-in
 
-As documented in the [compatibility matrix](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-fido2-compatibility?tabs=web), support varies across:
+then you need to validate those separately, because they are not one deployment target. They are four different sign-in environments.
 
-- web browsers
-- native apps
-- operating systems
-- provider types
-- third-party IdP and app integration scenarios
+## Why synced passkeys and device-bound passkeys create different sign-in behavior
 
-That page should be treated as the authoritative deployment lookup for specific combinations. In practice, it is the place you check when a user asks:
+Microsoft’s [synced passkey FAQ](https://learn.microsoft.com/en-us/entra/identity/authentication/synced-passkey-faq) is useful because it discusses passkeys as an operational model, not just a user convenience feature.
 
-- will this work in Safari?
-- will this work in Chrome on a personal Mac?
-- will the passkey work in a native app or only on the web?
-- does this provider work with Microsoft’s current sign-in surface?
+Synced passkeys improve portability. The user is less dependent on one physical authenticator instance, which reduces recovery and replacement cost. That directly improves sign-in resilience for broad user populations because the user is less likely to lose access simply because one device changed.
 
-Without the matrix, teams often make rollout promises that are only true in one browser or one platform family.
+But synced passkeys also introduce ecosystem dependence. The sign-in path now depends more heavily on the provider ecosystem and the compatibility of the current client surface with that provider model. That is not inherently bad, but it is a real tradeoff.
 
-## Synced versus device-bound from a sign-in operations perspective
+Device-bound passkeys make a different tradeoff. They reduce ambiguity about where the authenticator lives, but they are less forgiving during replacement, loss, or multi-device workflows. For privileged users, that is often exactly the desired outcome. For broad workforce users, Microsoft says synced passkeys are expected to be the better default.
 
-Microsoft’s [synced passkey FAQ](https://learn.microsoft.com/en-us/entra/identity/authentication/synced-passkey-faq) is especially useful because it frames the operational tradeoff, not just the end-user story.
+## Why registration success does not guarantee sign-in success
 
-Microsoft says synced passkeys:
+This is the point many teams miss during pilot. Registration proves that one credential-enrollment path succeeded. It does not prove that every future sign-in combination is supported.
 
-- reduce issuance and management friction
-- reduce recovery and reissuance cost
-- are expected to be the best option for most users and organizations
+A user can register a passkey successfully and still fail later because:
 
-But Microsoft also recommends:
+- the user attempts a browser or OS path outside Microsoft’s supported matrix
+- the intended flow is cross-device and Bluetooth or relay conditions are not met
+- the policy allows one passkey type but the user is trying to authenticate through another provider path
+- the sign-in surface is supported on the web but not in the native-app path the user chose
 
-- device-bound passkeys for admins and highly privileged users
-- synced passkeys for users without admin permissions
+That is why rollout should never be approved based only on successful registration tests.
 
-This is not just policy guidance. It is sign-in reliability guidance as well.
+## The practical failure domains during sign-in
 
-### Why synced passkeys help scale
+The first failure domain is compatibility. This includes browser and OS mismatches, native-app limitations, and provider-specific support gaps. Microsoft’s matrix is the right source for validating these scenarios, not general passkey marketing language.
 
-Synced passkeys reduce helpdesk work because the user is less dependent on one specific authenticator instance. That lowers the failure blast radius when:
+The second failure domain is cross-device dependency. Microsoft’s sign-in documentation explicitly calls out Bluetooth and internet connectivity requirements for cross-device authentication. When that flow fails, the passkey may be perfectly healthy while the relay workflow is not.
 
-- a phone is replaced
-- a laptop changes
-- a user signs in from multiple personal and managed devices
+The third failure domain is policy mismatch. A user might have a valid passkey registered, but if the current sign-in path no longer aligns with the passkey type, provider restrictions, or AAGUID policy, the method can still fail at runtime.
 
-### Why device-bound still matters
+The fourth failure domain is lifecycle handling. Administrators can revoke passkeys, as Microsoft notes in the [synced passkey FAQ](https://learn.microsoft.com/en-us/entra/identity/authentication/synced-passkey-faq). That means a credential can stop working because of deliberate administrative action, not because of protocol incompatibility.
 
-For high-privilege identities, many organizations want:
+## A better rollout model
 
-- tighter control over authenticator provenance
-- explicit hardware ownership
-- less dependence on consumer sync ecosystems
+A weak rollout approach is to enable passkeys and then let users discover what works. A strong rollout approach is to treat sign-in as a compatibility program.
 
-That is why the right answer is rarely "everyone should use the same passkey type."
+The first stage should be environment validation. Identify the exact browser, OS, and provider combinations your users actually rely on. Validate same-device sign-in first, because it is the simplest path and reveals the fewest confounding variables.
 
-## Revocation and lifecycle control
+The second stage should be standard-user rollout with synced passkeys where appropriate. Microsoft’s own recommendation in the [synced passkey FAQ](https://learn.microsoft.com/en-us/entra/identity/authentication/synced-passkey-faq) supports this pattern. The reason is not just convenience. It is lower operational friction and lower recovery cost for non-admin users.
 
-Microsoft states in the [synced passkey FAQ](https://learn.microsoft.com/en-us/entra/identity/authentication/synced-passkey-faq) that administrators can revoke a passkey through the per-user authentication methods UX or API.
+The third stage should be privileged rollout using device-bound passkeys. Here you care less about portability and more about explicit control over the authenticator and its lifecycle. This is where security keys or other controlled device-bound methods fit best.
 
-That means passkey lifecycle is not purely user-owned. Entra still controls:
+The fourth stage should be support-runbook maturity. By that point, your helpdesk and engineering teams should know how to answer questions like:
 
-- whether a passkey type is allowed
-- whether a provider is acceptable
-- whether a registered passkey remains authorized for the account
+- is this scenario supported in Microsoft’s compatibility matrix?
+- is this same-device or cross-device?
+- is the provider synced or device-bound?
+- is there a policy restriction blocking the provider?
 
-Operationally, that is important for:
+Without that runbook, passkey support quickly degenerates into anecdotal troubleshooting.
 
-- offboarding
-- lost-device response
-- privileged account hygiene
-- provider-policy changes
+## Screenshot references
 
-## Why sign-in breaks even when registration succeeded
+The specific UX and support material referenced in this article is shown in Microsoft’s documentation:
 
-Passkey troubleshooting is often confusing because successful registration only proves the credential was enrolled. It does not prove that every intended sign-in path is supported.
-
-The usual root causes are:
-
-### Unsupported scenario combination
-
-- browser supports one passkey path but not the exact provider flow attempted
-- native app support differs from web support
-- OS or browser version is below Microsoft’s supported path
-
-The Microsoft matrix is the right validation source [here](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-fido2-compatibility?tabs=web).
-
-### Cross-device prerequisites not met
-
-- Bluetooth off
-- QR handoff not completed
-- mobile device lacks internet connectivity
-
-Microsoft explicitly calls out those dependencies in [the sign-in article](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-sign-in-passkey).
-
-### Policy/provider mismatch
-
-- passkey profile allows one type but the user attempts another
-- AAGUID restrictions block the provider
-- attestation expectations do not match the chosen authenticator
-
-These are policy-plane issues, not user-behavior issues.
-
-## A rollout pattern that aligns with Microsoft guidance
-
-For a practical Entra rollout, I would use this model:
-
-### Stage 1: support-matrix validation
-
-- choose a narrow pilot group
-- validate the exact browser and OS combinations your tenant uses
-- document the approved sign-in paths
-
-### Stage 2: standard-user rollout
-
-- target synced passkeys where they fit the provider strategy
-- publish supported browser/platform guidance
-- support both same-device and cross-device sign-in scenarios
-
-### Stage 3: privileged-user rollout
-
-- use device-bound passkeys
-- restrict authenticator types more tightly
-- test revocation and replacement procedures
-
-This closely aligns with Microsoft’s role-based recommendation in the [synced passkeys FAQ](https://learn.microsoft.com/en-us/entra/identity/authentication/synced-passkey-faq).
-
-## Screenshot reference
-
-The sign-in dialogs and compatibility guidance discussed here are shown in:
-
-- [sign-in with a passkey](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-sign-in-passkey)
-- [passkey compatibility matrix](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-fido2-compatibility?tabs=web)
-- [synced passkey FAQ](https://learn.microsoft.com/en-us/entra/identity/authentication/synced-passkey-faq)
+- [Sign-in prompts and flow examples](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-sign-in-passkey)
+- [Compatibility matrix by client and scenario](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-fido2-compatibility?tabs=web)
+- [Operational guidance on synced passkeys](https://learn.microsoft.com/en-us/entra/identity/authentication/synced-passkey-faq)
 
 ## Final takeaway
 
-Microsoft Entra passkey sign-in is not one experience. It is a family of flows whose success depends on the exact combination of:
+Microsoft Entra passkey sign-in is not one monolithic experience. It is a set of supported and unsupported combinations across browsers, operating systems, providers, and interaction patterns. The compatibility matrix is therefore not optional reading. It is the technical contract that tells you which sign-in promises your tenant can realistically make.
 
-- provider type
-- browser
-- operating system
-- same-device versus cross-device path
-- policy restrictions and attestation settings
-
-The organizations that deploy passkeys cleanly are the ones that treat sign-in as an engineering compatibility problem, not as a generic passwordless slogan.
+Teams that succeed with passkeys treat sign-in as a compatibility and operations problem. Teams that struggle treat sign-in as a generic passwordless feature and only discover the real constraints after rollout.
 
 ## References
 

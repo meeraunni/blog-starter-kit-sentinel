@@ -8,7 +8,10 @@ export async function POST() {
     const result = await syncLatestPostToSubscribers(posts[0]);
 
     return NextResponse.json(result);
-  } catch {
+  } catch (error) {
+    console.error("Newsletter sync failed", {
+      message: error instanceof Error ? error.message : "Unknown error",
+    });
     return NextResponse.json({ error: "Newsletter sync failed." }, { status: 500 });
   }
 }

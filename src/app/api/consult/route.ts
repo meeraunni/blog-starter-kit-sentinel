@@ -23,7 +23,11 @@ export async function POST(request: Request) {
       email,
       challenge,
     });
-  } catch {
+  } catch (error) {
+    console.error("Consult form delivery failed", {
+      message: error instanceof Error ? error.message : "Unknown error",
+      email,
+    });
     return NextResponse.redirect(new URL("/thanks?form=assessment&status=error", request.url));
   }
 

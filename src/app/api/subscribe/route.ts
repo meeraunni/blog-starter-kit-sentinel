@@ -17,7 +17,11 @@ export async function POST(request: Request) {
   try {
     const subscriber = await registerSubscriber(email, name);
     await sendSubscriptionConfirmation(subscriber);
-  } catch {
+  } catch (error) {
+    console.error("Subscribe form delivery failed", {
+      message: error instanceof Error ? error.message : "Unknown error",
+      email,
+    });
     return NextResponse.redirect(new URL("/thanks?form=subscribe&status=error", request.url));
   }
 

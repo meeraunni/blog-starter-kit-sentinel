@@ -30,6 +30,8 @@ Microsoft’s [AADSTS50020 troubleshooting article](https://learn.microsoft.com/
 
 This is why AADSTS50020 should be analyzed as an **external identity object and invitation flow** problem, not only as a username/password problem.
 
+![AADSTS50020 external identity flow](/assets/blog/aadsts50020/cover.svg)
+
 ## How the guest sign-in pipeline works
 
 Microsoft explains the B2B redemption sequence in [B2B collaboration invitation redemption](https://learn.microsoft.com/en-us/entra/external-id/redemption-experience). That article documents the order Entra uses to discover the user’s home identity and complete invitation redemption.
@@ -72,7 +74,7 @@ The [AADSTS50020 troubleshooting article](https://learn.microsoft.com/en-us/trou
 
 ### Root-cause explanation
 
-This failure occurs after successful identity-provider authentication but before successful resource-tenant authorization. The app endpoint and tenant context are wrong for the user attempting access.
+This failure occurs after successful identity-provider authentication but before successful resource-tenant authorization. In protocol terms, the home identity provider has authenticated the principal, but the resource tenant cannot issue access because its own tenant context, guest object model, or app audience does not line up with that identity.
 
 ## Root cause 3: the tenant expects B2B collaboration, but the onboarding model is actually CIAM or self-service sign-up
 
@@ -89,7 +91,7 @@ Microsoft separates workforce-tenant B2B collaboration from external-tenant or c
 
 ### Root-cause explanation
 
-This is an architecture mismatch. The sign-in pattern the app expects does not match the external identity pattern the tenant was configured to use.
+This is an architecture mismatch. The sign-in pattern the app expects does not match the external identity pattern the tenant was configured to use. In practice, the bug is often introduced much earlier than the failed login itself, for example when an application is designed around B2B invitations but the tenant is configured for a self-service or customer-style onboarding path.
 
 ## Root cause 4: cross-tenant access or external collaboration settings block the inbound identity
 
@@ -150,3 +152,7 @@ If the answer is no, Entra blocks token issuance even if the user successfully a
 - [Use Microsoft Entra work and school accounts for B2B collaboration](https://learn.microsoft.com/en-us/entra/external-id/default-account)
 - [Add self-service sign-up user flows for B2B collaboration](https://learn.microsoft.com/en-us/entra/external-id/self-service-sign-up-user-flow)
 - [Cross-tenant access settings for B2B collaboration](https://learn.microsoft.com/en-us/entra/external-id/cross-tenant-access-settings-b2b-collaboration)
+
+## Supplemental References
+
+- [Reset the redemption status for a guest user in Microsoft Entra External ID](https://learn.microsoft.com/en-us/entra/external-id/reset-redemption-status)

@@ -31,6 +31,10 @@ That backend behavior explains two important failure patterns:
 
 A PRT issue is therefore usually a **token refresh path** problem, not just a generic "sign-in prompt" problem.
 
+As documented in [Understanding Primary Refresh Token (PRT)](https://learn.microsoft.com/en-us/entra/identity/devices/concept-primary-refresh-token), the PRT is device-bound and participates in how Windows and Microsoft identity brokers obtain downstream cloud tokens. That is why PRT failures can surface as broad SSO instability across multiple applications instead of as a single isolated auth error.
+
+![Primary Refresh Token failure indicators](/assets/blog/prt-failures/cover.svg)
+
 ## Where to start: dsregcmd, not guesswork
 
 Microsoft’s first troubleshooting step is [Get the status of the primary refresh token](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-primary-refresh-token).
@@ -83,7 +87,7 @@ Microsoft explicitly documents `AADSTS50155: Device authentication failed` in th
 
 ### Root-cause explanation
 
-PRT issuance depends on both user and device trust. If Microsoft Entra cannot authenticate the device object, token issuance fails even when the user portion of sign-in looks valid.
+PRT issuance depends on both user and device trust. If Microsoft Entra cannot authenticate the device object, token issuance fails even when the user portion of sign-in looks valid. That is the architectural reason a user can keep entering correct credentials and still fail to regain seamless SSO.
 
 ## Root cause 3: network, proxy, or endpoint reachability problems
 
@@ -104,7 +108,7 @@ Microsoft also states there that in environments using an outbound proxy, the **
 
 ### Root-cause explanation
 
-PRT refresh is a scheduled network transaction. If the device cannot reach the right Microsoft endpoint, or cannot traverse the proxy path correctly, the cached token ages out and SSO degrades.
+PRT refresh is a scheduled network transaction. If the device cannot reach the right Microsoft endpoint, or cannot traverse the proxy path correctly, the cached token ages out and SSO degrades. The delayed nature of the symptom is important: the break usually appears when the cached token can no longer hide the failed refresh path.
 
 ## Root cause 4: the admin is not reading the right event logs
 
@@ -141,7 +145,7 @@ Microsoft’s [PRT troubleshooting article](https://learn.microsoft.com/en-us/en
 
 ### Root-cause explanation
 
-The application is often the messenger, not the root cause. The real failure happened earlier in the Windows token refresh path.
+The application is often the messenger, not the root cause. The real failure happened earlier in the Windows token refresh path. This is why Microsoft’s own guidance starts with device SSO diagnostics rather than app-specific token traces.
 
 ## Recommended troubleshooting order
 
@@ -167,3 +171,8 @@ Use Microsoft’s `dsregcmd` and AAD log guidance first. It is the shortest path
 - [Troubleshoot primary refresh token issues on Windows devices](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-primary-refresh-token)
 - [Troubleshoot devices by using the dsregcmd command](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-device-dsregcmd)
 - [Troubleshooting Windows devices in Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-device-windows-joined)
+
+## Supplemental References
+
+- [Understanding Primary Refresh Token (PRT)](https://learn.microsoft.com/en-us/entra/identity/devices/concept-primary-refresh-token)
+- [Primary Refresh Token (PRT) in Azure and Microsoft 365](https://blog.matrixpost.net/azure-active-directory-primary-refresh-token-prt-single-sign-on-to-azure-and-office-365/)

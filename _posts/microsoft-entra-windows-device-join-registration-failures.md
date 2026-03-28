@@ -37,6 +37,8 @@ As Microsoft explains in [Pending devices in Microsoft Entra ID](https://learn.m
 
 That is why join failures show up later as SSO, PRT, or Conditional Access failures.
 
+![Windows join and registration flow](/assets/blog/windows-join/cover.svg)
+
 ## Root cause 1: the user is not allowed to join devices
 
 Microsoft documents in the Windows Autopilot Entra join step [here](https://learn.microsoft.com/en-us/autopilot/device-preparation/tutorial/user-driven/entra-join-allow-users-to-join) that **Users may join devices to Microsoft Entra ID** must allow the relevant users or groups.
@@ -49,7 +51,7 @@ Microsoft documents in the Windows Autopilot Entra join step [here](https://lear
 
 ### Root-cause explanation
 
-This is a tenant control-plane denial. The device can start the workflow locally, but the tenant will not allow the principal to create or complete the join.
+This is a tenant control-plane denial. The device can start the workflow locally, but the tenant will not allow the principal to create or complete the join. From the endpoint perspective this often looks like a vague UI failure, but the backend cause is explicit authorization logic in the Entra device settings plane.
 
 ## Root cause 2: the device never completed registration and is stuck in a pending state
 
@@ -92,7 +94,7 @@ Compare that local state with the device object visible in Entra.
 
 ### Root-cause explanation
 
-Join failures are often not "no state." They are **mismatched state** between local registration metadata and the directory object. Microsoft’s troubleshooting model relies on reconciling those two views.
+Join failures are often not "no state." They are **mismatched state** between local registration metadata and the directory object. This is exactly why Microsoft centers `dsregcmd` in its own guidance: the device shell may tell you almost nothing, while the local registration metadata tells you whether the machine believes it is joined, registered, hybrid joined, or in a partially-complete state.
 
 ## Root cause 4: the device cannot reach the registration service
 
@@ -106,7 +108,7 @@ Microsoft states in [Pending devices in Microsoft Entra ID](https://learn.micros
 
 ### Root-cause explanation
 
-Join is a service transaction, not only a local UI step. If the device cannot complete the registration call path, the local experience can appear to hang while the backend never receives or finishes the registration.
+Join is a service transaction, not only a local UI step. If the device cannot complete the registration call path, the local experience can appear to hang while the backend never receives or finishes the registration. In real environments this is one of the main reasons admins see a device object in the portal and assume join succeeded, even though the registration service transaction never actually closed.
 
 ## Root cause 5: the issue is downstream from join, but is being misread as a join failure
 
@@ -151,3 +153,7 @@ Treat the failure as a **device identity pipeline** issue and validate each stag
 - [Pending devices in Microsoft Entra ID](https://learn.microsoft.com/en-us/troubleshoot/entra/entra-id/dir-dmns-obj/pending-devices)
 - [Allow users to join devices to Microsoft Entra ID](https://learn.microsoft.com/en-us/autopilot/device-preparation/tutorial/user-driven/entra-join-allow-users-to-join)
 - [Troubleshoot primary refresh token issues on Windows devices](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-primary-refresh-token)
+
+## Supplemental References
+
+- [Troubleshoot Device Registration Issues Using dsregcmd](https://petri.com/dsregcmd/)

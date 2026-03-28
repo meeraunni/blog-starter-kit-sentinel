@@ -41,6 +41,8 @@ That sequence matters because it tells you where the control-plane checks happen
 
 If any one of those stages fails, the user experiences the same vague symptom: "I don’t see passkey."
 
+![Passkey registration dependency map](/assets/blog/passkey-not-showing/cover.svg)
+
 ## Root cause 1: the user is not enabled for Passkey (FIDO2)
 
 The first check should be the [Authentication Methods policy](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-authentication-methods-manage), not the mobile device.
@@ -56,7 +58,7 @@ As Microsoft describes in the Authentication Methods management documentation, e
 
 ### Why this breaks registration
 
-This is a control-plane denial, not a device failure. The user never reaches a valid passkey enrollment path because Entra does not consider the method available for that identity.
+This is a control-plane denial, not a device failure. The user never reaches a valid passkey enrollment path because Entra does not consider the method available for that identity. The frontend symptom is "the option is missing," but the backend reality is that the tenant never exposed the capability to that principal.
 
 ## Root cause 2: the user cannot satisfy the MFA prerequisite
 
@@ -106,7 +108,7 @@ Two details matter operationally:
 
 ### Why this breaks registration
 
-This is not an Entra policy problem. It is a local authenticator capability problem. The registration path reaches the authenticator, but the authenticator cannot create or store the credential in the manner Microsoft requires.
+This is not an Entra policy problem. It is a local authenticator capability problem. The registration path reaches the authenticator, but the authenticator cannot create or store the credential in the manner Microsoft requires. Once you are in that failure mode, changing directory policy is usually noise; the real decision is whether to change device, browser path, or authenticator type.
 
 ## Root cause 5: attestation or passkey profile policy rejects the authenticator
 

@@ -1,42 +1,42 @@
 <svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
   <rect width="1200" height="630" rx="36" fill="#07111E"/>
-  <rect x="28" y="28" width="1144" height="574" rx="30" fill="url(#bg)"/>
-  <rect x="76" y="88" width="1048" height="456" rx="28" fill="#0E1726" stroke="#26354A"/>
-  <rect x="112" y="128" width="312" height="44" rx="12" fill="#16304B"/>
-  <text x="138" y="158" fill="#DFF3FF" font-family="Arial, sans-serif" font-size="24" font-weight="700">PASSKEY (FIDO2)</text>
-  <rect x="112" y="196" width="296" height="308" rx="22" fill="#101E32" stroke="#325C92"/>
-  <text x="142" y="238" fill="#ECF7FF" font-family="Arial, sans-serif" font-size="25" font-weight="700">Default Profile</text>
-  <rect x="142" y="266" width="236" height="42" rx="10" fill="#143553"/>
-  <text x="160" y="293" fill="#D7F3FF" font-family="Arial, sans-serif" font-size="20" font-weight="700">Device-bound</text>
-  <rect x="142" y="322" width="236" height="42" rx="10" fill="#0F2A42"/>
-  <text x="160" y="349" fill="#D7F3FF" font-family="Arial, sans-serif" font-size="20" font-weight="700">Attestation: On</text>
-  <rect x="142" y="378" width="236" height="42" rx="10" fill="#143553"/>
-  <text x="160" y="405" fill="#D7F3FF" font-family="Arial, sans-serif" font-size="20" font-weight="700">AAGUID Filter</text>
-  <rect x="142" y="434" width="236" height="42" rx="10" fill="#0F2A42"/>
-  <text x="160" y="461" fill="#D7F3FF" font-family="Arial, sans-serif" font-size="20" font-weight="700">Admins</text>
-  <rect x="472" y="196" width="296" height="308" rx="22" fill="#101E32" stroke="#4E7CB2"/>
-  <text x="500" y="238" fill="#ECF7FF" font-family="Arial, sans-serif" font-size="25" font-weight="700">Workforce Profile</text>
-  <rect x="502" y="266" width="236" height="42" rx="10" fill="#17465C"/>
-  <text x="520" y="293" fill="#D9FFFF" font-family="Arial, sans-serif" font-size="20" font-weight="700">Synced</text>
-  <rect x="502" y="322" width="236" height="42" rx="10" fill="#143A4D"/>
-  <text x="520" y="349" fill="#D9FFFF" font-family="Arial, sans-serif" font-size="20" font-weight="700">Attestation: Off</text>
-  <rect x="502" y="378" width="236" height="42" rx="10" fill="#17465C"/>
-  <text x="520" y="405" fill="#D9FFFF" font-family="Arial, sans-serif" font-size="20" font-weight="700">Broad rollout</text>
-  <rect x="502" y="434" width="236" height="42" rx="10" fill="#143A4D"/>
-  <text x="520" y="461" fill="#D9FFFF" font-family="Arial, sans-serif" font-size="20" font-weight="700">Non-admins</text>
-  <rect x="832" y="196" width="250" height="308" rx="22" fill="#101E32" stroke="#3F9BB5"/>
-  <text x="862" y="238" fill="#ECF7FF" font-family="Arial, sans-serif" font-size="25" font-weight="700">Signals</text>
-  <circle cx="956" cy="318" r="72" fill="#0B2230" stroke="#48BDD6"/>
-  <text x="912" y="312" fill="#B8F7FF" font-family="Arial, sans-serif" font-size="22" font-weight="700">AAGUID</text>
-  <text x="894" y="342" fill="#B8F7FF" font-family="Arial, sans-serif" font-size="22" font-weight="700">ATTEST</text>
-  <path d="M424 352H472" stroke="#4E7CB2" stroke-width="4" stroke-linecap="round"/>
-  <path d="M768 352H832" stroke="#48BDD6" stroke-width="4" stroke-linecap="round"/>
-  <text x="78" y="578" fill="#ECF3FA" font-family="Arial, sans-serif" font-size="48" font-weight="700">POLICY, PROFILES, ATTENTION TO AAGUIDS</text>
-  <defs>
-    <linearGradient id="bg" x1="58" y1="42" x2="1136" y2="592" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0F172A"/>
-      <stop offset="0.55" stop-color="#081423"/>
-      <stop offset="1" stop-color="#101A28"/>
-    </linearGradient>
-  </defs>
+  <rect x="24" y="24" width="1152" height="582" rx="30" fill="#0B1624" stroke="#223449"/>
+  <rect x="66" y="84" width="272" height="462" rx="26" fill="#0E1B2B" stroke="#23384F"/>
+  <circle cx="126" cy="138" r="18" fill="#4A5A68"/>
+  <circle cx="164" cy="138" r="18" fill="#4A5A68"/>
+  <circle cx="202" cy="138" r="18" fill="#4A5A68"/>
+  <text x="98" y="208" fill="#53D2C7" font-family="Arial, sans-serif" font-size="30" font-weight="400">User scope</text>
+  <text x="98" y="248" fill="#D1E2F3" font-family="Arial, sans-serif" font-size="22" font-weight="400">Admins and workforce groups</text>
+  <rect x="94" y="296" width="92" height="64" rx="12" fill="#132338" stroke="#2A405B"/>
+  <rect x="136" y="316" width="38" height="24" rx="6" fill="#27496D"/>
+  <text x="98" y="408" fill="#53D2C7" font-family="Arial, sans-serif" font-size="30" font-weight="400">Signals</text>
+  <text x="98" y="446" fill="#D1E2F3" font-family="Arial, sans-serif" font-size="22" font-weight="400">AAGUID, attestation, type</text>
+  <rect x="94" y="480" width="132" height="12" rx="6" fill="#264761"/>
+  <rect x="94" y="502" width="108" height="12" rx="6" fill="#264761"/>
+  <path d="M376 186H646L716 314L646 442H376L446 314L376 186Z" fill="#111C29" stroke="#2B394A"/>
+  <path d="M470 238H610" stroke="#5B6B7B" stroke-width="2"/>
+  <path d="M470 314H610" stroke="#5B6B7B" stroke-width="2"/>
+  <path d="M470 390H610" stroke="#5B6B7B" stroke-width="2"/>
+  <path d="M484 214L504 234H558" stroke="#D9E6F2" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M490 290H500L512 302L536 274L550 290" stroke="#4EA0FF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M492 364L548 420" stroke="#D9E6F2" stroke-width="6" stroke-linecap="round"/>
+  <path d="M548 364L492 420" stroke="#D9E6F2" stroke-width="6" stroke-linecap="round"/>
+  <text x="572" y="242" fill="#D2D9E2" font-family="Arial, sans-serif" font-size="24" font-weight="400">ALLOW</text>
+  <text x="572" y="318" fill="#D2D9E2" font-family="Arial, sans-serif" font-size="24" font-weight="400">ENFORCE TRUST</text>
+  <text x="572" y="394" fill="#D2D9E2" font-family="Arial, sans-serif" font-size="24" font-weight="400">BLOCK</text>
+  <path d="M744 304C744 220 812 152 896 152H940C962 118 1000 96 1044 96C1110 96 1164 150 1164 216C1164 220 1164 224 1164 228C1192 246 1210 276 1210 310C1210 364 1166 408 1112 408H896C812 408 744 340 744 256V304Z" fill="#0E4C89"/>
+  <path d="M792 350C792 298 834 256 886 256H910C924 232 950 218 980 218C1024 218 1060 254 1060 298C1060 300 1060 302 1060 304C1078 316 1090 334 1090 356C1090 392 1060 422 1024 422H886C834 422 792 380 792 328V350Z" fill="#2B8BC9"/>
+  <text x="838" y="318" fill="white" font-family="Arial, sans-serif" font-size="34" font-weight="400">Passkey</text>
+  <text x="844" y="360" fill="white" font-family="Arial, sans-serif" font-size="28" font-weight="400">Profiles</text>
+  <rect x="836" y="172" width="34" height="24" rx="4" stroke="white" stroke-width="4"/>
+  <path d="M840 176L853 188L866 176" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="888" y="170" width="24" height="24" rx="4" fill="white"/>
+  <rect x="894" y="176" width="12" height="12" fill="#125DB1"/>
+  <path d="M936 186H962" stroke="white" stroke-width="4" stroke-linecap="round"/>
+  <path d="M948 174V198" stroke="white" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="1004" cy="184" r="14" stroke="white" stroke-width="4"/>
+  <path d="M1016 196L1028 208" stroke="white" stroke-width="4" stroke-linecap="round"/>
+  <path d="M0 566C84 522 152 510 240 518C322 526 398 560 462 560C550 560 620 518 716 518C800 518 866 564 950 564C1040 564 1112 520 1200 520V630H0V566Z" fill="#1E3852"/>
+  <path d="M0 590C92 550 178 548 272 566C350 580 424 614 500 614C588 614 662 566 760 566C844 566 910 610 1006 610C1084 610 1140 574 1200 560V630H0V590Z" fill="#0F2338"/>
+  <text x="80" y="588" fill="#E7F0F8" font-family="Arial, sans-serif" font-size="44" font-weight="400">Microsoft Entra Passkey Policy</text>
 </svg>

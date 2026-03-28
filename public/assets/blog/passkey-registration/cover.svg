@@ -1,43 +1,34 @@
 <svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1200" height="630" rx="36" fill="#09121F"/>
-  <rect x="28" y="28" width="1144" height="574" rx="30" fill="url(#bg)"/>
-  <rect x="68" y="82" width="1064" height="466" rx="28" fill="#0D1622" stroke="#2D3949"/>
-  <rect x="104" y="124" width="208" height="338" rx="26" fill="#0F2137" stroke="#38659A"/>
-  <rect x="124" y="158" width="168" height="28" rx="8" fill="#1E3E62"/>
-  <circle cx="208" cy="278" r="54" fill="#0C2E55" stroke="#66B6FF"/>
-  <path d="M208 252C192.536 252 180 264.536 180 280V298H236V280C236 264.536 223.464 252 208 252Z" fill="#C2F2FF"/>
-  <rect x="172" y="298" width="72" height="48" rx="12" fill="#E5FBFF"/>
-  <circle cx="208" cy="322" r="9" fill="#0B1A2A"/>
-  <text x="146" y="392" fill="#E8F5FF" font-family="Arial, sans-serif" font-size="20" font-weight="700">WINDOWS</text>
-  <text x="128" y="420" fill="#BFD4E8" font-family="Arial, sans-serif" font-size="18" font-weight="700">HELLO CONTAINER</text>
-  <rect x="364" y="124" width="208" height="338" rx="26" fill="#0F2130" stroke="#2D8A9C"/>
-  <rect x="388" y="156" width="160" height="24" rx="8" fill="#1A4951"/>
-  <rect x="418" y="212" width="100" height="174" rx="26" fill="#122735" stroke="#5ECBD6"/>
-  <circle cx="468" cy="330" r="16" fill="#5ECBD6"/>
-  <text x="440" y="392" fill="#E8FDFF" font-family="Arial, sans-serif" font-size="20" font-weight="700">iPHONE</text>
-  <text x="404" y="420" fill="#C6E7EA" font-family="Arial, sans-serif" font-size="18" font-weight="700">SECURITY KEY</text>
-  <rect x="624" y="124" width="208" height="338" rx="26" fill="#101E2D" stroke="#3F8B64"/>
-  <rect x="648" y="156" width="160" height="24" rx="8" fill="#1F4D38"/>
-  <rect x="690" y="214" width="76" height="160" rx="20" fill="#0F2430" stroke="#6BE29B"/>
-  <circle cx="728" cy="346" r="10" fill="#6BE29B"/>
-  <text x="684" y="392" fill="#EFFFF2" font-family="Arial, sans-serif" font-size="20" font-weight="700">ANDROID</text>
-  <text x="664" y="420" fill="#D2ECD8" font-family="Arial, sans-serif" font-size="18" font-weight="700">USB PASSKEY</text>
-  <rect x="884" y="124" width="188" height="338" rx="26" fill="#131F2B" stroke="#587AA6"/>
-  <text x="920" y="170" fill="#EAF2FF" font-family="Arial, sans-serif" font-size="21" font-weight="700">REGISTRATION</text>
-  <rect x="914" y="206" width="128" height="40" rx="10" fill="#17304E"/>
-  <text x="944" y="232" fill="#DFF2FF" font-family="Arial, sans-serif" font-size="18" font-weight="700">MFA</text>
-  <rect x="914" y="262" width="128" height="40" rx="10" fill="#1A404D"/>
-  <text x="936" y="288" fill="#E4FFFE" font-family="Arial, sans-serif" font-size="18" font-weight="700">PROFILE</text>
-  <rect x="914" y="318" width="128" height="40" rx="10" fill="#1D4C3E"/>
-  <text x="927" y="344" fill="#ECFFF4" font-family="Arial, sans-serif" font-size="18" font-weight="700">AAGUID</text>
-  <rect x="914" y="374" width="128" height="40" rx="10" fill="#213045"/>
-  <text x="926" y="400" fill="#EAF0FF" font-family="Arial, sans-serif" font-size="18" font-weight="700">ATTEST</text>
-  <text x="74" y="584" fill="#EEF4FB" font-family="Arial, sans-serif" font-size="46" font-weight="700">PASSKEY REGISTRATION ON WINDOWS, IOS, AND ANDROID</text>
-  <defs>
-    <linearGradient id="bg" x1="60" y1="40" x2="1140" y2="594" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#121A2A"/>
-      <stop offset="0.55" stop-color="#0A1523"/>
-      <stop offset="1" stop-color="#101A24"/>
-    </linearGradient>
-  </defs>
+  <rect width="1200" height="630" rx="36" fill="#07111E"/>
+  <rect x="24" y="24" width="1152" height="582" rx="30" fill="#0B1624" stroke="#223449"/>
+  <rect x="74" y="88" width="308" height="438" rx="26" fill="#0E1B2B" stroke="#23384F"/>
+  <rect x="112" y="122" width="234" height="364" rx="32" fill="#122338" stroke="#2D4863"/>
+  <rect x="148" y="162" width="160" height="18" rx="8" fill="#385878"/>
+  <circle cx="229" cy="332" r="58" fill="#1270C6"/>
+  <path d="M229 302C211.327 302 197 316.327 197 334V356H261V334C261 316.327 246.673 302 229 302Z" fill="#DFF5FF"/>
+  <rect x="189" y="356" width="80" height="56" rx="12" fill="#F4FDFF"/>
+  <circle cx="229" cy="384" r="10" fill="#145A97"/>
+  <text x="144" y="460" fill="#53D2C7" font-family="Arial, sans-serif" font-size="30" font-weight="400">Windows</text>
+  <text x="144" y="494" fill="#D1E2F3" font-family="Arial, sans-serif" font-size="24" font-weight="400">Hello registration</text>
+  <rect x="442" y="88" width="308" height="438" rx="26" fill="#0E1B2B" stroke="#23384F"/>
+  <rect x="534" y="150" width="122" height="246" rx="28" fill="#122338" stroke="#2D4863"/>
+  <circle cx="595" cy="340" r="12" fill="#7FA7C8"/>
+  <rect x="508" y="210" width="34" height="90" rx="12" fill="#173245" stroke="#3E6B77"/>
+  <path d="M524 176H618" stroke="#7E94A8" stroke-width="3" stroke-linecap="round"/>
+  <path d="M470 430H722" stroke="#5B6B7B" stroke-width="2"/>
+  <text x="480" y="470" fill="#53D2C7" font-family="Arial, sans-serif" font-size="30" font-weight="400">iPhone / Android</text>
+  <text x="480" y="504" fill="#D1E2F3" font-family="Arial, sans-serif" font-size="24" font-weight="400">Security key ceremony</text>
+  <rect x="812" y="88" width="296" height="438" rx="26" fill="#0E1B2B" stroke="#23384F"/>
+  <text x="850" y="146" fill="#D1E2F3" font-family="Arial, sans-serif" font-size="28" font-weight="400">Registration checks</text>
+  <rect x="850" y="186" width="214" height="48" rx="12" fill="#122338" stroke="#2D4863"/>
+  <text x="876" y="217" fill="#4EA0FF" font-family="Arial, sans-serif" font-size="22" font-weight="400">Recent MFA</text>
+  <rect x="850" y="252" width="214" height="48" rx="12" fill="#122338" stroke="#2D4863"/>
+  <text x="876" y="283" fill="#4EA0FF" font-family="Arial, sans-serif" font-size="22" font-weight="400">Profile scope</text>
+  <rect x="850" y="318" width="214" height="48" rx="12" fill="#122338" stroke="#2D4863"/>
+  <text x="876" y="349" fill="#4EA0FF" font-family="Arial, sans-serif" font-size="22" font-weight="400">AAGUID</text>
+  <rect x="850" y="384" width="214" height="48" rx="12" fill="#122338" stroke="#2D4863"/>
+  <text x="876" y="415" fill="#4EA0FF" font-family="Arial, sans-serif" font-size="22" font-weight="400">Attestation</text>
+  <path d="M0 566C84 522 152 510 240 518C322 526 398 560 462 560C550 560 620 518 716 518C800 518 866 564 950 564C1040 564 1112 520 1200 520V630H0V566Z" fill="#1E3852"/>
+  <path d="M0 590C92 550 178 548 272 566C350 580 424 614 500 614C588 614 662 566 760 566C844 566 910 610 1006 610C1084 610 1140 574 1200 560V630H0V590Z" fill="#0F2338"/>
+  <text x="82" y="588" fill="#E7F0F8" font-family="Arial, sans-serif" font-size="42" font-weight="400">Passkey Registration Across Windows and Mobile</text>
 </svg>

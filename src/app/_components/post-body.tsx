@@ -12,6 +12,7 @@ export function PostBody({ content }: Props) {
         prose-headings:tracking-[-0.03em]
         prose-a:text-cyan-900
         prose-a:no-underline
+        prose-a:font-medium
         prose-a:transition-colors
         prose-a:hover:text-slate-950
         prose-strong:text-slate-950
@@ -19,6 +20,17 @@ export function PostBody({ content }: Props) {
         prose-blockquote:bg-cyan-50/60
         prose-blockquote:px-6
         prose-blockquote:py-2
+        prose-code:rounded
+        prose-code:bg-slate-100
+        prose-code:px-1.5
+        prose-code:py-0.5
+        prose-code:text-[0.95em]
+        prose-code:text-slate-900
+        prose-pre:rounded-[1.5rem]
+        prose-pre:bg-slate-950
+        prose-pre:px-6
+        prose-pre:py-5
+        prose-hr:my-12
         prose-img:rounded-[1.75rem]
         prose-img:shadow-[0_20px_50px_rgba(15,23,42,0.12)]
         prose-p:leading-8

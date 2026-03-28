@@ -159,14 +159,7 @@ That is the mental model engineers need. If the request is in scope for policy, 
 
 ## Microsoft references
 
-Microsoft Entra Conditional Access overview  
-https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview
-
-Conditional Access policy concepts  
-https://learn.microsoft.com/en-us/entra/identity/conditional-access/concept-conditional-access-policies
-
-What If tool for Conditional Access evaluation  
-https://learn.microsoft.com/en-us/entra/identity/conditional-access/what-if-tool
-
-Sign-in logs in Microsoft Entra  
-https://learn.microsoft.com/en-us/entra/identity/monitoring-health/concept-sign-ins
+- [Microsoft Entra Conditional Access overview](https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview)
+- [Conditional Access policy concepts](https://learn.microsoft.com/en-us/entra/identity/conditional-access/concept-conditional-access-policies)
+- [What If tool for Conditional Access evaluation](https://learn.microsoft.com/en-us/entra/identity/conditional-access/what-if-tool)
+- [Sign-in logs in Microsoft Entra](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/concept-sign-ins)

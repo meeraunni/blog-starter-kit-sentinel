@@ -10,11 +10,15 @@
 }
 
 .markdown h2 {
-  @apply mb-5 mt-14 text-3xl leading-tight text-slate-950 md:text-4xl;
+  @apply mb-5 mt-16 border-t border-slate-200 pt-8 text-3xl leading-tight text-slate-950 md:text-4xl;
 }
 
 .markdown h3 {
   @apply mb-4 mt-10 text-2xl leading-tight text-slate-950 md:text-3xl;
+}
+
+.markdown h4 {
+  @apply mb-3 mt-8 text-xl font-semibold leading-tight text-slate-950;
 }
 
 .markdown ul,
@@ -22,6 +26,38 @@
   @apply pl-6;
 }
 
+.markdown ul {
+  list-style: disc;
+}
+
+.markdown ol {
+  list-style: decimal;
+}
+
+.markdown li + li {
+  @apply mt-2;
+}
+
+.markdown li > p {
+  @apply my-2;
+}
+
+.markdown a {
+  word-break: break-word;
+}
+
 .markdown hr {
   @apply my-12 border-slate-200;
+}
+
+.markdown table {
+  @apply my-8 w-full border-collapse overflow-hidden rounded-2xl text-left text-base;
+}
+
+.markdown thead th {
+  @apply border-b border-slate-200 bg-slate-50 px-4 py-3 font-semibold text-slate-950;
+}
+
+.markdown tbody td {
+  @apply border-b border-slate-100 px-4 py-3 align-top;
 }

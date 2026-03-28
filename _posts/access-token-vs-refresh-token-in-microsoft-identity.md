@@ -178,15 +178,10 @@ No token means no access.
 
 A simplified comparison.
 
-Access Token  
-Purpose: authorize access to a resource  
-Sent to: API or resource server  
-Typical behavior: short-lived  
-
-Refresh Token  
-Purpose: obtain new access tokens  
-Sent to: Microsoft Entra ID  
-Typical behavior: longer-lived  
+| Token | Purpose | Sent to | Typical behavior |
+| --- | --- | --- | --- |
+| Access Token | Authorize access to a resource | API or resource server | Short-lived |
+| Refresh Token | Obtain new access tokens | Microsoft Entra ID | Longer-lived |
 
 The easiest way to remember this is.
 
@@ -223,33 +218,22 @@ Tokens are not just theoretical protocol components. They are the operational ba
 
 After a Microsoft sign-in, the password is not what applications keep using. The real work is done by tokens.
 
-Access token  
-Used for authorizing requests to APIs and protected resources.
+- **Access token**
+  Used for authorizing requests to APIs and protected resources.
 
-Refresh token  
-Used by the client to obtain new access tokens from Microsoft Entra ID.
+- **Refresh token**
+  Used by the client to obtain new access tokens from Microsoft Entra ID.
 
-ID token  
-Used by the client application to represent the user’s authentication context.
+- **ID token**
+  Used by the client application to represent the user’s authentication context.
 
 Once this separation becomes clear, many Microsoft Entra behaviors become much easier to reason about.
 
 ## Microsoft References
 
-Access tokens in the Microsoft identity platform  
-https://learn.microsoft.com/en-us/entra/identity-platform/access-tokens
-
-Refresh tokens in the Microsoft identity platform  
-https://learn.microsoft.com/en-us/entra/identity-platform/refresh-tokens
-
-Security tokens and claims in the Microsoft identity platform  
-https://learn.microsoft.com/en-us/entra/identity-platform/security-tokens
-
-Access token claims reference  
-https://learn.microsoft.com/en-us/entra/identity-platform/access-token-claims-reference
-
-OAuth 2.0 authorization code flow in Microsoft identity platform  
-https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow
-
-OpenID Connect protocol in Microsoft identity platform  
-https://learn.microsoft.com/en-us/entra/identity-platform/v2-protocols-oidc
+- [Access tokens in the Microsoft identity platform](https://learn.microsoft.com/en-us/entra/identity-platform/access-tokens)
+- [Refresh tokens in the Microsoft identity platform](https://learn.microsoft.com/en-us/entra/identity-platform/refresh-tokens)
+- [Security tokens and claims in the Microsoft identity platform](https://learn.microsoft.com/en-us/entra/identity-platform/security-tokens)
+- [Access token claims reference](https://learn.microsoft.com/en-us/entra/identity-platform/access-token-claims-reference)
+- [OAuth 2.0 authorization code flow in Microsoft identity platform](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow)
+- [OpenID Connect protocol in Microsoft identity platform](https://learn.microsoft.com/en-us/entra/identity-platform/v2-protocols-oidc)

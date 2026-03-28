@@ -51,11 +51,17 @@ export function newsletterReady() {
 async function getContactByEmail(email: string) {
   const resend = getResend();
   const audienceId = getAudienceId();
-  const { data } = await resend.contacts.get({
-    email,
-    audienceId: audienceId || undefined,
-  });
-  return (data || null) as ContactRecord | null;
+
+  try {
+    const { data } = await resend.contacts.get({
+      email,
+      audienceId: audienceId || undefined,
+    });
+
+    return (data || null) as ContactRecord | null;
+  } catch {
+    return null;
+  }
 }
 
 export async function registerSubscriber(email: string, name?: string) {
@@ -90,12 +96,27 @@ export async function registerSubscriber(email: string, name?: string) {
     };
   }
 
-  const { data, error } = await resend.contacts.create({
-    email: normalizedEmail,
-    audienceId,
-    firstName,
-    unsubscribed: false,
-  });
+  const createPayload = audienceId
+    ? {
+        email: normalizedEmail,
+        audienceId,
+        firstName,
+        unsubscribed: false,
+      }
+    : segmentId
+      ? {
+          email: normalizedEmail,
+          firstName,
+          unsubscribed: false,
+          segments: [{ id: segmentId }],
+        }
+      : {
+          email: normalizedEmail,
+          firstName,
+          unsubscribed: false,
+        };
+
+  const { data, error } = await resend.contacts.create(createPayload);
 
   if (error) {
     throw new Error(error.message || "Could not create contact");

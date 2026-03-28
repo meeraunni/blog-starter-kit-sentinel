@@ -1,26 +1,14 @@
-<svg width="1600" height="1000" viewBox="0 0 1600 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1600" height="1000" rx="48" fill="#07121F"/>
-  <rect x="56" y="56" width="1488" height="888" rx="36" fill="url(#bg)"/>
-  <rect x="186" y="224" width="370" height="184" rx="28" fill="#0E2742" stroke="#35A7FF" stroke-opacity=".55" stroke-width="3"/>
-  <rect x="1038" y="566" width="310" height="176" rx="30" fill="#0F2B1F" stroke="#3CCB7F" stroke-opacity=".6" stroke-width="3"/>
-  <circle cx="800" cy="492" r="168" fill="url(#glow)"/>
-  <path d="M800 356C728 356 670 414 670 486V588C670 660 728 718 800 718C872 718 930 660 930 588V486C930 414 872 356 800 356Z" fill="#B9F4FF"/>
-  <path d="M800 408C757 408 722 443 722 486V532H878V486C878 443 843 408 800 408Z" fill="#0B3A57"/>
-  <path d="M744 532H856V590C856 633 832 671 800 693C768 671 744 633 744 590V532Z" fill="#0C6484"/>
-  <path d="M298 632C414 544 531 493 640 490C756 487 854 540 969 532C1093 522 1214 454 1331 344" stroke="#35A7FF" stroke-width="8" stroke-linecap="round"/>
-  <path d="M324 704C453 600 560 551 658 549C756 547 850 596 968 596C1081 596 1177 546 1284 457" stroke="#2BDAC7" stroke-opacity=".45" stroke-width="4" stroke-linecap="round"/>
-  <text x="244" y="298" fill="#E8F7FF" font-family="Arial, sans-serif" font-size="46" font-weight="700">ACCESS</text>
-  <text x="244" y="352" fill="#E8F7FF" font-family="Arial, sans-serif" font-size="46" font-weight="700">TOKEN</text>
-  <text x="1098" y="640" fill="#E5FFF2" font-family="Arial, sans-serif" font-size="40" font-weight="700">REFRESH</text>
-  <text x="1160" y="692" fill="#E5FFF2" font-family="Arial, sans-serif" font-size="40" font-weight="700">TOKEN</text>
-  <defs>
-    <linearGradient id="bg" x1="181" y1="124" x2="1398" y2="888" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#081A31"/>
-      <stop offset="1" stop-color="#09111B"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(800 492) rotate(90) scale(210)">
-      <stop stop-color="#25D7FF" stop-opacity=".45"/>
-      <stop offset="1" stop-color="#25D7FF" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" rx="36" fill="#07111E"/>
+  <rect x="24" y="24" width="1152" height="582" rx="30" fill="#0B1624" stroke="#223449"/>
+  <rect x="104" y="146" width="286" height="120" rx="24" fill="#163245" stroke="#355A7E"/><text x="154" y="198" fill="#A9D9FF" font-family="Arial, sans-serif" font-size="30">Access token</text>
+  <rect x="792" y="336" width="238" height="110" rx="22" fill="#163A34" stroke="#2B7A53"/><text x="830" y="404" fill="#B8FFE0" font-family="Arial, sans-serif" font-size="30">Refresh token</text>
+  <circle cx="602" cy="302" r="112" fill="#14304A" stroke="#4EA0FF" stroke-width="4"/>
+  <path d="M602 246C556 246 518 284 518 330V372H686V330C686 284 648 246 602 246Z" fill="#E7F8FF"/>
+  <path d="M536 372H668V438C668 490 640 536 602 558C564 536 536 490 536 438V372Z" fill="#2A8FC5"/>
+  <path d="M386 304C454 286 500 280 518 280" stroke="#4EA0FF" stroke-width="4" stroke-linecap="round"/>
+  <path d="M686 356C736 364 772 374 792 382" stroke="#6FDFA3" stroke-width="4" stroke-linecap="round"/>
+  <path d="M0 566C84 522 152 510 240 518C322 526 398 560 462 560C550 560 620 518 716 518C800 518 866 564 950 564C1040 564 1112 520 1200 520V630H0V566Z" fill="#1E3852"/>
+  <path d="M0 590C92 550 178 548 272 566C350 580 424 614 500 614C588 614 662 566 760 566C844 566 910 610 1006 610C1084 610 1140 574 1200 560V630H0V590Z" fill="#0F2338"/>
+  <text x="78" y="588" fill="#E7F0F8" font-family="Arial, sans-serif" font-size="44">Access Tokens and Refresh Tokens in Microsoft Identity</text>
 </svg>

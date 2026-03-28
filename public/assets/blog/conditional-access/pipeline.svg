@@ -1,25 +1,16 @@
-<svg width="1600" height="1000" viewBox="0 0 1600 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1600" height="1000" rx="48" fill="#08121E"/>
-  <rect x="56" y="56" width="1488" height="888" rx="36" fill="url(#bg)"/>
-  <circle cx="806" cy="496" r="302" stroke="#2A94D6" stroke-opacity=".16" stroke-width="3" stroke-dasharray="12 14"/>
-  <path d="M806 244L1058 384V584C1058 708 948 816 806 870C664 816 554 708 554 584V384L806 244Z" fill="#103C69" stroke="#7FC9FF" stroke-width="4"/>
-  <path d="M806 324L980 420V578C980 670 908 748 806 798C704 748 632 670 632 578V420L806 324Z" fill="#0B2744"/>
-  <circle cx="806" cy="492" r="76" fill="#DDF7FF"/>
-  <path d="M806 406C764 406 730 440 730 482V530H882V482C882 440 848 406 806 406Z" fill="#0D4668"/>
-  <path d="M742 530H870V590C870 640 844 683 806 709C768 683 742 640 742 590V530Z" fill="#0F688E"/>
-  <rect x="198" y="324" width="214" height="96" rx="24" fill="#0E2742" stroke="#39A8FF" stroke-opacity=".55" stroke-width="3"/>
-  <rect x="1170" y="322" width="220" height="96" rx="24" fill="#0E2742" stroke="#67D2FF" stroke-opacity=".55" stroke-width="3"/>
-  <rect x="1170" y="592" width="250" height="108" rx="26" fill="#132E4F" stroke="#8EDBFF" stroke-opacity=".42" stroke-width="3"/>
-  <text x="244" y="382" fill="#E6F7FF" font-family="Arial, sans-serif" font-size="30" font-weight="700">ACCESS</text>
-  <text x="1234" y="380" fill="#E6F7FF" font-family="Arial, sans-serif" font-size="30" font-weight="700">SIGN-IN</text>
-  <text x="1210" y="660" fill="#E6F7FF" font-family="Arial, sans-serif" font-size="30" font-weight="700">POLICY FLOW</text>
-  <path d="M412 372H556" stroke="#39A8FF" stroke-width="5" stroke-linecap="round"/>
-  <path d="M1058 370H1170" stroke="#67D2FF" stroke-width="5" stroke-linecap="round"/>
-  <path d="M1052 646H1170" stroke="#8EDBFF" stroke-width="5" stroke-linecap="round"/>
-  <defs>
-    <linearGradient id="bg" x1="188" y1="120" x2="1384" y2="888" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#081B34"/>
-      <stop offset="1" stop-color="#0A111A"/>
-    </linearGradient>
-  </defs>
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" rx="36" fill="#07111E"/>
+  <rect x="24" y="24" width="1152" height="582" rx="30" fill="#0B1624" stroke="#223449"/>
+  <rect x="94" y="170" width="212" height="96" rx="22" fill="#163245" stroke="#355A7E"/><text x="138" y="229" fill="#A9D9FF" font-family="Arial, sans-serif" font-size="28">Access</text>
+  <rect x="884" y="170" width="212" height="96" rx="22" fill="#163245" stroke="#2D6E8A"/><text x="936" y="229" fill="#A9D9FF" font-family="Arial, sans-serif" font-size="28">Sign-in</text>
+  <rect x="900" y="352" width="218" height="96" rx="22" fill="#2E2338" stroke="#5C447D"/><text x="944" y="411" fill="#E3D1FF" font-family="Arial, sans-serif" font-size="28">Policy flow</text>
+  <circle cx="598" cy="300" r="132" fill="#14304A" stroke="#4EA0FF" stroke-width="4"/>
+  <path d="M598 236L714 298V396C714 468 662 532 598 566C534 532 482 468 482 396V298L598 236Z" fill="#1D67A3"/>
+  <path d="M598 280L670 320V386C670 434 638 476 598 502C558 476 526 434 526 386V320L598 280Z" fill="#0F2238"/>
+  <path d="M306 218H466" stroke="#4EA0FF" stroke-width="4" stroke-linecap="round"/>
+  <path d="M730 218H884" stroke="#4EA0FF" stroke-width="4" stroke-linecap="round"/>
+  <path d="M722 398H900" stroke="#C197FF" stroke-width="4" stroke-linecap="round"/>
+  <path d="M0 566C84 522 152 510 240 518C322 526 398 560 462 560C550 560 620 518 716 518C800 518 866 564 950 564C1040 564 1112 520 1200 520V630H0V566Z" fill="#1E3852"/>
+  <path d="M0 590C92 550 178 548 272 566C350 580 424 614 500 614C588 614 662 566 760 566C844 566 910 610 1006 610C1084 610 1140 574 1200 560V630H0V590Z" fill="#0F2338"/>
+  <text x="78" y="588" fill="#E7F0F8" font-family="Arial, sans-serif" font-size="42">Conditional Access Evaluation Pipeline</text>
 </svg>

@@ -1,27 +1,16 @@
-<svg width="1600" height="1000" viewBox="0 0 1600 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1600" height="1000" rx="48" fill="#111827"/>
-  <rect x="56" y="56" width="1488" height="888" rx="36" fill="url(#bg)"/>
-  <circle cx="790" cy="502" r="228" fill="url(#glow)"/>
-  <path d="M790 316C694 316 616 394 616 490V620C616 716 694 794 790 794C886 794 964 716 964 620V490C964 394 886 316 790 316Z" fill="#E7F7FF"/>
-  <path d="M790 390C738 390 696 432 696 484V540H884V484C884 432 842 390 790 390Z" fill="#12415F"/>
-  <path d="M714 540H866V612C866 672 835 724 790 755C745 724 714 672 714 612V540Z" fill="#0E7490"/>
-  <circle cx="1010" cy="320" r="92" fill="#2A1D1D" stroke="#FB7185" stroke-opacity=".45" stroke-width="3"/>
-  <path d="M1010 274V328" stroke="#FCA5A5" stroke-width="14" stroke-linecap="round"/>
-  <circle cx="1010" cy="368" r="10" fill="#FCA5A5"/>
-  <rect x="184" y="278" width="278" height="112" rx="24" fill="#13243B" stroke="#38BDF8" stroke-opacity=".45" stroke-width="3"/>
-  <rect x="1086" y="620" width="288" height="126" rx="26" fill="#251A1A" stroke="#FB7185" stroke-opacity=".45" stroke-width="3"/>
-  <text x="232" y="346" fill="#E6F7FF" font-family="Arial, sans-serif" font-size="30" font-weight="700">BLUETOOTH</text>
-  <text x="1132" y="694" fill="#FFE8EC" font-family="Arial, sans-serif" font-size="30" font-weight="700">CA LOOP</text>
-  <path d="M462 334H616" stroke="#38BDF8" stroke-width="5" stroke-linecap="round"/>
-  <path d="M964 676H1086" stroke="#FB7185" stroke-width="5" stroke-linecap="round"/>
-  <defs>
-    <linearGradient id="bg" x1="160" y1="106" x2="1430" y2="892" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0F172A"/>
-      <stop offset="1" stop-color="#111827"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(790 502) rotate(90) scale(246)">
-      <stop stop-color="#22D3EE" stop-opacity=".26"/>
-      <stop offset="1" stop-color="#22D3EE" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" rx="36" fill="#07111E"/>
+  <rect x="24" y="24" width="1152" height="582" rx="30" fill="#0B1624" stroke="#223449"/>
+  <circle cx="596" cy="286" r="110" fill="#14304A" stroke="#4EA0FF" stroke-width="4"/>
+  <path d="M596 230C550 230 512 268 512 314V356H680V314C680 268 642 230 596 230Z" fill="#E7F8FF"/>
+  <path d="M530 356H662V422C662 474 634 520 596 542C558 520 530 474 530 422V356Z" fill="#2A8FC5"/>
+  <circle cx="826" cy="194" r="58" fill="#331A22" stroke="#7B3A49" stroke-width="4"/>
+  <path d="M826 166V202" stroke="#FFD1D8" stroke-width="10" stroke-linecap="round"/><circle cx="826" cy="226" r="8" fill="#FFD1D8"/>
+  <rect x="136" y="184" width="216" height="60" rx="14" fill="#163245"/><text x="174" y="223" fill="#A9D9FF" font-family="Arial, sans-serif" font-size="24">Bluetooth</text>
+  <rect x="842" y="384" width="214" height="60" rx="14" fill="#331A22"/><text x="896" y="423" fill="#FFD1D8" font-family="Arial, sans-serif" font-size="24">CA loop</text>
+  <path d="M352 214H486" stroke="#4EA0FF" stroke-width="4" stroke-linecap="round"/>
+  <path d="M706 414H842" stroke="#EB6A6A" stroke-width="4" stroke-linecap="round"/>
+  <path d="M0 566C84 522 152 510 240 518C322 526 398 560 462 560C550 560 620 518 716 518C800 518 866 564 950 564C1040 564 1112 520 1200 520V630H0V566Z" fill="#1E3852"/>
+  <path d="M0 590C92 550 178 548 272 566C350 580 424 614 500 614C588 614 662 566 760 566C844 566 910 610 1006 610C1084 610 1140 574 1200 560V630H0V590Z" fill="#0F2338"/>
+  <text x="78" y="588" fill="#E7F0F8" font-family="Arial, sans-serif" font-size="42">Passkey Troubleshooting Guide</text>
 </svg>

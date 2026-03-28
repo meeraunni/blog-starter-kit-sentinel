@@ -1,23 +1,14 @@
-<svg width="1600" height="1000" viewBox="0 0 1600 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1600" height="1000" rx="48" fill="#0E1726"/>
-  <rect x="56" y="56" width="1488" height="888" rx="36" fill="url(#bg)"/>
-  <rect x="170" y="184" width="560" height="560" rx="36" fill="#111D32" stroke="#4CB6FF" stroke-opacity=".28" stroke-width="3"/>
-  <rect x="882" y="196" width="538" height="122" rx="26" fill="#17263E" stroke="#7DD3FC" stroke-opacity=".38" stroke-width="3"/>
-  <rect x="882" y="366" width="538" height="122" rx="26" fill="#17263E" stroke="#34D399" stroke-opacity=".34" stroke-width="3"/>
-  <rect x="882" y="536" width="538" height="122" rx="26" fill="#17263E" stroke="#F59E0B" stroke-opacity=".34" stroke-width="3"/>
-  <path d="M452 286C353 286 274 365 274 464V608C274 707 353 786 452 786C551 786 630 707 630 608V464C630 365 551 286 452 286Z" fill="#E8FBFF"/>
-  <path d="M452 356C397 356 352 401 352 456V516H552V456C552 401 507 356 452 356Z" fill="#0C476F"/>
-  <path d="M368 516H536V600C536 664 503 721 452 753C401 721 368 664 368 600V516Z" fill="#0FA4C8"/>
-  <circle cx="452" cy="566" r="20" fill="#09283E"/>
-  <rect x="320" y="132" width="264" height="96" rx="22" fill="#17263E" stroke="#E879F9" stroke-opacity=".36" stroke-width="3"/>
-  <text x="352" y="190" fill="#F5E8FF" font-family="Arial, sans-serif" font-size="32" font-weight="700">PASSKEY</text>
-  <text x="928" y="272" fill="#E7F6FF" font-family="Arial, sans-serif" font-size="32" font-weight="700">POLICY TARGETING</text>
-  <text x="928" y="442" fill="#E7FFF7" font-family="Arial, sans-serif" font-size="32" font-weight="700">AUTHENTICATOR PATH</text>
-  <text x="928" y="612" fill="#FFF8E8" font-family="Arial, sans-serif" font-size="32" font-weight="700">PLATFORM SUPPORT</text>
-  <defs>
-    <linearGradient id="bg" x1="126" y1="102" x2="1454" y2="902" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0F1C32"/>
-      <stop offset="1" stop-color="#111827"/>
-    </linearGradient>
-  </defs>
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" rx="36" fill="#07111E"/>
+  <rect x="24" y="24" width="1152" height="582" rx="30" fill="#0B1624" stroke="#223449"/>
+  <circle cx="256" cy="282" r="112" fill="#14304A" stroke="#4EA0FF" stroke-width="4"/>
+  <path d="M256 226C210 226 172 264 172 310V352H340V310C340 264 302 226 256 226Z" fill="#E7F8FF"/>
+  <path d="M190 352H322V418C322 470 294 516 256 538C218 516 190 470 190 418V352Z" fill="#2A8FC5"/>
+  <rect x="116" y="114" width="280" height="54" rx="14" fill="#2E2338"/><text x="154" y="150" fill="#E3D1FF" font-family="Arial, sans-serif" font-size="24">Passkey method</text>
+  <rect x="652" y="142" width="400" height="72" rx="16" fill="#163245"/><text x="688" y="188" fill="#A9D9FF" font-family="Arial, sans-serif" font-size="28">Policy targeting</text>
+  <rect x="652" y="254" width="400" height="72" rx="16" fill="#163A34"/><text x="688" y="300" fill="#B8FFE0" font-family="Arial, sans-serif" font-size="28">Authenticator path</text>
+  <rect x="652" y="366" width="400" height="72" rx="16" fill="#3A2B1E"/><text x="688" y="412" fill="#F8D29A" font-family="Arial, sans-serif" font-size="28">Platform support</text>
+  <path d="M0 566C84 522 152 510 240 518C322 526 398 560 462 560C550 560 620 518 716 518C800 518 866 564 950 564C1040 564 1112 520 1200 520V630H0V566Z" fill="#1E3852"/>
+  <path d="M0 590C92 550 178 548 272 566C350 580 424 614 500 614C588 614 662 566 760 566C844 566 910 610 1006 610C1084 610 1140 574 1200 560V630H0V590Z" fill="#0F2338"/>
+  <text x="78" y="588" fill="#E7F0F8" font-family="Arial, sans-serif" font-size="42">Missing Passkey Registration Options</text>
 </svg>

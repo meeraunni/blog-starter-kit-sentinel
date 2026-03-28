@@ -1,24 +1,16 @@
-<svg width="1600" height="1000" viewBox="0 0 1600 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1600" height="1000" rx="48" fill="#0C1320"/>
-  <rect x="56" y="56" width="1488" height="888" rx="36" fill="url(#bg)"/>
-  <rect x="210" y="220" width="1180" height="560" rx="36" fill="#111D31" stroke="#7DD3FC" stroke-opacity=".26" stroke-width="3"/>
-  <rect x="312" y="306" width="264" height="88" rx="22" fill="#13314A"/>
-  <rect x="312" y="454" width="264" height="88" rx="22" fill="#12332A"/>
-  <rect x="312" y="602" width="264" height="88" rx="22" fill="#3A1F23"/>
-  <text x="366" y="362" fill="#E8F6FF" font-family="Arial, sans-serif" font-size="34" font-weight="700">LOCAL STATE</text>
-  <text x="374" y="510" fill="#E8FFF6" font-family="Arial, sans-serif" font-size="34" font-weight="700">JOIN FLOW</text>
-  <text x="378" y="658" fill="#FFECEC" font-family="Arial, sans-serif" font-size="34" font-weight="700">PENDING</text>
-  <path d="M700 500H1160" stroke="#38BDF8" stroke-width="10" stroke-linecap="round"/>
-  <circle cx="818" cy="500" r="22" fill="#38BDF8"/>
-  <circle cx="1010" cy="500" r="22" fill="#34D399"/>
-  <circle cx="1202" cy="500" r="22" fill="#F87171"/>
-  <text x="820" y="440" fill="#EAF7FF" font-family="Arial, sans-serif" font-size="30" font-weight="700">REGISTER</text>
-  <text x="968" y="440" fill="#E8FFF6" font-family="Arial, sans-serif" font-size="30" font-weight="700">COMPLETE</text>
-  <text x="1146" y="440" fill="#FFECEC" font-family="Arial, sans-serif" font-size="30" font-weight="700">BLOCKED</text>
-  <defs>
-    <linearGradient id="bg" x1="142" y1="104" x2="1460" y2="906" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0E1A2E"/>
-      <stop offset="1" stop-color="#111827"/>
-    </linearGradient>
-  </defs>
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" rx="36" fill="#07111E"/>
+  <rect x="24" y="24" width="1152" height="582" rx="30" fill="#0B1624" stroke="#223449"/>
+  <rect x="100" y="132" width="290" height="292" rx="24" fill="#0E1B2B" stroke="#2D4863"/>
+  <rect x="144" y="196" width="202" height="52" rx="12" fill="#163245"/><text x="178" y="230" fill="#A9D9FF" font-family="Arial, sans-serif" font-size="24">Local state</text>
+  <rect x="144" y="272" width="202" height="52" rx="12" fill="#163A34"/><text x="194" y="306" fill="#B8FFE0" font-family="Arial, sans-serif" font-size="24">Join flow</text>
+  <rect x="144" y="348" width="202" height="52" rx="12" fill="#331A22"/><text x="184" y="382" fill="#FFD1D8" font-family="Arial, sans-serif" font-size="24">Pending</text>
+  <path d="M466 278H1018" stroke="#4EA0FF" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="610" cy="278" r="16" fill="#4EA0FF"/><circle cx="782" cy="278" r="16" fill="#6FDFA3"/><circle cx="954" cy="278" r="16" fill="#EB6A6A"/>
+  <text x="566" y="236" fill="#E7F0F8" font-family="Arial, sans-serif" font-size="24">Register</text>
+  <text x="736" y="236" fill="#E7F0F8" font-family="Arial, sans-serif" font-size="24">Complete</text>
+  <text x="910" y="236" fill="#E7F0F8" font-family="Arial, sans-serif" font-size="24">Blocked</text>
+  <path d="M0 566C84 522 152 510 240 518C322 526 398 560 462 560C550 560 620 518 716 518C800 518 866 564 950 564C1040 564 1112 520 1200 520V630H0V566Z" fill="#1E3852"/>
+  <path d="M0 590C92 550 178 548 272 566C350 580 424 614 500 614C588 614 662 566 760 566C844 566 910 610 1006 610C1084 610 1140 574 1200 560V630H0V590Z" fill="#0F2338"/>
+  <text x="78" y="588" fill="#E7F0F8" font-family="Arial, sans-serif" font-size="44">Windows Device Join and Registration Failures</text>
 </svg>

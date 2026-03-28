@@ -1,31 +1,16 @@
-<svg width="1600" height="1000" viewBox="0 0 1600 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="1600" height="1000" rx="48" fill="#0B1220"/>
-  <rect x="56" y="56" width="1488" height="888" rx="36" fill="url(#bg)"/>
-  <circle cx="790" cy="494" r="250" fill="url(#glow)"/>
-  <circle cx="790" cy="494" r="308" stroke="#35D2A6" stroke-opacity=".15" stroke-width="3" stroke-dasharray="12 12"/>
-  <rect x="246" y="272" width="270" height="128" rx="26" fill="#12243E" stroke="#38BDF8" stroke-opacity=".5" stroke-width="3"/>
-  <rect x="1056" y="292" width="298" height="128" rx="26" fill="#15252D" stroke="#34D399" stroke-opacity=".55" stroke-width="3"/>
-  <rect x="1036" y="616" width="324" height="138" rx="28" fill="#14253B" stroke="#8B9CFB" stroke-opacity=".45" stroke-width="3"/>
-  <path d="M790 320C688 320 606 402 606 504V640C606 742 688 824 790 824C892 824 974 742 974 640V504C974 402 892 320 790 320Z" fill="#E5FBFF"/>
-  <path d="M790 394C734 394 688 440 688 496V556H892V496C892 440 846 394 790 394Z" fill="#0D4566"/>
-  <path d="M704 556H876V630C876 699 842 758 790 791C738 758 704 699 704 630V556Z" fill="#11779F"/>
-  <circle cx="1088" cy="684" r="24" fill="#8B9CFB"/>
-  <circle cx="1164" cy="684" r="24" fill="#34D399"/>
-  <circle cx="1240" cy="684" r="24" fill="#38BDF8"/>
-  <text x="302" y="348" fill="#E6F7FF" font-family="Arial, sans-serif" font-size="32" font-weight="700">DEVICE-BOUND</text>
-  <text x="1116" y="369" fill="#E7FFF7" font-family="Arial, sans-serif" font-size="32" font-weight="700">SYNCED</text>
-  <text x="1094" y="678" fill="#E8EEFF" font-family="Arial, sans-serif" font-size="28" font-weight="700">SIGN-IN</text>
-  <path d="M516 336H626" stroke="#38BDF8" stroke-width="5" stroke-linecap="round"/>
-  <path d="M974 356H1056" stroke="#34D399" stroke-width="5" stroke-linecap="round"/>
-  <path d="M970 648H1036" stroke="#8B9CFB" stroke-width="5" stroke-linecap="round"/>
-  <defs>
-    <linearGradient id="bg" x1="162" y1="102" x2="1414" y2="892" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0D1B31"/>
-      <stop offset="1" stop-color="#111827"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(790 494) rotate(90) scale(260)">
-      <stop stop-color="#34D399" stop-opacity=".28"/>
-      <stop offset="1" stop-color="#34D399" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" rx="36" fill="#07111E"/>
+  <rect x="24" y="24" width="1152" height="582" rx="30" fill="#0B1624" stroke="#223449"/>
+  <circle cx="596" cy="286" r="110" fill="#14304A" stroke="#4EA0FF" stroke-width="4"/>
+  <path d="M596 230C550 230 512 268 512 314V356H680V314C680 268 642 230 596 230Z" fill="#E7F8FF"/>
+  <path d="M530 356H662V422C662 474 634 520 596 542C558 520 530 474 530 422V356Z" fill="#2A8FC5"/>
+  <rect x="142" y="168" width="232" height="66" rx="16" fill="#163245"/><text x="180" y="211" fill="#A9D9FF" font-family="Arial, sans-serif" font-size="26">Device-bound</text>
+  <rect x="792" y="168" width="232" height="66" rx="16" fill="#163A34"/><text x="848" y="211" fill="#B8FFE0" font-family="Arial, sans-serif" font-size="26">Synced</text>
+  <rect x="802" y="384" width="222" height="66" rx="16" fill="#2E2338"/><text x="862" y="427" fill="#E3D1FF" font-family="Arial, sans-serif" font-size="26">Sign-in</text>
+  <path d="M374 202H488" stroke="#4EA0FF" stroke-width="4" stroke-linecap="round"/>
+  <path d="M706 202H792" stroke="#6FDFA3" stroke-width="4" stroke-linecap="round"/>
+  <path d="M706 416H802" stroke="#C197FF" stroke-width="4" stroke-linecap="round"/>
+  <path d="M0 566C84 522 152 510 240 518C322 526 398 560 462 560C550 560 620 518 716 518C800 518 866 564 950 564C1040 564 1112 520 1200 520V630H0V566Z" fill="#1E3852"/>
+  <path d="M0 590C92 550 178 548 272 566C350 580 424 614 500 614C588 614 662 566 760 566C844 566 910 610 1006 610C1084 610 1140 574 1200 560V630H0V590Z" fill="#0F2338"/>
+  <text x="78" y="588" fill="#E7F0F8" font-family="Arial, sans-serif" font-size="44">Microsoft Entra Passkeys Explained</text>
 </svg>

@@ -2,6 +2,8 @@
 
 import { FormEvent, useState } from "react";
 
+const CONSULT_ENDPOINT = "https://formsubmit.co/ajax/info@sentinelidentity.ca";
+
 type FormState = {
   name: string;
   company: string;
@@ -30,17 +32,22 @@ export default function ConsultingForm() {
     setStatus("loading");
     setMessage("");
 
-    const response = await fetch("/api/consult", {
+    const response = await fetch(CONSULT_ENDPOINT, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
       },
-      body: JSON.stringify(form),
+      body: JSON.stringify({
+        ...form,
+        _subject: `Sentinel Identity consulting request from ${form.name}`,
+        _template: "table",
+      }),
     });
 
-    const result = await response.json();
+    const result = await response.json().catch(() => ({}));
 
-    if (!response.ok) {
+    if (!response.ok || result.success === "false") {
       setStatus("error");
       setMessage(result.error || "Unable to submit your request right now.");
       return;

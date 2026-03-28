@@ -12,16 +12,18 @@ export default async function Index() {
     <main className="relative overflow-hidden">
       <Header />
 
-      <section className="border-b border-slate-200/80 bg-[linear-gradient(135deg,rgba(255,255,255,0.94),rgba(240,247,255,0.96))]">
+      <section className="border-b border-slate-200/80 bg-[radial-gradient(circle_at_top_left,rgba(194,65,12,0.10),transparent_30%),radial-gradient(circle_at_85%_20%,rgba(8,145,178,0.12),transparent_26%),linear-gradient(135deg,rgba(255,251,245,0.97),rgba(241,245,249,0.96))]">
         <Container>
           <div className="grid gap-8 py-14 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-center lg:py-16">
             <div>
               <p className="text-sm font-medium uppercase tracking-[0.24em] text-slate-500">
                 Sentinel Identity
               </p>
-              <h1 className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-slate-950 md:text-5xl">
-                Microsoft Entra Blog
-              </h1>
+              <div className="mt-4 inline-flex rounded-[1.75rem] border border-white/70 bg-white/80 px-6 py-5 shadow-[0_18px_50px_rgba(15,23,42,0.08)] backdrop-blur-sm">
+                <h1 className="text-4xl font-semibold tracking-[-0.05em] text-slate-950 md:text-5xl">
+                  Microsoft Entra Blog
+                </h1>
+              </div>
             </div>
 
             <form className="rounded-xl bg-white p-2 shadow-[0_14px_30px_rgba(2,6,23,0.16)]">

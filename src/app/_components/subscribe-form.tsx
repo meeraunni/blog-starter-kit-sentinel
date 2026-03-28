@@ -2,6 +2,8 @@
 
 import { FormEvent, useState } from "react";
 
+const SUBSCRIBE_ENDPOINT = "https://formsubmit.co/ajax/info@sentinelidentity.ca";
+
 export default function SubscribeForm() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -13,24 +15,30 @@ export default function SubscribeForm() {
     setStatus("loading");
     setMessage("");
 
-    const response = await fetch("/api/subscribe", {
+    const response = await fetch(SUBSCRIBE_ENDPOINT, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Accept: "application/json",
       },
-      body: JSON.stringify({ email, name }),
+      body: JSON.stringify({
+        name: name || "Subscriber",
+        email,
+        _subject: "New Sentinel Identity subscriber",
+        _template: "table",
+      }),
     });
 
-    const result = await response.json();
+    const result = await response.json().catch(() => ({}));
 
-    if (!response.ok) {
+    if (!response.ok || result.success === "false") {
       setStatus("error");
       setMessage(result.error || "Unable to subscribe right now.");
       return;
     }
 
     setStatus("success");
-    setMessage("Thanks. You are subscribed for Sentinel Identity updates.");
+    setMessage("Thanks. Your subscription request has been sent.");
     setEmail("");
     setName("");
   }

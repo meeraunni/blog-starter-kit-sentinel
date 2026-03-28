@@ -1,10 +1,3 @@
-type FormState = {
-  name: string;
-  company: string;
-  email: string;
-  challenge: string;
-};
-
 export default function ConsultingForm() {
   return (
     <div className="rounded-[2rem] border border-slate-200/80 bg-white p-7 shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
@@ -19,19 +12,10 @@ export default function ConsultingForm() {
       </p>
 
       <form
-        action="https://formsubmit.co/meeraunni4@gmail.com"
+        action="/api/consult"
         method="POST"
         className="mt-6 grid gap-4"
       >
-        <input
-          type="hidden"
-          name="_subject"
-          value="New Sentinel Identity consulting request"
-        />
-        <input type="hidden" name="_template" value="table" />
-        <input type="hidden" name="_cc" value="info@sentinelidentity.ca" />
-        <input type="hidden" name="_next" value="https://sentinelidentity.ca/thanks?form=assessment" />
-        <input type="hidden" name="_captcha" value="false" />
         <input
           type="text"
           required

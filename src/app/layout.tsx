@@ -1,4 +1,5 @@
 import Footer from "@/app/_components/footer";
+import NewsletterSync from "@/app/_components/newsletter-sync";
 import { CMS_NAME, HOME_OG_IMAGE_URL } from "@/lib/constants";
 import type { Metadata } from "next";
 import Script from "next/script";
@@ -83,6 +84,7 @@ export default function RootLayout({
           "min-h-screen bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.08),transparent_30%),linear-gradient(180deg,#f8fbff_0%,#ffffff_22%,#f8fafc_100%)] text-slate-700 antialiased",
         )}
       >
+        <NewsletterSync />
         <ThemeSwitcher />
         <div className="min-h-screen">{children}</div>
         <Footer />

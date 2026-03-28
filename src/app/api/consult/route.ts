@@ -1,42 +1,31 @@
 import { NextResponse } from "next/server";
-import { sendFormSubmission } from "@/lib/formsubmit";
+import { sendConsultingRequestEmail } from "@/lib/newsletter";
 
 function sanitize(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
 }
 
 export async function POST(request: Request) {
-  const body = await request.json();
-
-  const name = sanitize(body.name);
-  const company = sanitize(body.company);
-  const email = sanitize(body.email);
-  const challenge = sanitize(body.challenge);
+  const formData = await request.formData();
+  const name = sanitize(formData.get("name"));
+  const company = sanitize(formData.get("company"));
+  const email = sanitize(formData.get("email"));
+  const challenge = sanitize(formData.get("challenge"));
 
   if (!name || !email || !challenge) {
-    return NextResponse.json(
-      { error: "Name, email, and project details are required." },
-      { status: 400 },
-    );
+    return NextResponse.redirect(new URL("/thanks?form=assessment&status=error", request.url));
   }
 
   try {
-    await sendFormSubmission({
+    await sendConsultingRequestEmail({
       name,
       company,
       email,
       challenge,
-      _subject: `Sentinel Identity consulting request from ${name}`,
-      _replyto: email,
-      _cc: "info@sentinelidentity.ca",
-      _template: "table",
     });
   } catch {
-    return NextResponse.json(
-      { error: "We could not send your request right now. Please try again shortly." },
-      { status: 500 },
-    );
+    return NextResponse.redirect(new URL("/thanks?form=assessment&status=error", request.url));
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.redirect(new URL("/thanks?form=assessment&status=success", request.url));
 }

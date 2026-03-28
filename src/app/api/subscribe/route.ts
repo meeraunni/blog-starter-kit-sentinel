@@ -1,37 +1,25 @@
 import { NextResponse } from "next/server";
-import { sendFormSubmission } from "@/lib/formsubmit";
+import { sendSubscriptionConfirmation, upsertSubscriber } from "@/lib/newsletter";
 
 function sanitize(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
 }
 
 export async function POST(request: Request) {
-  const body = await request.json();
-  const email = sanitize(body.email);
-  const name = sanitize(body.name);
+  const formData = await request.formData();
+  const email = sanitize(formData.get("email"));
+  const name = sanitize(formData.get("name"));
 
   if (!email) {
-    return NextResponse.json(
-      { error: "Email is required." },
-      { status: 400 },
-    );
+    return NextResponse.redirect(new URL("/thanks?form=subscribe&status=error", request.url));
   }
 
   try {
-    await sendFormSubmission({
-      name: name || "Subscriber",
-      email,
-      _subject: "New Sentinel Identity subscriber",
-      _replyto: email,
-      _cc: "info@sentinelidentity.ca",
-      _template: "table",
-    });
+    const subscriber = await upsertSubscriber(email, name);
+    await sendSubscriptionConfirmation(subscriber);
   } catch {
-    return NextResponse.json(
-      { error: "We could not complete your subscription right now. Please try again shortly." },
-      { status: 500 },
-    );
+    return NextResponse.redirect(new URL("/thanks?form=subscribe&status=error", request.url));
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.redirect(new URL("/thanks?form=subscribe&status=success", request.url));
 }

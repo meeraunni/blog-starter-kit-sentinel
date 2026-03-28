@@ -6,6 +6,8 @@
     "start": "next start"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.0.2",
+    "@vercel/postgres": "^0.10.0",
     "classnames": "^2.5.1",
     "date-fns": "^3.6.0",
     "gray-matter": "^4.0.3",
@@ -14,7 +16,8 @@
     "react-dom": "^19",
     "remark": "^15.0.1",
     "remark-gfm": "^4.0.1",
-    "remark-html": "^16.0.1"
+    "remark-html": "^16.0.1",
+    "resend": "^6.9.4"
   },
   "devDependencies": {
     "@types/node": "^20.14.8",

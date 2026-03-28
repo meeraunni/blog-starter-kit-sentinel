@@ -13,15 +13,10 @@ export default function SubscribeForm() {
       </p>
 
       <form
-        action="https://formsubmit.co/meeraunni4@gmail.com"
+        action="/api/subscribe"
         method="POST"
         className="mt-6 grid gap-4"
       >
-        <input type="hidden" name="_subject" value="New Sentinel Identity subscriber" />
-        <input type="hidden" name="_template" value="table" />
-        <input type="hidden" name="_cc" value="info@sentinelidentity.ca" />
-        <input type="hidden" name="_next" value="https://sentinelidentity.ca/thanks?form=subscribe" />
-        <input type="hidden" name="_captcha" value="false" />
         <input
           type="text"
           name="name"

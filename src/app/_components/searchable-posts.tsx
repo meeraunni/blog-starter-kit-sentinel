@@ -68,7 +68,7 @@ export default function SearchablePosts({ posts }: Props) {
       </section>
 
       {filteredPosts.length > 0 ? (
-        <MoreStories posts={filteredPosts} />
+        <MoreStories posts={filteredPosts} query={query} />
       ) : (
         <section id="latest" className="pb-20 pt-10 lg:pb-24 lg:pt-12">
           <div className="mb-8">

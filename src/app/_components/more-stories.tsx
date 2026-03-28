@@ -3,9 +3,10 @@ import { PostPreview } from "./post-preview";
 
 type Props = {
   posts: Post[];
+  query?: string;
 };
 
-export function MoreStories({ posts }: Props) {
+export function MoreStories({ posts, query }: Props) {
   return (
     <section id="latest" className="pb-20 pt-10 lg:pb-24 lg:pt-12">
       <div className="mb-8">
@@ -24,6 +25,7 @@ export function MoreStories({ posts }: Props) {
             author={post.author}
             slug={post.slug}
             excerpt={post.excerpt}
+            query={query}
           />
         ))}
       </div>

@@ -170,13 +170,13 @@ For general browser registration, focus on the bootstrap requirement and method 
 
 That is the difference between a passkey rollout that scales and one that collapses into support noise.
 
-## Screenshot references
+## Example registration screens
 
-Microsoft’s registration screenshots that map directly to this article are here:
+![Add passkey flow in Security info](/assets/blog/passkey-registration/ms-add-passkey.png)
+*Source: Microsoft Learn, [Register a passkey (FIDO2)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-register-passkey).*
 
-- [Browser registration through Security info](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-register-passkey)
-- [iPhone and Android security-key registration](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-register-passkey-mobile?tabs=iOS)
-- [Windows Hello passkey preview configuration and UX](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-entra-passkeys-on-windows)
+![Windows Hello passkey profile and AAGUID configuration](/assets/blog/passkey-policy/ms-windows-passkey-profile.png)
+*Source: Microsoft Learn, [Enable Microsoft Entra passkey on Windows (preview)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-entra-passkeys-on-windows).*
 
 ## Final takeaway
 

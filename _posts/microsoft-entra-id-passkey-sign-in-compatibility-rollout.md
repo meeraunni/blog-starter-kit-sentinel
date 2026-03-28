@@ -146,13 +146,10 @@ The fourth stage should be support-runbook maturity. By that point, your helpdes
 
 Without that runbook, passkey support quickly degenerates into anecdotal troubleshooting.
 
-## Screenshot references
+## Example sign-in screen
 
-The specific UX and support material referenced in this article is shown in Microsoft’s documentation:
-
-- [Sign-in prompts and flow examples](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-sign-in-passkey)
-- [Compatibility matrix by client and scenario](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-fido2-compatibility?tabs=web)
-- [Operational guidance on synced passkeys](https://learn.microsoft.com/en-us/entra/identity/authentication/synced-passkey-faq)
+![Microsoft sign-in welcome screen for passkey flow](/assets/blog/passkey-signin/ms-signin-welcome.png)
+*Source: Microsoft Learn, [How to sign in with a passkey (FIDO2)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-sign-in-passkey).*
 
 ## Final takeaway
 

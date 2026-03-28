@@ -166,12 +166,16 @@ For Windows Hello preview, use a dedicated pilot profile:
 
 This architecture is easier to reason about, easier to troubleshoot, and much safer to expand.
 
-## Screenshot references
+## Example policy screens
 
-The specific policy screens this article is describing are shown in Microsoft’s documentation:
+![Microsoft Entra passkey settings](/assets/blog/passkey-policy/ms-passkey-settings.png)
+*Source: Microsoft Learn, [How to enable passkeys (FIDO2) in Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkeys-fido2).*
 
-- [Passkey profile configuration and group targeting](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkeys-fido2)
-- [Windows Hello passkey profile and AAGUID requirements](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-entra-passkeys-on-windows)
+![Default passkey profile in Microsoft Entra](/assets/blog/passkey-policy/ms-default-passkey-profile.png)
+*Source: Microsoft Learn, [How to enable passkeys (FIDO2) in Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkeys-fido2).*
+
+![Windows Hello passkey profile configuration](/assets/blog/passkey-policy/ms-windows-passkey-profile.png)
+*Source: Microsoft Learn, [Enable Microsoft Entra passkey on Windows (preview)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-entra-passkeys-on-windows).*
 
 ## Final takeaway
 

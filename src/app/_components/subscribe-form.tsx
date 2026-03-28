@@ -2,8 +2,6 @@
 
 import { FormEvent, useState } from "react";
 
-const SUBSCRIBE_ENDPOINT = "https://formsubmit.co/ajax/info@sentinelidentity.ca";
-
 export default function SubscribeForm() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -15,23 +13,17 @@ export default function SubscribeForm() {
     setStatus("loading");
     setMessage("");
 
-    const response = await fetch(SUBSCRIBE_ENDPOINT, {
+    const response = await fetch("/api/subscribe", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json",
       },
-      body: JSON.stringify({
-        name: name || "Subscriber",
-        email,
-        _subject: "New Sentinel Identity subscriber",
-        _template: "table",
-      }),
+      body: JSON.stringify({ name, email }),
     });
 
     const result = await response.json().catch(() => ({}));
 
-    if (!response.ok || result.success === "false") {
+    if (!response.ok) {
       setStatus("error");
       setMessage(result.error || "Unable to subscribe right now.");
       return;

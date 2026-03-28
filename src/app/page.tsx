@@ -12,25 +12,25 @@ export default async function Index() {
     <main className="relative overflow-hidden">
       <Header />
 
-      <section className="border-b border-slate-200/80 bg-[radial-gradient(circle_at_top_left,rgba(194,65,12,0.10),transparent_30%),radial-gradient(circle_at_85%_20%,rgba(8,145,178,0.12),transparent_26%),linear-gradient(135deg,rgba(255,251,245,0.97),rgba(241,245,249,0.96))]">
+      <section className="border-b border-slate-800 bg-[radial-gradient(circle_at_top_left,rgba(217,119,6,0.16),transparent_24%),radial-gradient(circle_at_85%_20%,rgba(16,185,129,0.12),transparent_22%),linear-gradient(135deg,#0f172a_0%,#111827_45%,#1f2937_100%)] text-white">
         <Container>
           <div className="grid gap-8 py-14 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-center lg:py-16">
             <div>
-              <p className="text-sm font-medium uppercase tracking-[0.24em] text-slate-500">
+              <p className="text-sm font-medium uppercase tracking-[0.24em] text-slate-300">
                 Sentinel Identity
               </p>
-              <div className="mt-4 inline-flex rounded-[1.75rem] border border-white/70 bg-white/80 px-6 py-5 shadow-[0_18px_50px_rgba(15,23,42,0.08)] backdrop-blur-sm">
-                <h1 className="text-4xl font-semibold tracking-[-0.05em] text-slate-950 md:text-5xl">
+              <div className="mt-4 inline-flex rounded-[1.75rem] border border-white/10 bg-white/5 px-6 py-5 shadow-[0_18px_50px_rgba(2,6,23,0.22)] backdrop-blur-sm">
+                <h1 className="text-4xl font-semibold tracking-[-0.05em] text-white md:text-5xl">
                   Microsoft Entra Blog
                 </h1>
               </div>
             </div>
 
-            <form className="rounded-xl bg-white p-2 shadow-[0_14px_30px_rgba(2,6,23,0.16)]">
+            <form className="rounded-xl border border-white/10 bg-white/10 p-2 shadow-[0_14px_30px_rgba(2,6,23,0.18)] backdrop-blur-sm">
               <input
                 type="search"
                 placeholder="Search this blog"
-                className="w-full rounded-lg border border-slate-200 px-4 py-3 text-base text-slate-950 outline-none placeholder:text-slate-400"
+                className="w-full rounded-lg border border-white/10 bg-white px-4 py-3 text-base text-slate-950 outline-none placeholder:text-slate-400"
               />
             </form>
           </div>

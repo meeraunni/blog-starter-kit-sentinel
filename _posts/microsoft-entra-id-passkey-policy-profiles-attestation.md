@@ -1,6 +1,6 @@
 ---
 title: "Microsoft Entra ID: Passkey Policy Design, Profiles, AAGUID Restrictions, and Attestation"
-excerpt: "A technical design guide for Microsoft Entra administrators covering passkey policy architecture, passkey profiles, device-bound versus synced passkeys, AAGUID-based restrictions, attestation, and rollout design."
+excerpt: "Learn how Microsoft Entra passkey policy works, how passkey profiles are evaluated, and how AAGUID restrictions and attestation affect registration and sign-in."
 coverImage: "/assets/blog/passkey-policy/cover.svg"
 date: "2026-03-28T21:10:00.000Z"
 author:
@@ -9,162 +9,116 @@ ogImage:
   url: "/assets/blog/passkey-policy/cover.svg"
 ---
 
-## Why passkey policy design matters
+## Overview
 
-Most Entra passkey deployments start with the wrong mental model. Teams often assume passkeys are enabled by turning on a method and then letting users register. That is not how Microsoft Entra actually enforces passkey eligibility.
+This article explains how Microsoft Entra evaluates passkey policy. It focuses on the parts of the design that usually decide whether a rollout is predictable or frustrating:
 
-The real control plane, as Microsoft documents in [How to enable passkeys (FIDO2) in Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkeys-fido2), is a layered decision model:
+- passkey profiles
+- passkey type selection
+- AAGUID restrictions
+- attestation
+- Windows Hello preview-specific behavior
 
-- the tenant must allow passkey self-service registration
-- the user must be in scope for a passkey profile
-- the chosen authenticator has to satisfy the passkey type allowed by that profile
-- if key restrictions are enabled, the authenticator’s AAGUID must satisfy the allow or block rule
-- if attestation is enforced, the authenticator must return attestation Microsoft can validate
-
-This is why badly planned rollouts feel random. They are not random. The directory is evaluating multiple control points, and the admin team has usually configured only part of the chain.
+The authoritative Microsoft configuration guidance is in [How to enable passkeys (FIDO2) in Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkeys-fido2) and [Enable Microsoft Entra passkey on Windows (preview)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-entra-passkeys-on-windows).
 
 ![Passkey policy design](/assets/blog/passkey-policy/cover.svg)
 
-## The policy engine Entra is actually applying
+## What passkey policy controls
 
-Microsoft’s passkey profile model is not a cosmetic wrapper over the old FIDO2 toggle. It is a group-targeted policy framework. When a user tries to register or use a passkey, Entra evaluates the user’s applicable passkey profiles and determines whether the authenticator satisfies at least one of them.
+Microsoft Entra passkey policy is not a single on or off switch. The registration and sign-in path is controlled by several settings that work together:
 
-Microsoft is explicit in the [passkey enablement article](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkeys-fido2) that if a user is targeted by multiple profiles, the evaluation order is not guaranteed, and the passkey is permitted if it fully satisfies one of the targeted profiles.
+1. self-service registration must be allowed
+2. the user must be targeted by a passkey profile
+3. the authenticator must satisfy the allowed passkey type
+4. if key restrictions are enabled, the AAGUID must be allowed
+5. if attestation is enforced, Microsoft must be able to validate the attestation statement
 
-This has an important architectural consequence: the system does not behave like a firewall rule set where the first matching policy wins. It behaves more like a satisfiability model. If you accidentally scope one broad profile and one narrow profile to the same population, the broad profile can make the narrow one operationally irrelevant.
+This layering is why a tenant can appear to have passkeys enabled while registration still fails for a user population. A failure at any stage blocks the full workflow.
 
-That is why passkey design should be treated as policy architecture, not just as directory configuration.
+## How passkey profiles are evaluated
 
-## What a passkey profile really represents
+Microsoft documents in [How to enable passkeys (FIDO2)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkeys-fido2) that passkey profiles are group-targeted policy definitions. A profile tells Entra what type of passkey a targeted user can register and what restrictions apply to that registration.
 
-A passkey profile is Microsoft’s mechanism for binding user scope to authenticator requirements. It lets you describe which populations can register which kinds of passkeys and under what trust assumptions.
+The important runtime detail is that users can be targeted by more than one profile. Microsoft states that evaluation order is not guaranteed and that a passkey is allowed if it satisfies at least one applicable profile. That means profile design should be treated carefully:
 
-As described in [the Microsoft documentation](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkeys-fido2), each profile can define:
+- broad profiles can unintentionally override the intent of narrow profiles
+- exception groups should be isolated
+- privileged populations should not share the same permissive profile as standard users
 
-- the user or group target
-- the allowed passkey type
-- whether attestation is enforced
-- whether key restrictions are used
-- whether the restrictions are allow or block based
+For practical rollout design, it is better to think of passkey profiles as policy personas rather than as ad hoc exceptions.
 
-The important thing to notice is that these are not just registration preferences. They influence the entire credential lifecycle:
+## Passkey type: device-bound and synced
 
-- which credentials can be issued
-- which credentials remain usable later
-- which populations can migrate between provider types
-- which authenticators remain valid after policy changes
+Microsoft lets you control whether a profile allows:
 
-Microsoft also notes that after you opt in to passkey profiles, you cannot opt out, and that the feature currently supports up to three profiles, including the default profile. That limit matters because it forces the architect to think in broad operating personas instead of over-fitting one profile to every exception.
+- device-bound passkeys
+- synced passkeys
+- both
 
-## Why the self-service registration toggle still matters
+This is not only a UX choice. It changes the operational model.
 
-One of the easiest design mistakes is to build a careful set of passkey profiles and forget that the tenant-level registration control can still block the entire workflow.
+As Microsoft explains in the [synced passkey FAQ](https://learn.microsoft.com/en-us/entra/identity/authentication/synced-passkey-faq), synced passkeys are expected to be the best option for most standard users because they reduce issuance and recovery friction. The same Microsoft guidance recommends device-bound passkeys for administrators and highly privileged users.
 
-Microsoft documents [here](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkeys-fido2) that if `Allow self-service set up` is disabled, users cannot register passkeys from [Security info](https://mysignins.microsoft.com), even if the rest of the passkey policy design looks correct.
+That recommendation aligns with how the two models behave:
 
-This tells you something useful about the enforcement pipeline. Microsoft Entra does not start with profile resolution and then discover later that registration is disabled. The flow is rejected earlier because the tenant has not allowed self-service issuance in the first place.
+- device-bound passkeys provide tighter control over the authenticator boundary
+- synced passkeys provide lower lifecycle overhead and better portability
 
-For an architect, that means there are really two gates:
+A clean tenant design usually separates those populations instead of trying to force one passkey type across every role.
 
-1. can this tenant issue passkeys through self-service at all?
-2. if yes, is this specific user-authenticator combination allowed?
+## What AAGUID is and why it matters
 
-If the first gate is closed, all later policy reasoning is irrelevant.
+The Authenticator Attestation GUID, or AAGUID, is the identifier the authenticator presents to represent its make and model. Microsoft defines it in [How to enable passkeys (FIDO2)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkeys-fido2) and uses it as the enforcement primitive for key restrictions.
 
-## Device-bound versus synced is a governance decision, not just a usability choice
+If your tenant needs to allow only specific authenticator models, AAGUID is the control that makes that possible. Entra is not matching on marketing names or vendor branding. It is matching on the identifier supplied during registration.
 
-Microsoft’s documentation draws a hard distinction between device-bound passkeys and synced passkeys. Many teams read that as a user-experience decision. It is more accurately a governance and recovery decision.
+This also has a runtime implication. Microsoft notes that if a previously allowed AAGUID is later removed from policy, existing passkeys associated with that authenticator model can stop working for sign-in. So AAGUID restrictions are not only a registration-time decision. They are also a production access decision.
 
-Device-bound passkeys are tied to a specific authenticator. In Entra terms, that often means:
+## What attestation is doing
 
-- a hardware FIDO2 security key
-- a platform authenticator with device-local binding
-- Windows Hello in the passkey-on-Windows preview model
+Attestation is the mechanism that lets Microsoft validate that the authenticator is what it claims to be. Microsoft explains in [Microsoft Entra ID attestation for passkey (FIDO2) vendors](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-fido2-hardware-vendor) that it relies on FIDO metadata and attestation information returned by the authenticator.
 
-The value of device-bound credentials is control. You know more precisely what physical or local authenticator holds the key material. That is why Microsoft recommends device-bound passkeys for administrators and highly privileged users in the [synced passkey FAQ](https://learn.microsoft.com/en-us/entra/identity/authentication/synced-passkey-faq).
+In practice, attestation changes how much trust Entra can place in the properties associated with the passkey. Microsoft states in [How to enable passkeys (FIDO2)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkeys-fido2):
 
-Synced passkeys solve a different problem. As Microsoft explains in that same FAQ, synced passkeys reduce issuance, replacement, and lifecycle cost. The private key still stays on user-controlled authenticators, but the passkey experience can follow the user through a provider’s sync ecosystem. That makes them operationally attractive for standard user populations.
+- when attestation is enforced, registration requires a valid attestation statement
+- when attestation is not enforced, Entra cannot guarantee the attributes of the passkey, including whether it is synced or device-bound
 
-The deeper engineering point is this: passkey type affects your helpdesk model, your privileged-access model, your recovery model, and your hardware-vendor dependency model. That is why passkey type belongs inside targeted profiles rather than in a single tenant-wide decision.
+That second point is easy to miss. Disabling attestation broadens compatibility, but it also reduces certainty about the authenticator identity and credential classification.
 
-## AAGUID is the control that turns “approved authenticator” into something enforceable
+## Windows Hello preview behavior
 
-When administrators talk about “allow only approved keys,” they are really talking about AAGUID-driven control.
+Windows Hello is a special case in the current passkey design. Microsoft documents in [Enable Microsoft Entra passkey on Windows (preview)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-entra-passkeys-on-windows) that Windows Hello can act as the passkey provider for Microsoft Entra passkeys on Windows.
 
-Microsoft defines the Authenticator Attestation GUID in [How to enable passkeys (FIDO2)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkeys-fido2) as the 128-bit identifier returned by the authenticator to identify its make and model. That means AAGUID is not a friendly label. It is the authoritative identifier Entra can actually evaluate during registration.
+For policy design, the most important Microsoft requirements are:
 
-This is the real reason key restrictions exist. Without AAGUID-based restriction, the directory has no precise way to distinguish one vendor/model family from another at policy time.
+- the Windows Hello AAGUIDs must be explicitly allow-listed
+- key restrictions must be enabled
+- attestation must not be enforced for those preview profiles
 
-Microsoft’s documentation is especially important on one operational detail: if you remove an allowed AAGUID from policy, existing passkeys that depend on that authenticator model can stop working for sign-in. That means AAGUID governance is not only an onboarding decision. It is a runtime access decision with production impact.
+That is why Windows Hello should usually be placed in a dedicated pilot profile rather than mixed into a broader workforce profile during early rollout.
 
-An admin who changes AAGUID policy is effectively changing the set of authenticators that remain trusted by the tenant.
+## Recommended profile model
 
-## What attestation is doing under the hood
+For most tenants, the cleanest implementation is to separate passkey policy into three groups:
 
-Attestation is often described loosely as “verifying the key.” That is too vague to be useful.
-
-Microsoft explains in [Microsoft Entra ID attestation for passkey (FIDO2) vendors](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-fido2-hardware-vendor) that Microsoft relies on the FIDO Alliance Metadata Service and authenticator attestation statements to evaluate authenticator identity and capability. In other words, attestation gives Entra a way to validate that the authenticator presenting itself as a certain model/provider is backed by metadata Microsoft recognizes.
-
-That matters because several higher-level policy promises depend on attestation being meaningful:
-
-- whether Microsoft can trust the authenticator’s reported identity
-- whether the directory can classify the passkey reliably
-- whether AAGUID restrictions are operating on a trustworthy signal
-
-Microsoft is very clear in [the enablement article](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkeys-fido2):
-
-- if attestation is enforced, registration requires a verifiable attestation statement
-- if attestation is not enforced, Entra cannot guarantee the attributes of the passkey, including whether it is synced or device-bound
-
-That second sentence is the one most teams underestimate. Turning off attestation does not merely broaden compatibility. It reduces the certainty of the directory’s own classification of the credential.
-
-## Why Windows Hello needs separate policy treatment
-
-The Windows preview is the best example of why passkey policy cannot be built from generic assumptions.
-
-Microsoft documents in [Enable Microsoft Entra passkey on Windows (preview)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-entra-passkeys-on-windows) that Windows Hello stores Entra passkeys in the Windows Hello container and can back that storage with TPM-backed or software-based protection depending on the device.
-
-For policy design, the important part is not the local storage mechanism by itself. The important part is that Windows Hello is being treated as a passkey provider with its own published AAGUIDs. During preview, Microsoft requires those AAGUIDs to be explicitly allow-listed and requires key restrictions to be turned on for the profile. Microsoft also says attestation should not be enforced for profiles that include Windows Hello AAGUIDs in preview.
-
-That tells you the preview architecture is still converging. Entra can recognize the provider through explicit AAGUID policy, but the attestation path should not be treated as production-grade in the same way as other attested authenticators.
-
-In practice, that means Windows Hello should usually live in its own pilot profile instead of being mixed immediately into your broad workforce design.
-
-## The real failure pattern during passkey rollout
-
-When passkey rollout fails, the symptom is usually “user cannot register.” The root cause is usually one of four different technical failures:
-
-The first failure domain is scope. The user is not in a profile that actually allows the authenticator they are trying to use. Because the evaluation model is “satisfy at least one profile,” badly overlapping profiles can also create the opposite problem: the user is more permitted than the admin intended.
-
-The second failure domain is bootstrap authentication. Microsoft requires the user to complete MFA within the prior five minutes before registration, as documented [here](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkeys-fido2). If that trust bootstrap is missing, the registration flow is denied even though the passkey profile itself is fine.
-
-The third failure domain is authenticator trust. If attestation is enforced and the authenticator’s attestation cannot be validated, the flow fails. If key restrictions are enabled and the AAGUID is not permitted, the flow fails. Those are authenticator-identity failures, not user failures.
-
-The fourth failure domain is feature-specific constraints, especially around Windows preview support. A team can have a correct general passkey design and still fail Windows registration because the required AAGUIDs were not explicitly allow-listed in the preview profile.
-
-## A practical architecture pattern
-
-The cleanest design pattern is to stop trying to make one passkey profile fit every use case.
-
-For privileged populations, use a tightly controlled profile:
+### Admin profile
 
 - device-bound only
 - approved AAGUIDs only
 - attestation enforced where supported
 
-For broad workforce populations, use a separate profile aligned with Microsoft’s recommendation in the [synced passkey FAQ](https://learn.microsoft.com/en-us/entra/identity/authentication/synced-passkey-faq):
+### Workforce profile
 
 - synced passkeys allowed
-- minimal restriction unless there is a compliance requirement
-- lower operational friction
+- minimal restriction unless compliance requires tighter control
 
-For Windows Hello preview, use a dedicated pilot profile:
+### Windows Hello pilot profile
 
-- explicitly allow the Windows Hello AAGUIDs Microsoft publishes
-- enable key restrictions
-- disable attestation for that profile during preview
+- explicit Windows Hello AAGUID allow list
+- key restrictions enabled
+- attestation disabled for preview support
 
-This architecture is easier to reason about, easier to troubleshoot, and much safer to expand.
+This structure maps directly to Microsoft’s guidance and makes later troubleshooting easier because each profile has a clear purpose.
 
 ## Example policy screens
 
@@ -177,11 +131,12 @@ This architecture is easier to reason about, easier to troubleshoot, and much sa
 ![Windows Hello passkey profile configuration](/assets/blog/passkey-policy/ms-windows-passkey-profile.png)
 *Source: Microsoft Learn, [Enable Microsoft Entra passkey on Windows (preview)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-entra-passkeys-on-windows).*
 
-## Final takeaway
+## Key implementation points
 
-Microsoft Entra passkey policy is a trust framework, not a simple method toggle. Profiles decide who can use which passkey types. AAGUID decides whether the authenticator model is acceptable. Attestation decides how strongly Entra can trust the authenticator’s claimed identity. Windows Hello preview adds another provider-specific layer that needs its own policy treatment.
-
-If you understand those relationships, passkey rollout becomes much more predictable. If you ignore them, the tenant quickly ends up with a design that looks enabled in the portal but behaves inconsistently in production.
+- Passkey rollout should be designed as a profile strategy, not a single global toggle.
+- AAGUID restrictions are the real enforcement control for approved authenticator models.
+- Attestation changes the trust quality of the registration, not just the compatibility rate.
+- Windows Hello preview needs its own profile treatment.
 
 ## References
 

@@ -31,6 +31,10 @@ function getSegmentId() {
   return process.env.RESEND_SEGMENT_ID || "";
 }
 
+function getAudienceId() {
+  return process.env.RESEND_AUDIENCE_ID || "";
+}
+
 function escapeHtml(value: string) {
   return value
     .replaceAll("&", "&amp;")
@@ -53,6 +57,7 @@ async function getContactByEmail(email: string) {
 export async function registerSubscriber(email: string, name?: string) {
   const resend = getResend();
   const segmentId = getSegmentId();
+  const audienceId = getAudienceId();
   const normalizedEmail = email.trim().toLowerCase();
   const firstName = name?.trim() || undefined;
 
@@ -60,10 +65,18 @@ export async function registerSubscriber(email: string, name?: string) {
 
   if (existing?.id) {
     await resend.contacts.update({
-      id: existing.id,
+      email: normalizedEmail,
       unsubscribed: false,
+      firstName: firstName || null,
       properties: firstName ? { first_name: firstName } : undefined,
     });
+
+    if (segmentId) {
+      await resend.contacts.segments.add({
+        contactId: existing.id,
+        segmentId,
+      });
+    }
 
     return {
       email: normalizedEmail,
@@ -74,9 +87,9 @@ export async function registerSubscriber(email: string, name?: string) {
 
   const { data, error } = await resend.contacts.create({
     email: normalizedEmail,
+    audienceId,
     firstName,
     unsubscribed: false,
-    segments: segmentId ? [{ id: segmentId }] : undefined,
   });
 
   if (error) {

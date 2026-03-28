@@ -1,6 +1,6 @@
 ---
 title: "Microsoft Entra ID: Troubleshoot Primary Refresh Token (PRT) Failures on Windows"
-excerpt: "Technical troubleshooting for Microsoft Entra Primary Refresh Token failures on Windows, including dsregcmd diagnostics, AAD analytic and operational logs, common status codes, and network/proxy causes."
+excerpt: "Learn how to troubleshoot Microsoft Entra Primary Refresh Token failures on Windows by using dsregcmd, AAD logs, device validation, and network diagnostics."
 coverImage: "/assets/blog/prt-failures/cover.svg"
 date: "2026-03-28T09:10:00.000Z"
 author:
@@ -9,35 +9,31 @@ ogImage:
   url: "/assets/blog/prt-failures/cover.svg"
 ---
 
-## Failure definition
+## Overview
 
-This article covers Windows scenarios where:
+This article covers Windows scenarios where seamless SSO degrades and `dsregcmd /status` shows `AzureAdPrt : NO`.
 
-- users lose seamless SSO
-- Microsoft 365 starts prompting unexpectedly
-- lock/unlock and sign-in behavior becomes inconsistent
-- `dsregcmd /status` shows `AzureAdPrt : NO`
+The authoritative Microsoft guide is [Troubleshoot primary refresh token issues on Windows devices](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-primary-refresh-token).
 
-The authoritative Microsoft source is [Troubleshoot primary refresh token issues on Windows devices](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-primary-refresh-token).
+Typical user symptoms include:
 
-## What the PRT is doing in the backend
-
-Microsoft explains in the [PRT troubleshooting article](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-primary-refresh-token) that on Microsoft Entra joined or hybrid joined Windows devices, the **Primary Refresh Token** is a core component of Windows authentication. It is acquired at sign-in, cached on the device, and refreshed in the background roughly every four hours.
-
-That backend behavior explains two important failure patterns:
-
-- the device can appear healthy immediately after sign-in because a cached PRT still exists
-- SSO can degrade later when background refresh fails and the PRT expires
-
-A PRT issue is therefore usually a **token refresh path** problem, not just a generic "sign-in prompt" problem.
-
-As documented in [Understanding Primary Refresh Token (PRT)](https://learn.microsoft.com/en-us/entra/identity/devices/concept-primary-refresh-token), the PRT is device-bound and participates in how Windows and Microsoft identity brokers obtain downstream cloud tokens. That is why PRT failures can surface as broad SSO instability across multiple applications instead of as a single isolated auth error.
+- repeated Microsoft 365 sign-in prompts
+- loss of seamless SSO after time passes
+- inconsistent browser and Office sign-in behavior
 
 ![Primary Refresh Token failure indicators](/assets/blog/prt-failures/cover.svg)
 
-## Where to start: dsregcmd, not guesswork
+## What a PRT does
 
-Microsoft’s first troubleshooting step is [Get the status of the primary refresh token](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-primary-refresh-token).
+Microsoft explains in [Understanding Primary Refresh Token (PRT)](https://learn.microsoft.com/en-us/entra/identity/devices/concept-primary-refresh-token) that the PRT is a device-bound token used by Windows and Microsoft identity brokers to support downstream token acquisition.
+
+The operational consequence is important: a PRT problem is rarely just an app problem. It is a device SSO problem that can surface across multiple apps at once.
+
+Microsoft also documents in the PRT troubleshooting article that Windows refreshes the PRT in the background. That explains why users can sign in successfully at first and then start seeing prompts later. The original session may have been healthy while background PRT refresh was already failing.
+
+## How to start troubleshooting
+
+Microsoft’s first diagnostic step is `dsregcmd /status`.
 
 Run:
 
@@ -45,134 +41,85 @@ Run:
 dsregcmd /status
 ```
 
-Then inspect the **SSO State** section, especially:
+Then review the `SSO State` section, especially:
 
 - `AzureAdPrt`
-- `AzureAdPrtAuthority`
 - `Previous Prt Attempt`
 - `Attempt Status`
 - `Credential Type`
 - `Server Error Code`
 - `Server Error Description`
 
-As documented [here](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-primary-refresh-token), on Windows 10 21H1 and later, `dsregcmd` can expose the PRT attempt status directly in the output.
+Microsoft documents these fields in [Troubleshoot primary refresh token issues on Windows devices](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-primary-refresh-token).
 
-## Root cause 1: credentials or server-side auth failed during PRT acquisition
+## Common causes
 
-Microsoft documents status codes and server error mappings in the [PRT troubleshooting article](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-primary-refresh-token). One example Microsoft gives is:
+### User or server-side authentication failure during PRT acquisition
 
-- `Attempt Status : 0xc000006d`
-- `Server Error Code : invalid_grant`
-- `AADSTS50126`
+Microsoft maps common server errors in the PRT troubleshooting article. One documented example is `AADSTS50126` paired with `invalid_grant`.
 
-### Validation steps
+This means the device reached the Microsoft token service, but the PRT issuance attempt itself failed.
 
-1. Run `dsregcmd /status`.
-2. Capture the `Attempt Status`, `Server Error Code`, and `Server Error Description`.
-3. Map the result to the status-code guidance in the Microsoft article.
+### Device authentication failure
 
-### Root-cause explanation
+Microsoft documents `AADSTS50155` as a device authentication failure and notes that the device object might be deleted or disabled.
 
-The device reached the token endpoint, but the authentication exchange for PRT issuance failed. That means the failure is in the PRT acquisition flow itself, not necessarily in device registration.
+This is a different failure class from user credential issues. In this case, the user may authenticate correctly while the device trust layer fails.
 
-## Root cause 2: the device cannot authenticate itself to Microsoft Entra
+### Network or proxy failure
 
-Microsoft explicitly documents `AADSTS50155: Device authentication failed` in the [PRT troubleshooting article](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-primary-refresh-token). Microsoft states there that the device may have been deleted or disabled.
-
-### Validation steps
-
-1. Check whether the device object still exists and is enabled in Entra.
-2. Compare the local device state from `dsregcmd /status` with the Entra device object.
-3. If Microsoft identifies the device object as deleted/disabled, re-register the device according to the documented join type.
-
-### Root-cause explanation
-
-PRT issuance depends on both user and device trust. If Microsoft Entra cannot authenticate the device object, token issuance fails even when the user portion of sign-in looks valid. That is the architectural reason a user can keep entering correct credentials and still fail to regain seamless SSO.
-
-## Root cause 3: network, proxy, or endpoint reachability problems
-
-Microsoft documents common WinHTTP errors in the [PRT troubleshooting article](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-primary-refresh-token), including:
+Microsoft lists common WinHTTP failures such as:
 
 - `ERROR_WINHTTP_TIMEOUT`
 - `ERROR_WINHTTP_NAME_NOT_RESOLVED`
 - `ERROR_WINHTTP_CANNOT_CONNECT`
 - `ERROR_WINHTTP_CONNECTION_ERROR`
 
-Microsoft also states there that in environments using an outbound proxy, the **computer account** must be able to discover and silently authenticate to the proxy where required.
+This is especially important in environments with outbound proxy infrastructure, because the machine context has to be able to complete the background token flow.
 
-### Validation steps
+### Missing or misread diagnostics
 
-1. Use `dsregcmd /status` and Event Viewer to find the failing URL and error context.
-2. Review **AAD Analytic** and **AAD Operational** logs, as documented [here](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-primary-refresh-token).
-3. If needed, capture traces by using the Microsoft `netsh trace` method documented in the same article.
+Microsoft explicitly points administrators to the **AAD Analytic** and **AAD Operational** logs. Without those logs, teams often guess based on user-visible symptoms instead of reading the actual PRT acquisition path.
 
-### Root-cause explanation
+### Problem is misdiagnosed as an app issue
 
-PRT refresh is a scheduled network transaction. If the device cannot reach the right Microsoft endpoint, or cannot traverse the proxy path correctly, the cached token ages out and SSO degrades. The delayed nature of the symptom is important: the break usually appears when the cached token can no longer hide the failed refresh path.
+Microsoft’s guidance makes it clear that PRT failure is often the root cause behind later Outlook, Teams, or browser prompts. If `AzureAdPrt` is already failing, the app prompt is often the messenger, not the actual fault domain.
 
-## Root cause 4: the admin is not reading the right event logs
+## How to validate the problem
 
-Microsoft is explicit in the [PRT troubleshooting article](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-primary-refresh-token): you need both **AAD Analytic** and **AAD Operational** logs.
+Use this order:
 
-As mentioned [here](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-primary-refresh-token), Event IDs **1006** and **1007** bracket the PRT acquisition flow in the analytic log, and Event ID **1081** can include server error details.
+1. run `dsregcmd /status`
+2. inspect the `SSO State` section
+3. capture the attempt status and server error values
+4. verify the device object still exists and is enabled
+5. review the AAD Analytic and Operational logs
+6. if needed, follow Microsoft’s network trace guidance
 
-### Validation steps
+Microsoft documents the event log path and relevant events in [Troubleshoot primary refresh token issues on Windows devices](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-primary-refresh-token).
 
-1. Open **Event Viewer**.
-2. Enable **Show Analytic and Debug Logs** if needed.
-3. Browse to **Applications and Services Logs > Microsoft > Windows > AAD**.
-4. Review the **Analytic** and **Operational** logs around the repro window.
+## What usually fixes it
 
-### Root-cause explanation
+The remediation depends on the stage that failed:
 
-Many PRT incidents are diagnosable without guessing because the CloudAP and AAD logging stack exposes the exact failing stage of token acquisition.
+- if the failure is `invalid_grant` or a user-authentication issue, fix the credential or auth-side problem first
+- if device authentication failed, validate the Entra device object and repair or re-register the device
+- if the failure is network or proxy related, fix service reachability from the machine context
+- if the sign-in prompt is only a symptom, solve the PRT issue before debugging the application
 
-## Root cause 5: the issue is being misread as an app problem
+The main point is to treat PRT as a device-token pipeline rather than as an app symptom.
 
-Because PRT affects Windows SSO broadly, users often report the first visible symptom at the app layer:
+## Key implementation points
 
-- Outlook prompts again
-- Teams reauthenticates
-- browser-based SSO becomes inconsistent
+- `dsregcmd /status` is the primary PRT diagnostic entry point.
+- PRT failure often appears after the original sign-in because refresh is a background process.
+- Device trust and user trust are both required for successful PRT issuance.
+- App prompts are often downstream effects of a Windows token problem.
 
-Microsoft’s [PRT troubleshooting article](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-primary-refresh-token) explains that those symptoms can appear after background refresh failure causes the cached PRT to expire.
-
-### Validation steps
-
-1. Confirm whether `AzureAdPrt` is `NO`.
-2. Check whether prompts appeared after extended lock/unlock or elapsed time rather than at the original device sign-in.
-3. If yes, treat the issue as a device SSO/token problem before debugging the application itself.
-
-### Root-cause explanation
-
-The application is often the messenger, not the root cause. The real failure happened earlier in the Windows token refresh path. This is why Microsoft’s own guidance starts with device SSO diagnostics rather than app-specific token traces.
-
-## Recommended troubleshooting order
-
-1. Run `dsregcmd /status` and inspect the **SSO State**, as documented [here](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-primary-refresh-token).
-2. Capture `Attempt Status`, `Server Error Code`, and `Server Error Description`.
-3. Review **AAD Analytic** and **AAD Operational** logs around the failing window.
-4. If the failure points to device auth, validate the Entra device object.
-5. If the failure points to connectivity, follow Microsoft’s network and `netsh trace` guidance from the same article.
-6. Only after those checks should you move up-stack into application-specific debugging.
-
-## Final takeaway
-
-PRT failures are not generic "Windows sign-in issues." They are failures in one of three documented backend paths:
-
-- user or server-side auth during PRT acquisition
-- device authentication to Microsoft Entra
-- network/proxy connectivity to required token endpoints
-
-Use Microsoft’s `dsregcmd` and AAD log guidance first. It is the shortest path to the actual root cause.
-
-## Microsoft References
+## References
 
 - [Troubleshoot primary refresh token issues on Windows devices](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-primary-refresh-token)
 - [Troubleshoot devices by using the dsregcmd command](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-device-dsregcmd)
 - [Troubleshooting Windows devices in Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity/devices/troubleshoot-device-windows-joined)
-
-## Supplemental References
-
 - [Understanding Primary Refresh Token (PRT)](https://learn.microsoft.com/en-us/entra/identity/devices/concept-primary-refresh-token)
 - [Primary Refresh Token (PRT) in Azure and Microsoft 365](https://blog.matrixpost.net/azure-active-directory-primary-refresh-token-prt-single-sign-on-to-azure-and-office-365/)

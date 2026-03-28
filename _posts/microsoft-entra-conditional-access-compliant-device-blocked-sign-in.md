@@ -1,6 +1,6 @@
 ---
-title: "Microsoft Entra Conditional Access: Why a Compliant Device Is Still Blocked at Sign-In"
-excerpt: "A technical guide to troubleshooting Microsoft Entra Conditional Access when Intune says a device is compliant but sign-in is blocked, including browser support, device identity, sign-in logs, and grant control behavior."
+title: "Microsoft Entra ID: Troubleshoot 'Require device to be marked as compliant' Sign-In Failures"
+excerpt: "Technical troubleshooting for Conditional Access failures where the device is compliant in Intune but Microsoft Entra still blocks token issuance."
 coverImage: "/assets/blog/compliant-device-blocked/cover.svg"
 date: "2026-03-27T21:20:00.000Z"
 author:
@@ -9,187 +9,164 @@ ogImage:
   url: "/assets/blog/compliant-device-blocked/cover.svg"
 ---
 
-## The problem behind a very common help desk ticket
+## Failure definition
 
-One of the most common Microsoft Entra access complaints sounds like this:
+The scenario in scope is:
 
-> "The device is compliant in Intune, but Conditional Access still blocks the sign-in."
+- the device is shown as compliant in Intune
+- the user signs in to a cloud resource
+- Microsoft Entra blocks token issuance because a Conditional Access policy requiring a compliant device was not satisfied
 
-This is not one problem. It is several possible problems that look identical from the user’s perspective.
+This failure is easy to describe badly. The common summary is "Intune says compliant but Entra says blocked." The more precise summary is:
 
-In practice, the failure usually comes from one of these layers:
+**the compliance state exists, but the sign-in transaction did not satisfy Microsoft Entra’s device-based evaluation requirements**
 
-- the device has compliance, but the sign-in path cannot present device identity
-- the browser is unsupported for device-based access controls
-- the device is not registered in the expected way
-- the sign-in event is being evaluated before the full device context is available
-- the policy was designed too broadly and blocks its own bootstrap path
+That distinction matters because the [grant control documentation](https://learn.microsoft.com/en-us/entra/identity/conditional-access/concept-conditional-access-grant) and the [Conditional Access conditions documentation](https://learn.microsoft.com/en-us/azure/active-directory/conditional-access/concept-conditional-access-conditions) make clear that device-based enforcement depends on both:
 
-The key is to stop asking only whether the device is compliant and start asking whether Entra can **prove** that compliance during the exact sign-in path being used.
+- a valid device identity
+- a supported client path that can present that identity during sign-in
 
-## Compliance and device identity are related, but they are not the same thing
+## What the control actually checks
 
-A device being compliant in Intune does not automatically mean every sign-in can satisfy **Require device to be marked as compliant**.
+As documented in [What is device identity?](https://learn.microsoft.com/en-us/entra/identity/devices/overview), device-based Conditional Access depends on a device object in Microsoft Entra ID. As documented in [Configure grant controls in Microsoft Entra](https://learn.microsoft.com/en-us/entra/identity/conditional-access/concept-conditional-access-grant), **Require device to be marked as compliant** only supports Microsoft Entra-registered devices on supported platforms that are enrolled with Intune.
 
-For that grant control to work, Entra needs device identity information during the sign-in event. Microsoft documents that device-based controls require the device to be registered with Entra and supported on the relevant platform and browser path.
+That means "device is compliant in Intune" is necessary, but it is not the whole condition. Microsoft Entra still has to identify the device during the sign-in and match that sign-in to a registered, managed, policy-evaluable device object.
 
-That means you need all of the following to line up:
+## Root cause 1: the sign-in path cannot present device identity
 
-- device registration state
-- Intune compliance state
-- supported browser or client
-- supported operating system
-- policy conditions that match the real access path
+The [Conditional Access conditions documentation](https://learn.microsoft.com/en-us/azure/active-directory/conditional-access/concept-conditional-access-conditions) explicitly lists the supported browsers and operating systems for satisfying device policies. That page also states two details admins often miss:
 
-If any one of those is missing, the sign-in may still show as blocked even though the device is healthy in Intune.
+- the browsers in the support table are the ones that support **device authentication**
+- the device check fails if the browser is in **private mode** or if **cookies are disabled**
 
-## Root cause 1: the browser path cannot satisfy device identification
+As mentioned [here](https://learn.microsoft.com/en-us/azure/active-directory/conditional-access/concept-conditional-access-conditions), that means a device can be perfectly compliant and still fail the policy if the browser session cannot carry the device proof.
 
-This is one of the biggest sources of false assumptions.
+### Validation steps
 
-Microsoft’s Conditional Access documentation explains that to satisfy a device policy such as **Require device to be marked as compliant**, only certain browser and operating system combinations support device authentication properly.
+1. Open the failed sign-in in **Entra sign-in logs**.
+2. Record the **browser** and **operating system** used for the failed event.
+3. Compare that combination to the support table in [Conditional Access conditions](https://learn.microsoft.com/en-us/azure/active-directory/conditional-access/concept-conditional-access-conditions).
+4. Confirm the user was not in private browsing and did not disable cookies.
 
-Examples from current Microsoft guidance:
+### Root-cause explanation
 
-- **Windows 10+**: Edge, Chrome, Firefox 91+
-- **iOS**: Edge, Safari
-- **Android**: Edge, Chrome
-- **macOS**: Edge, Chrome, Firefox 133+, Safari
-- **Linux desktop**: Edge
+The policy engine is not directly evaluating Intune compliance "in the abstract." It is evaluating whether the specific token request carried the evidence needed to map the request to a device and then check that device’s compliance state.
 
-If the user signs in with an unsupported browser path, Entra may not be able to determine the device state, even if the device is enrolled and compliant.
+## Root cause 2: the device is enrolled, but the registration state is not the one the policy expects
 
-That is why "it works in one browser but not another" is often a real architecture issue, not a random bug.
+As explained in [What is device identity?](https://learn.microsoft.com/en-us/entra/identity/devices/overview), Microsoft Entra recognizes device identity through registration, join, or hybrid join. Device-based Conditional Access relies on that object. If the object is missing, stale, or mismatched, compliance cannot be applied correctly at sign-in.
 
-## Root cause 2: the device is compliant, but not registered in the way the grant control expects
+### Validation steps
 
-Microsoft documents that devices must be registered with Entra before they can be used for device-based Conditional Access checks.
+1. Confirm the device has a valid device object in **Microsoft Entra ID > Devices**.
+2. Confirm the object state matches the expected platform model:
+   - Microsoft Entra registered
+   - Microsoft Entra joined
+   - Microsoft Entra hybrid joined
+3. On Windows, run `dsregcmd /status` and compare the local registration state to the Entra object.
 
-That means you should verify:
+### Root-cause explanation
 
-- Microsoft Entra registered
-- Microsoft Entra joined
-- Microsoft Entra hybrid joined
+Intune compliance by itself does not manufacture device identity. The sign-in succeeds only when Entra can associate the token request with the expected device object and then evaluate the relevant compliance signal.
 
-The right answer depends on the platform and the policy model you are enforcing.
+## Root cause 3: the client certificate path failed
 
-If the device object is missing, stale, or not the one Entra expects during sign-in, the user can end up with a compliant device that still cannot satisfy the grant control.
+Microsoft states in [Configure grant controls in Microsoft Entra](https://learn.microsoft.com/en-us/entra/identity/conditional-access/concept-conditional-access-grant) that on Windows, iOS, Android, macOS, and some non-Microsoft browsers, Microsoft Entra identifies the device using a **client certificate** provisioned during device registration. Microsoft also states there that the user must select that certificate when prompted.
 
-For Windows investigation, `dsregcmd /status` remains one of the most useful checks because it confirms the local registration and join state directly from the endpoint.
+### Validation steps
 
-## Root cause 3: the browser certificate or device proof is not being presented
+1. Ask whether the user saw a certificate prompt on first browser sign-in.
+2. Confirm the user did not dismiss or reject the certificate.
+3. Reproduce the sign-in in a normal browser session, not an incognito/private session.
+4. If possible, compare behavior between the failing browser and Microsoft Edge.
 
-Microsoft notes that on Windows, iOS, Android, macOS, and some non-Microsoft browsers, Entra identifies the device through a client certificate provisioned during device registration.
+### Root-cause explanation
 
-This has several operational implications:
+If the certificate-based device proof is not presented, the browser session may authenticate the user successfully but still fail device-based Conditional Access because the device identity never reached the policy engine.
 
-- the certificate prompt may appear during first use
-- private browsing can break the flow
-- disabled cookies can break the flow
-- browser state and sign-in context matter
+## Root cause 4: Edge is supported, but the Edge session is not
 
-If the user dismisses the certificate prompt, uses a private window, or signs in through a path that does not preserve device identity correctly, the device state can appear unknown or noncompliant even though Intune shows the device as healthy.
+The [Conditional Access conditions page](https://learn.microsoft.com/en-us/azure/active-directory/conditional-access/concept-conditional-access-conditions) states that **Microsoft Edge 85+ requires the user to be signed in to the browser to properly pass device identity**. The [Microsoft Edge Conditional Access documentation](https://learn.microsoft.com/en-us/deployedge/ms-edge-security-conditional-access) expands on how Edge participates in device-based access.
 
-## Root cause 4: Edge profile or browser sign-in state is incomplete
+### Validation steps
 
-Microsoft specifically documents that Edge requires the user to be signed in to the browser profile to properly pass device identity in supported scenarios.
+1. Confirm the user is actually signed into the Edge browser profile.
+2. Confirm the session is not **InPrivate**.
+3. Re-run the sign-in after confirming the profile state.
 
-That means a user can say:
+### Root-cause explanation
 
-- "I’m in Edge"
-- "The device is compliant"
-- "Why am I still blocked?"
+This is a browser-state problem, not a compliance-policy problem. The browser is supported, but the session is not carrying the device identity in the manner Microsoft documents.
 
-and the answer can still be that the browser itself is not in the state required to carry device identity to Entra.
+## Root cause 5: the policy design blocks its own enrollment or recovery path
 
-This is a good example of why "supported browser" is not the same thing as "correctly configured browser session."
+The [Conditional Access troubleshooting documentation](https://learn.microsoft.com/en-us/entra/identity/conditional-access/troubleshoot-conditional-access) recommends using sign-in logs, the What If tool, and [report-only mode](https://learn.microsoft.com/en-us/entra/identity/conditional-access/concept-conditional-access-report-only) to understand policy effects before broad enforcement. This is directly relevant when a tenant requires compliant devices very early in the lifecycle.
 
-## Root cause 5: the policy is blocking a registration or bootstrap flow
+### Validation steps
 
-Microsoft’s own Conditional Access troubleshooting guidance warns against broad policies that require compliant devices for all users and all resources before the organization has a safe onboarding path.
+1. Use the failed sign-in’s **Conditional Access** tab to identify the exact blocking policy.
+2. Evaluate whether that same policy blocks:
+   - device enrollment
+   - Company Portal access
+   - admin onboarding
+   - browser bootstrap on unmanaged/BYOD endpoints
+3. Use [What If](https://learn.microsoft.com/en-us/entra/identity/conditional-access/what-if-tool) and [report-only mode](https://learn.microsoft.com/en-us/entra/identity/conditional-access/concept-conditional-access-report-only) to test the revised policy model.
 
-This is where tenants create their own lockout conditions.
+### Root-cause explanation
 
-Common examples:
+This is a policy-architecture failure. The tenant has created a control that assumes device proof exists before the workflow that establishes or exposes that proof can complete.
 
-- new user cannot reach enrollment because access already requires compliance
-- admin cannot reach Intune portal because access already requires compliance
-- BYOD phone cannot finish the managed app or registration path because the compliant device rule is enforced too early
+## Root cause 6: the admin is reading the final error but not the sign-in details
 
-This is not a device problem. It is a policy design problem.
+The [Applied Conditional Access policies view](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/how-to-view-applied-conditional-access-policies) and [Conditional Access troubleshooting guidance](https://learn.microsoft.com/en-us/entra/identity/conditional-access/troubleshoot-conditional-access) are the authoritative places to inspect what actually happened during the sign-in.
 
-## Root cause 6: the sign-in log is telling you the device state was unknown, not truly noncompliant
+### Validation steps
 
-In real incidents, admins often focus on the final blocked result and miss what the sign-in details actually show.
+For the failed sign-in, review:
 
-The more useful fields are:
-
-- **Client app**
-- **Browser**
-- **Operating system**
+- **Conditional Access** tab
 - **Device ID**
 - **Compliant**
 - **Managed**
-- **Conditional Access tab**
-- **Error code**
+- **Client app**
+- **Browser**
+- **Operating system**
 
-Microsoft’s sign-in troubleshooting guidance highlights codes such as:
+If the device ID is absent or the browser is unsupported, the root cause may be missing device evidence rather than true noncompliance.
 
-- `AADSTS53000` for **DeviceNotCompliant**
-- `AADSTS53003` for **BlockedByConditionalAccess**
+### Root-cause explanation
 
-But the interpretation still depends on whether Entra received a valid device signal from the sign-in path.
+The sign-in result alone is too coarse. The diagnostic data in the sign-in log tells you whether the problem is policy selection, missing device proof, unsupported client path, or actual compliance failure.
 
-If the device ID is missing or the browser path is unsupported, the issue may be that the device could not be evaluated correctly, not that Intune truly marked it noncompliant.
+## Recommended troubleshooting order
 
-## A fast troubleshooting sequence that works
-
-When a compliant device is blocked, use this order:
-
-1. Check the Entra sign-in log for the exact attempt.
-2. Open the **Conditional Access** tab and confirm which policy blocked it.
-3. Check whether the **Device ID** is present.
-4. Check the **Browser** and **Operating system** values against Microsoft’s supported browser matrix.
-5. Confirm the device is actually registered in Entra, not just enrolled in Intune.
-6. On Windows, validate device registration locally with `dsregcmd /status`.
-7. Confirm the user is not in private browsing or a cookie-restricted session.
-8. If Edge is used, confirm the user is signed into the Edge profile.
-
-That sequence usually narrows the problem quickly.
-
-## Design guidance to avoid this class of issue
-
-If you want fewer "compliant but blocked" incidents:
-
-1. Do not apply **Require device to be marked as compliant** to every user and every resource without a bootstrap plan.
-2. Keep one safe enrollment and recovery path available.
-3. Publish the supported browser list to users and support staff.
-4. Test mobile and browser paths separately.
-5. Review policy interactions with app protection and approved app controls instead of stacking them blindly.
-
-Most mature Conditional Access deployments fail less because the policy is technically stronger. They fail less because the access paths were designed intentionally.
+1. Open the failed sign-in in [sign-in logs](https://learn.microsoft.com/en-us/entra/identity/conditional-access/troubleshoot-conditional-access).
+2. Review the [Conditional Access tab](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/how-to-view-applied-conditional-access-policies) for the blocking policy.
+3. Check whether **Device ID**, **Compliant**, and **Managed** values are populated.
+4. Compare the browser and OS with the support matrix in [Conditional Access conditions](https://learn.microsoft.com/en-us/azure/active-directory/conditional-access/concept-conditional-access-conditions).
+5. Validate Microsoft Entra device registration state using [device identity](https://learn.microsoft.com/en-us/entra/identity/devices/overview) and local Windows checks where relevant.
+6. Confirm the browser session was not private and did not suppress the device certificate path.
+7. Re-evaluate whether the policy is blocking enrollment or proof-up flows.
 
 ## Final takeaway
 
-If Intune says a device is compliant but Entra still blocks the sign-in, the problem is often not the compliance policy itself.
+When a compliant device is blocked, the real question is not "is Intune right or is Entra right?"
 
-The real issue is usually one of these:
+The real question is whether the token request provided the evidence Microsoft Entra needs to:
 
-- unsupported browser path
-- missing device identity during sign-in
-- stale or unexpected registration state
-- policy design blocking enrollment or proof-up
-- misread sign-in log interpretation
+1. identify the device
+2. map it to the correct Entra device object
+3. evaluate the compliance grant control on a supported client path
 
-Ask whether Entra could identify the device during **that exact sign-in**, not only whether Intune liked the device five minutes earlier.
+Most failures reduce to one of those documented dependencies.
 
 ## Microsoft References
 
+- [What is device identity?](https://learn.microsoft.com/en-us/entra/identity/devices/overview)
+- [Configure grant controls in Microsoft Entra](https://learn.microsoft.com/en-us/entra/identity/conditional-access/concept-conditional-access-grant)
+- [Use conditions in Conditional Access policies](https://learn.microsoft.com/en-us/azure/active-directory/conditional-access/concept-conditional-access-conditions)
 - [Troubleshoot sign-in problems with Conditional Access](https://learn.microsoft.com/en-us/entra/identity/conditional-access/troubleshoot-conditional-access)
-- [Use Conditional Access with Microsoft Intune compliance policies](https://learn.microsoft.com/en-us/mem/intune/protect/conditional-access)
-- [How to configure grant controls in Microsoft Entra](https://learn.microsoft.com/en-us/entra/identity/conditional-access/concept-conditional-access-grant)
-- [How to use conditions in Conditional Access policies](https://learn.microsoft.com/en-us/azure/active-directory/conditional-access/concept-conditional-access-conditions)
+- [View applied Conditional Access policies in sign-in logs](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/how-to-view-applied-conditional-access-policies)
+- [Conditional Access report-only mode](https://learn.microsoft.com/en-us/entra/identity/conditional-access/concept-conditional-access-report-only)
+- [What If tool for Conditional Access](https://learn.microsoft.com/en-us/entra/identity/conditional-access/what-if-tool)
 - [Microsoft Edge and Conditional Access](https://learn.microsoft.com/en-us/deployedge/ms-edge-security-conditional-access)
-- [Conditional Access and sign-in logs](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/how-to-view-applied-conditional-access-policies)
-- [What is device identity in Microsoft Entra ID?](https://learn.microsoft.com/en-us/entra/identity/devices/overview)
-- [Microsoft Entra device management FAQ](https://learn.microsoft.com/entra/identity/devices/faq)

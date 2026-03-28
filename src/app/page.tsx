@@ -1,7 +1,7 @@
 import Container from "@/app/_components/container";
 import ConsultingForm from "@/app/_components/consulting-form";
 import Header from "@/app/_components/header";
-import { MoreStories } from "@/app/_components/more-stories";
+import SearchablePosts from "@/app/_components/searchable-posts";
 import SubscribeForm from "@/app/_components/subscribe-form";
 import { getAllPosts } from "@/lib/api";
 
@@ -12,33 +12,8 @@ export default async function Index() {
     <main className="relative overflow-hidden">
       <Header />
 
-      <section className="border-b border-slate-800 bg-[radial-gradient(circle_at_top_left,rgba(217,119,6,0.16),transparent_24%),radial-gradient(circle_at_85%_20%,rgba(16,185,129,0.12),transparent_22%),linear-gradient(135deg,#0f172a_0%,#111827_45%,#1f2937_100%)] text-white">
-        <Container>
-          <div className="grid gap-8 py-14 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-center lg:py-16">
-            <div>
-              <p className="text-sm font-medium uppercase tracking-[0.24em] text-slate-300">
-                Sentinel Identity
-              </p>
-              <div className="mt-4 inline-flex px-0 py-2">
-                <h1 className="text-4xl font-semibold tracking-[-0.05em] text-white md:text-5xl">
-                  Microsoft Entra Blog
-                </h1>
-              </div>
-            </div>
-
-            <form className="rounded-xl border border-white/10 bg-white/10 p-2 shadow-[0_14px_30px_rgba(2,6,23,0.18)] backdrop-blur-sm">
-              <input
-                type="search"
-                placeholder="Search this blog"
-                className="w-full rounded-lg border border-white/10 bg-white px-4 py-3 text-base text-slate-950 outline-none placeholder:text-slate-400"
-              />
-            </form>
-          </div>
-        </Container>
-      </section>
-
       <Container>
-        {allPosts.length > 0 && <MoreStories posts={allPosts} />}
+        {allPosts.length > 0 && <SearchablePosts posts={allPosts} />}
 
         <section className="pb-16 pt-6 lg:pt-10">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(340px,1.05fr)] lg:items-start">

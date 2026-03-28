@@ -50,7 +50,11 @@ export function newsletterReady() {
 
 async function getContactByEmail(email: string) {
   const resend = getResend();
-  const { data } = await resend.contacts.get({ email });
+  const audienceId = getAudienceId();
+  const { data } = await resend.contacts.get({
+    email,
+    audienceId: audienceId || undefined,
+  });
   return (data || null) as ContactRecord | null;
 }
 
@@ -66,6 +70,7 @@ export async function registerSubscriber(email: string, name?: string) {
   if (existing?.id) {
     await resend.contacts.update({
       email: normalizedEmail,
+      audienceId: audienceId || undefined,
       unsubscribed: false,
       firstName: firstName || null,
       properties: firstName ? { first_name: firstName } : undefined,

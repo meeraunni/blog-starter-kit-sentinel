@@ -1,0 +1,25 @@
+<svg width="1600" height="1000" viewBox="0 0 1600 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="1000" rx="48" fill="#0E1624"/>
+  <rect x="56" y="56" width="1488" height="888" rx="36" fill="url(#bg)"/>
+  <rect x="168" y="242" width="344" height="430" rx="34" fill="#112038" stroke="#7DD3FC" stroke-opacity=".34" stroke-width="3"/>
+  <rect x="628" y="242" width="344" height="430" rx="34" fill="#112038" stroke="#34D399" stroke-opacity=".34" stroke-width="3"/>
+  <rect x="1088" y="242" width="344" height="430" rx="34" fill="#112038" stroke="#F59E0B" stroke-opacity=".34" stroke-width="3"/>
+  <text x="250" y="340" fill="#E8F6FF" font-family="Arial, sans-serif" font-size="54" font-weight="700">EDGE</text>
+  <text x="686" y="340" fill="#E8FFF5" font-family="Arial, sans-serif" font-size="54" font-weight="700">CHROME</text>
+  <text x="1178" y="340" fill="#FFF7E8" font-family="Arial, sans-serif" font-size="54" font-weight="700">SAFARI</text>
+  <rect x="224" y="410" width="232" height="74" rx="20" fill="#12332A"/>
+  <rect x="684" y="410" width="232" height="74" rx="20" fill="#18324A"/>
+  <rect x="1144" y="410" width="232" height="74" rx="20" fill="#3A2520"/>
+  <text x="286" y="456" fill="#E8FFF6" font-family="Arial, sans-serif" font-size="28" font-weight="700">SUPPORTED</text>
+  <text x="734" y="456" fill="#E7F4FF" font-family="Arial, sans-serif" font-size="28" font-weight="700">DEPENDS</text>
+  <text x="1192" y="456" fill="#FFF2E2" font-family="Arial, sans-serif" font-size="28" font-weight="700">PLATFORM</text>
+  <path d="M802 756C700 756 618 674 618 572V556H986V572C986 674 904 756 802 756Z" fill="#E5FBFF"/>
+  <path d="M802 366C742 366 694 414 694 474V556H910V474C910 414 862 366 802 366Z" fill="#0C4667"/>
+  <path d="M712 556H892V622C892 693 854 756 802 790C750 756 712 693 712 622V556Z" fill="#1293B6"/>
+  <defs>
+    <linearGradient id="bg" x1="138" y1="104" x2="1460" y2="906" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F1B31"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+  </defs>
+</svg>

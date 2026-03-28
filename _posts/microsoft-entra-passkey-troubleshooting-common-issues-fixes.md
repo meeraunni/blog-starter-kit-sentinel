@@ -28,7 +28,7 @@ The reason these incidents feel messy is that passkey behavior depends on multip
 - same-device versus cross-device flow
 - lifecycle state of the credential itself
 
-This guide is designed as a troubleshooting playbook for administrators. It uses Microsoft documentation as the primary source and then adds the recurring field patterns that show up in Microsoft community discussions and Reddit posts from admins deploying passkeys in the real world.
+This guide is designed as a troubleshooting playbook for administrators. It uses Microsoft documentation as the primary source and then adds the recurring field patterns that show up in real tenant incidents.
 
 ## First question: what stage is actually failing?
 
@@ -118,7 +118,7 @@ Microsoft documents explicit prerequisites for cross-device registration and sig
 - both devices must have internet connectivity
 - required platform endpoints must be reachable
 
-In Tech Community discussions, the "connecting to your device" symptom shows up repeatedly when one of those dependencies is missing or unreliable. The user sees one symptom, but the failure can be anywhere in Bluetooth pairing, device-to-device transport, or outbound endpoint reachability.
+In real-world passkey rollouts, the "connecting to your device" symptom shows up repeatedly when one of those dependencies is missing or unreliable. The user sees one symptom, but the failure can be anywhere in Bluetooth pairing, device-to-device transport, or outbound endpoint reachability.
 
 ### What to check
 
@@ -145,7 +145,7 @@ Typical examples:
 - approved-client-app rule that conflicts with the registration experience
 - phishing-resistant enforcement applied before the user has completed registration
 
-One recurring Reddit pattern is the "chicken and egg" problem: users are required to use passkeys everywhere before they have completed initial setup on a new phone or new account.
+One recurring field pattern is the "chicken and egg" problem: users are required to use passkeys everywhere before they have completed initial setup on a new phone or new account.
 
 ### What to check
 
@@ -268,7 +268,7 @@ That sequence is much more effective than starting from "the user says passkeys 
 
 ## Common field patterns from docs and community discussions
 
-Across Microsoft Learn, Tech Community, and Reddit, the same themes appear repeatedly:
+Across Microsoft Learn and repeated production troubleshooting patterns, the same themes appear repeatedly:
 
 - registration blocked by policy scope
 - Android registration failure on unsupported hardware
@@ -291,7 +291,7 @@ Most Microsoft Entra passkey incidents are explainable. They usually reduce to o
 
 If you sort the issue into the right bucket early, passkey troubleshooting becomes much more deterministic.
 
-## Microsoft and Community References
+## Microsoft References
 
 - [Passkeys in Microsoft Authenticator FAQ](https://learn.microsoft.com/en-us/entra/identity/authentication/passkey-authenticator-faq)
 - [Support passkeys in Authenticator in your Microsoft Entra tenant](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-support-authenticator-passkey)
@@ -300,7 +300,3 @@ If you sort the issue into the right bucket early, passkey troubleshooting becom
 - [Sign in with passkeys in Authenticator for Android and iOS](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-sign-in-passkey-authenticator)
 - [Passkey authentication matrix with Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-fido2-compatibility)
 - [Passkey profiles in Microsoft Entra ID (preview)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkey-profiles)
-- [Create passkey from Microsoft Authenticator discussion](https://techcommunity.microsoft.com/discussions/microsoft-entra/create-passkey-from-microsoft-authenticator/4402420)
-- [Issue hanging on "connecting to your device" discussion](https://techcommunity.microsoft.com/discussions/microsoft-entra/issues-with-passkey-login-hanging-on-connecting-to-your-device/4405321)
-- [Passkey deployment: two issues](https://www.reddit.com/r/Passkeys/comments/1of4l2s)
-- [Microsoft Authenticator with Passkey](https://www.reddit.com/r/entra/comments/1gnmahd)

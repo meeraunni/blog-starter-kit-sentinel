@@ -1,0 +1,23 @@
+<svg width="1600" height="1000" viewBox="0 0 1600 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="1000" rx="48" fill="#0E1420"/>
+  <rect x="56" y="56" width="1488" height="888" rx="36" fill="url(#bg)"/>
+  <rect x="180" y="212" width="470" height="540" rx="36" fill="#111D31" stroke="#34D399" stroke-opacity=".3" stroke-width="3"/>
+  <rect x="792" y="212" width="620" height="540" rx="36" fill="#121E33" stroke="#93C5FD" stroke-opacity=".3" stroke-width="3"/>
+  <rect x="254" y="294" width="322" height="76" rx="20" fill="#12332A"/>
+  <rect x="254" y="420" width="322" height="76" rx="20" fill="#15314B"/>
+  <rect x="254" y="546" width="322" height="76" rx="20" fill="#3A1F23"/>
+  <text x="294" y="344" fill="#E8FFF6" font-family="Arial, sans-serif" font-size="30" font-weight="700">INTUNE: COMPLIANT</text>
+  <text x="294" y="470" fill="#E7F4FF" font-family="Arial, sans-serif" font-size="30" font-weight="700">DEVICE ID CHECK</text>
+  <text x="294" y="596" fill="#FFECEC" font-family="Arial, sans-serif" font-size="30" font-weight="700">SIGN-IN BLOCKED</text>
+  <path d="M1010 300C899 300 810 389 810 500V632C810 743 899 832 1010 832C1121 832 1210 743 1210 632V500C1210 389 1121 300 1010 300Z" fill="#E5F8FF"/>
+  <path d="M1010 374C947 374 896 425 896 488V554H1124V488C1124 425 1073 374 1010 374Z" fill="#0D4566"/>
+  <path d="M920 554H1100V634C1100 709 1062 775 1010 807C958 775 920 709 920 634V554Z" fill="#0F7B9A"/>
+  <path d="M1228 340L1346 458" stroke="#F87171" stroke-width="18" stroke-linecap="round"/>
+  <path d="M1346 340L1228 458" stroke="#F87171" stroke-width="18" stroke-linecap="round"/>
+  <defs>
+    <linearGradient id="bg" x1="146" y1="104" x2="1460" y2="910" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0D1A2E"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+  </defs>
+</svg>

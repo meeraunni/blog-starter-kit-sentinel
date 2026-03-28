@@ -1,0 +1,42 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" rx="36" fill="#07111E"/>
+  <rect x="28" y="28" width="1144" height="574" rx="30" fill="url(#bg)"/>
+  <rect x="76" y="88" width="1048" height="456" rx="28" fill="#0E1726" stroke="#26354A"/>
+  <rect x="112" y="128" width="312" height="44" rx="12" fill="#16304B"/>
+  <text x="138" y="158" fill="#DFF3FF" font-family="Arial, sans-serif" font-size="24" font-weight="700">PASSKEY (FIDO2)</text>
+  <rect x="112" y="196" width="296" height="308" rx="22" fill="#101E32" stroke="#325C92"/>
+  <text x="142" y="238" fill="#ECF7FF" font-family="Arial, sans-serif" font-size="25" font-weight="700">Default Profile</text>
+  <rect x="142" y="266" width="236" height="42" rx="10" fill="#143553"/>
+  <text x="160" y="293" fill="#D7F3FF" font-family="Arial, sans-serif" font-size="20" font-weight="700">Device-bound</text>
+  <rect x="142" y="322" width="236" height="42" rx="10" fill="#0F2A42"/>
+  <text x="160" y="349" fill="#D7F3FF" font-family="Arial, sans-serif" font-size="20" font-weight="700">Attestation: On</text>
+  <rect x="142" y="378" width="236" height="42" rx="10" fill="#143553"/>
+  <text x="160" y="405" fill="#D7F3FF" font-family="Arial, sans-serif" font-size="20" font-weight="700">AAGUID Filter</text>
+  <rect x="142" y="434" width="236" height="42" rx="10" fill="#0F2A42"/>
+  <text x="160" y="461" fill="#D7F3FF" font-family="Arial, sans-serif" font-size="20" font-weight="700">Admins</text>
+  <rect x="472" y="196" width="296" height="308" rx="22" fill="#101E32" stroke="#4E7CB2"/>
+  <text x="500" y="238" fill="#ECF7FF" font-family="Arial, sans-serif" font-size="25" font-weight="700">Workforce Profile</text>
+  <rect x="502" y="266" width="236" height="42" rx="10" fill="#17465C"/>
+  <text x="520" y="293" fill="#D9FFFF" font-family="Arial, sans-serif" font-size="20" font-weight="700">Synced</text>
+  <rect x="502" y="322" width="236" height="42" rx="10" fill="#143A4D"/>
+  <text x="520" y="349" fill="#D9FFFF" font-family="Arial, sans-serif" font-size="20" font-weight="700">Attestation: Off</text>
+  <rect x="502" y="378" width="236" height="42" rx="10" fill="#17465C"/>
+  <text x="520" y="405" fill="#D9FFFF" font-family="Arial, sans-serif" font-size="20" font-weight="700">Broad rollout</text>
+  <rect x="502" y="434" width="236" height="42" rx="10" fill="#143A4D"/>
+  <text x="520" y="461" fill="#D9FFFF" font-family="Arial, sans-serif" font-size="20" font-weight="700">Non-admins</text>
+  <rect x="832" y="196" width="250" height="308" rx="22" fill="#101E32" stroke="#3F9BB5"/>
+  <text x="862" y="238" fill="#ECF7FF" font-family="Arial, sans-serif" font-size="25" font-weight="700">Signals</text>
+  <circle cx="956" cy="318" r="72" fill="#0B2230" stroke="#48BDD6"/>
+  <text x="912" y="312" fill="#B8F7FF" font-family="Arial, sans-serif" font-size="22" font-weight="700">AAGUID</text>
+  <text x="894" y="342" fill="#B8F7FF" font-family="Arial, sans-serif" font-size="22" font-weight="700">ATTEST</text>
+  <path d="M424 352H472" stroke="#4E7CB2" stroke-width="4" stroke-linecap="round"/>
+  <path d="M768 352H832" stroke="#48BDD6" stroke-width="4" stroke-linecap="round"/>
+  <text x="78" y="578" fill="#ECF3FA" font-family="Arial, sans-serif" font-size="48" font-weight="700">POLICY, PROFILES, ATTENTION TO AAGUIDS</text>
+  <defs>
+    <linearGradient id="bg" x1="58" y1="42" x2="1136" y2="592" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F172A"/>
+      <stop offset="0.55" stop-color="#081423"/>
+      <stop offset="1" stop-color="#101A28"/>
+    </linearGradient>
+  </defs>
+</svg>

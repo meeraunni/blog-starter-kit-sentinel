@@ -1,0 +1,30 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" rx="36" fill="#08111E"/>
+  <rect x="28" y="28" width="1144" height="574" rx="30" fill="url(#bg)"/>
+  <rect x="72" y="92" width="1056" height="438" rx="28" fill="#0D1826" stroke="#2A3645"/>
+  <rect x="106" y="136" width="270" height="314" rx="24" fill="#102031" stroke="#336792"/>
+  <text x="140" y="180" fill="#EDF5FF" font-family="Arial, sans-serif" font-size="24" font-weight="700">SAME DEVICE</text>
+  <rect x="172" y="216" width="138" height="168" rx="26" fill="#12283E" stroke="#69B7FF"/>
+  <circle cx="242" cy="340" r="18" fill="#69B7FF"/>
+  <text x="164" y="422" fill="#D9EEFF" font-family="Arial, sans-serif" font-size="18" font-weight="700">FACE / PIN / KEY</text>
+  <rect x="462" y="136" width="270" height="314" rx="24" fill="#10202F" stroke="#2B9AB0"/>
+  <text x="494" y="180" fill="#EDFDFE" font-family="Arial, sans-serif" font-size="24" font-weight="700">CROSS DEVICE</text>
+  <rect x="502" y="236" width="82" height="110" rx="18" fill="#143041" stroke="#5FD5E1"/>
+  <rect x="610" y="216" width="84" height="152" rx="20" fill="#112C35" stroke="#7BE4E8"/>
+  <path d="M584 288H610" stroke="#5FD5E1" stroke-width="4" stroke-linecap="round"/>
+  <rect x="542" y="272" width="28" height="28" fill="#C3FBFF"/>
+  <text x="518" y="420" fill="#D6FBFF" font-family="Arial, sans-serif" font-size="18" font-weight="700">QR + BLUETOOTH</text>
+  <rect x="818" y="136" width="270" height="314" rx="24" fill="#11202D" stroke="#3A8E66"/>
+  <text x="844" y="180" fill="#F0FFF5" font-family="Arial, sans-serif" font-size="24" font-weight="700">SECURITY KEY</text>
+  <rect x="922" y="240" width="54" height="124" rx="16" fill="#133029" stroke="#78E7A2"/>
+  <rect x="942" y="220" width="14" height="24" rx="6" fill="#78E7A2"/>
+  <text x="876" y="420" fill="#DFFEE9" font-family="Arial, sans-serif" font-size="18" font-weight="700">DEVICE-BOUND PATH</text>
+  <text x="72" y="582" fill="#EEF4FB" font-family="Arial, sans-serif" font-size="48" font-weight="700">SIGN-IN FLOWS, COMPATIBILITY, AND ROLLOUT</text>
+  <defs>
+    <linearGradient id="bg" x1="58" y1="42" x2="1138" y2="592" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#101827"/>
+      <stop offset="0.52" stop-color="#091522"/>
+      <stop offset="1" stop-color="#0F1926"/>
+    </linearGradient>
+  </defs>
+</svg>

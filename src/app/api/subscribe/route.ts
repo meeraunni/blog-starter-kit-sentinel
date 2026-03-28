@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { sendSubscriptionConfirmation, upsertSubscriber } from "@/lib/newsletter";
+import { registerSubscriber, sendSubscriptionConfirmation } from "@/lib/newsletter";
 
 function sanitize(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
@@ -15,7 +15,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const subscriber = await upsertSubscriber(email, name);
+    const subscriber = await registerSubscriber(email, name);
     await sendSubscriptionConfirmation(subscriber);
   } catch {
     return NextResponse.redirect(new URL("/thanks?form=subscribe&status=error", request.url));

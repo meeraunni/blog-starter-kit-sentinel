@@ -29,7 +29,7 @@ export default async function ThanksPage({ searchParams }: Props) {
         </h1>
         <p className="mt-5 max-w-2xl text-base leading-8 text-slate-600">
           {isError
-            ? "Please try again shortly. If this continues, the live email or database configuration in Vercel still needs to be completed."
+            ? "Please try again shortly. If this continues, the live email configuration in Vercel still needs attention."
             : isAssessment
               ? "We received your tenant assessment inquiry."
               : "We received your request to subscribe to blog updates."}

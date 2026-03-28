@@ -1,15 +1,12 @@
-import crypto from "crypto";
 import { Resend } from "resend";
 import { Post } from "@/interfaces/post";
-import { ensureDatabaseSchema, runQuery } from "@/lib/db";
-import { getBaseUrl, getSiteUrl } from "@/lib/site";
+import { getSiteUrl } from "@/lib/site";
 
-type SubscriberRow = {
-  id: number;
+type ContactRecord = {
+  id?: string;
   email: string;
-  name: string | null;
-  status: string;
-  unsubscribe_token: string;
+  first_name?: string;
+  unsubscribed?: boolean;
 };
 
 function getResend() {
@@ -23,23 +20,21 @@ function getResend() {
 }
 
 function getMailFrom() {
-  const from = process.env.MAIL_FROM_EMAIL;
-
-  if (!from) {
-    throw new Error("Missing MAIL_FROM_EMAIL");
-  }
-
-  return from;
+  return process.env.MAIL_FROM_EMAIL || "Sentinel Identity <onboarding@resend.dev>";
 }
 
 function getContactInbox() {
-  const to = process.env.CONTACT_TO_EMAIL;
+  return process.env.CONTACT_TO_EMAIL || "info@sentinelidentity.ca";
+}
 
-  if (!to) {
-    throw new Error("Missing CONTACT_TO_EMAIL");
+function getAudienceId() {
+  const audienceId = process.env.RESEND_AUDIENCE_ID;
+
+  if (!audienceId) {
+    throw new Error("Missing RESEND_AUDIENCE_ID");
   }
 
-  return to;
+  return audienceId;
 }
 
 function escapeHtml(value: string) {
@@ -52,47 +47,74 @@ function escapeHtml(value: string) {
 }
 
 export function newsletterReady() {
-  return Boolean(process.env.DATABASE_URL && process.env.RESEND_API_KEY && process.env.MAIL_FROM_EMAIL);
+  return Boolean(process.env.RESEND_API_KEY && process.env.RESEND_AUDIENCE_ID);
 }
 
-export async function upsertSubscriber(email: string, name?: string) {
-  await ensureDatabaseSchema();
+async function getContactByEmail(email: string) {
+  const resend = getResend();
+  const { data } = await resend.contacts.get({ email });
+  return (data || null) as ContactRecord | null;
+}
 
-  const unsubscribeToken = crypto.randomUUID();
+export async function registerSubscriber(email: string, name?: string) {
+  const resend = getResend();
+  const audienceId = getAudienceId();
   const normalizedEmail = email.trim().toLowerCase();
-  const trimmedName = name?.trim() || null;
+  const firstName = name?.trim() || undefined;
 
-  const rows = await runQuery<SubscriberRow>`
-    INSERT INTO newsletter_subscribers (email, name, status, unsubscribe_token, updated_at)
-    VALUES (${normalizedEmail}, ${trimmedName}, 'active', ${unsubscribeToken}, NOW())
-    ON CONFLICT (email)
-    DO UPDATE SET
-      name = COALESCE(EXCLUDED.name, newsletter_subscribers.name),
-      status = 'active',
-      updated_at = NOW()
-    RETURNING id, email, name, status, unsubscribe_token
-  `;
+  const existing = await getContactByEmail(normalizedEmail);
 
-  return rows[0] as SubscriberRow;
+  if (existing?.id) {
+    await resend.contacts.update({
+      id: existing.id,
+      firstName,
+      unsubscribed: false,
+    });
+
+    return {
+      email: normalizedEmail,
+      firstName,
+      contactId: existing.id,
+    };
+  }
+
+  const { data, error } = await resend.contacts.create({
+    email: normalizedEmail,
+    firstName,
+    unsubscribed: false,
+    audienceId,
+  });
+
+  if (error) {
+    throw new Error(error.message || "Could not create contact");
+  }
+
+  return {
+    email: normalizedEmail,
+    firstName,
+    contactId: data?.id || "",
+  };
 }
 
-export async function sendSubscriptionConfirmation(subscriber: SubscriberRow) {
+export async function sendSubscriptionConfirmation(values: {
+  email: string;
+  firstName?: string;
+}) {
   const resend = getResend();
   const from = getMailFrom();
-  const unsubscribeUrl = getBaseUrl(`/api/unsubscribe?token=${encodeURIComponent(subscriber.unsubscribe_token)}`);
   const siteUrl = getSiteUrl();
+  const greeting = values.firstName ? `Hi ${escapeHtml(values.firstName)},` : "Hello,";
 
   await resend.emails.send({
     from,
-    to: [subscriber.email],
+    to: [values.email],
     subject: "You’re subscribed to Microsoft Entra Blog updates",
     html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #0f172a;">
+        <p>${greeting}</p>
         <h1 style="font-size: 22px; margin-bottom: 12px;">Subscription confirmed</h1>
-        <p>You're now subscribed to Microsoft Entra Blog updates from Sentinel Identity.</p>
-        <p>You'll get notified when a new technical post is published.</p>
+        <p>You are now subscribed to Microsoft Entra Blog updates from Sentinel Identity.</p>
         <p><a href="${siteUrl}" style="color: #0f172a;">Visit the blog</a></p>
-        <p style="font-size: 13px; color: #64748b;">If you no longer want these emails, you can <a href="${unsubscribeUrl}" style="color: #64748b;">unsubscribe here</a>.</p>
       </div>
     `,
   });
@@ -126,136 +148,42 @@ export async function sendConsultingRequestEmail(values: {
   });
 }
 
-async function getActiveSubscribers() {
-  await ensureDatabaseSchema();
-
-  return runQuery<SubscriberRow>`
-    SELECT id, email, name, status, unsubscribe_token
-    FROM newsletter_subscribers
-    WHERE status = 'active'
-    ORDER BY created_at ASC
-  `;
-}
-
-async function claimNewsletterSend(post: Post) {
-  await ensureDatabaseSchema();
-
-  const retried = await runQuery<{ id: number }>`
-    UPDATE newsletter_sends
-    SET status = 'processing', attempted_at = NOW(), error = NULL
-    WHERE post_slug = ${post.slug} AND status = 'failed'
-    RETURNING id
-  `;
-
-  if (retried[0]) {
-    return retried[0];
-  }
-
-  const inserted = await runQuery<{ id: number }>`
-    INSERT INTO newsletter_sends (post_slug, post_title, status, attempted_at)
-    VALUES (${post.slug}, ${post.title}, 'processing', NOW())
-    ON CONFLICT (post_slug) DO NOTHING
-    RETURNING id
-  `;
-
-  return inserted[0] || null;
-}
-
-async function markNewsletterSend(post: Post, values: {
-  status: "sent" | "failed";
-  subscriberCount: number;
-  deliveredCount: number;
-  error?: string;
-}) {
-  const status = values.status;
-
-  await runQuery`
-    UPDATE newsletter_sends
-    SET
-      status = ${status},
-      subscriber_count = ${values.subscriberCount},
-      delivered_count = ${values.deliveredCount},
-      sent_at = CASE WHEN ${status} = 'sent' THEN NOW() ELSE sent_at END,
-      error = ${values.error || null}
-    WHERE post_slug = ${post.slug}
-  `;
-}
-
-async function sendNewPostEmail(subscriber: SubscriberRow, post: Post) {
-  const resend = getResend();
-  const from = getMailFrom();
-  const postUrl = getBaseUrl(`/posts/${post.slug}`);
-  const unsubscribeUrl = getBaseUrl(`/api/unsubscribe?token=${encodeURIComponent(subscriber.unsubscribe_token)}`);
-  const greeting = subscriber.name?.trim() ? `Hi ${escapeHtml(subscriber.name.trim())},` : "Hello,";
-
-  await resend.emails.send({
-    from,
-    to: [subscriber.email],
-    subject: `${post.title} | Microsoft Entra Blog`,
-    html: `
-      <div style="font-family: Arial, sans-serif; line-height: 1.65; color: #0f172a;">
-        <p>${greeting}</p>
-        <h1 style="font-size: 22px; margin: 12px 0;">${escapeHtml(post.title)}</h1>
-        <p>${escapeHtml(post.excerpt)}</p>
-        <p><a href="${postUrl}" style="display: inline-block; padding: 12px 18px; border-radius: 999px; background: #020617; color: #ffffff; text-decoration: none;">Read the new post</a></p>
-        <p style="font-size: 13px; color: #64748b;">If you no longer want blog updates, you can <a href="${unsubscribeUrl}" style="color: #64748b;">unsubscribe here</a>.</p>
-      </div>
-    `,
-  });
-}
-
 export async function syncLatestPostToSubscribers(post: Post | undefined) {
   if (!post || !newsletterReady()) {
     return { status: "skipped" as const };
   }
 
-  const claim = await claimNewsletterSend(post);
+  const resend = getResend();
+  const from = getMailFrom();
+  const siteUrl = getSiteUrl();
+  const audienceId = getAudienceId();
 
-  if (!claim) {
-    return { status: "already-sent" as const };
+  const { data, error } = await resend.broadcasts.create({
+    segmentId: audienceId,
+    from,
+    subject: `${post.title} | Microsoft Entra Blog`,
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.65; color: #0f172a;">
+        <h1 style="font-size: 22px; margin: 12px 0;">${escapeHtml(post.title)}</h1>
+        <p>${escapeHtml(post.excerpt)}</p>
+        <p><a href="${siteUrl}/posts/${post.slug}" style="display: inline-block; padding: 12px 18px; border-radius: 999px; background: #020617; color: #ffffff; text-decoration: none;">Read the new post</a></p>
+        <p style="font-size: 13px; color: #64748b;">You can manage your subscription from your email provider or Resend unsubscribe controls.</p>
+      </div>
+    `,
+    name: `post-${post.slug}`,
+    send: true,
+  });
+
+  if (error) {
+    throw new Error(error.message || "Broadcast creation failed");
   }
 
-  const subscribers = await getActiveSubscribers();
-  let deliveredCount = 0;
-
-  try {
-    for (const subscriber of subscribers) {
-      await sendNewPostEmail(subscriber as SubscriberRow, post);
-      deliveredCount += 1;
-    }
-
-    await markNewsletterSend(post, {
-      status: "sent",
-      subscriberCount: subscribers.length,
-      deliveredCount,
-    });
-
-    return {
-      status: "sent" as const,
-      subscriberCount: subscribers.length,
-      deliveredCount,
-    };
-  } catch (error) {
-    await markNewsletterSend(post, {
-      status: "failed",
-      subscriberCount: subscribers.length,
-      deliveredCount,
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
-
-    throw error;
-  }
+  return {
+    status: "sent" as const,
+    broadcastId: data?.id || null,
+  };
 }
 
-export async function unsubscribeByToken(token: string) {
-  await ensureDatabaseSchema();
-
-  const rows = await runQuery<{ email: string }>`
-    UPDATE newsletter_subscribers
-    SET status = 'unsubscribed', updated_at = NOW()
-    WHERE unsubscribe_token = ${token}
-    RETURNING email
-  `;
-
-  return rows[0] || null;
+export async function unsubscribeByToken(_token: string) {
+  return null;
 }

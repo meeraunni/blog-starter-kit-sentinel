@@ -19,7 +19,7 @@ export default async function Index() {
               <p className="text-sm font-medium uppercase tracking-[0.24em] text-slate-300">
                 Sentinel Identity
               </p>
-              <div className="mt-4 inline-flex rounded-[1.75rem] border border-white/10 bg-white/5 px-6 py-5 shadow-[0_18px_50px_rgba(2,6,23,0.22)] backdrop-blur-sm">
+              <div className="mt-4 inline-flex px-0 py-2">
                 <h1 className="text-4xl font-semibold tracking-[-0.05em] text-white md:text-5xl">
                   Microsoft Entra Blog
                 </h1>

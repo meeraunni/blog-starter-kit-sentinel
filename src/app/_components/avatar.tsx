@@ -13,7 +13,7 @@ export default function Avatar({ name }: Props) {
       </div>
       <div>
         <div className="text-sm font-semibold text-slate-950">{displayName}</div>
-        <div className="text-xs uppercase tracking-[0.2em] text-slate-500">Editorial Team</div>
+        <div className="text-xs uppercase tracking-[0.2em] text-slate-500">Cloud Identity Research</div>
       </div>
     </div>
   );

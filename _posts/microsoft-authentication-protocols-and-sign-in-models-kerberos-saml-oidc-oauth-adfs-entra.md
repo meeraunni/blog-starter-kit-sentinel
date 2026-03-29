@@ -1,6 +1,6 @@
 ---
-title: "Microsoft Authentication Protocols and Sign-In Models: Kerberos, NTLM, SAML, WS-Federation, OAuth, OpenID Connect, AD FS, and Microsoft Entra ID"
-excerpt: "A technical guide to the major authentication protocols and sign-in models used in Microsoft environments, including Kerberos, NTLM, SAML, WS-Federation, OAuth 2.0, OpenID Connect, passkeys, certificate-based authentication, AD FS, and Microsoft Entra sign-in models."
+title: "Microsoft Authentication Protocols and Sign-In Models: Kerberos, NTLM, LDAP, SAML, WS-Federation, OAuth, OpenID Connect, AD FS, and Microsoft Entra ID"
+excerpt: "A technical guide to the major authentication protocols and sign-in models used in Microsoft environments, including Kerberos, NTLM, LDAP bind, SAML, WS-Federation, OAuth 2.0, OpenID Connect, passkeys, certificate-based authentication, AD FS, and Microsoft Entra sign-in models."
 coverImage: "/assets/blog/auth-protocols/cover.svg"
 date: "2026-03-28T23:20:00.000Z"
 author:
@@ -19,13 +19,14 @@ When administrators talk about "authentication," they often mix together three d
 
 That mix-up is why identity conversations become confusing so quickly. `AD FS SAML` and `Microsoft Entra SAML` are not two different protocols. They are both SAML-based sign-in patterns, but they use different identity providers, different trust boundaries, and different control planes. Likewise, `OAuth` is not the same thing as `OpenID Connect`, even though they are often used together. And `password hash sync` is not a protocol at all. It is a sign-in architecture.
 
-This article focuses on the major authentication and sign-in models you will actually see in Windows, Active Directory, AD FS, Microsoft Entra, and SaaS integrations. It is not a list of every authentication mechanism in computing. It is a practical technical map for Microsoft identity engineers.
+This article focuses on the major authentication and sign-in models you will actually see in Windows, Active Directory, LDAP-integrated applications, AD FS, Microsoft Entra, and SaaS integrations. It is not a list of every authentication mechanism in computing. It is a practical technical map for Microsoft identity engineers.
 
 Primary Microsoft sources for this topic include:
 
 - [Windows authentication overview](https://learn.microsoft.com/en-us/windows-server/security/windows-authentication/windows-authentication-overview)
 - [Kerberos authentication overview](https://learn.microsoft.com/en-us/windows-server/security/kerberos/kerberos-authentication-overview)
 - [NTLM overview](https://learn.microsoft.com/en-us/windows-server/security/kerberos/ntlm-overview)
+- [Lightweight Directory Access Protocol (LDAP)](https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ldap/lightweight-directory-access-protocol-ldap)
 - [Single sign-on SAML protocol](https://learn.microsoft.com/en-us/entra/identity-platform/single-sign-on-saml-protocol)
 - [OpenID Connect on the Microsoft identity platform](https://learn.microsoft.com/en-us/entra/identity-platform/v2-protocols-oidc)
 - [OAuth 2.0 authorization code flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow)
@@ -57,6 +58,7 @@ If you do not separate these layers, it becomes difficult to explain why a sign-
 | --- | --- | --- |
 | Kerberos | Domain authentication and ticket-based SSO | Active Directory domain logon, Windows-integrated access |
 | NTLM | Legacy challenge-response authentication | Fallback or legacy Windows authentication |
+| LDAP bind | Directory-backed credential validation | Third-party apps, appliances, Linux apps, older enterprise apps against AD |
 | SAML 2.0 | Browser federation with signed assertions | Enterprise app SSO in AD FS and Entra |
 | WS-Federation | Browser federation for Microsoft-era web apps | Older Microsoft 365 and AD FS scenarios |
 | OAuth 2.0 | Delegated or app-to-app authorization | APIs, Graph, mobile and web app token acquisition |
@@ -98,6 +100,31 @@ Unlike Kerberos, NTLM does not rely on the KDC issuing tickets for service acces
 That is a much less scalable and less elegant model than Kerberos because the resource server often has to participate directly in validation or contact a domain controller during the exchange. It also lacks many of the SSO and delegation strengths of Kerberos.
 
 In practical terms, NTLM still matters because any environment that says "Windows integrated authentication" may still be using NTLM for some flows, especially where Kerberos fails because of SPN issues, name resolution issues, or legacy application design.
+
+## LDAP and LDAP bind authentication
+
+LDAP belongs in this conversation, but it needs to be categorized correctly. LDAP is primarily a **directory access protocol**, not a federation protocol and not a ticketing protocol like Kerberos. Microsoft describes LDAP in [Lightweight Directory Access Protocol (LDAP)](https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ldap/lightweight-directory-access-protocol-ldap) as the protocol used by clients to access directory services.
+
+When administrators say "LDAP authentication," they usually mean **LDAP bind authentication**. In that model, the application is not asking the domain controller for a Kerberos ticket and it is not redirecting the user to a cloud identity provider. Instead, the application talks directly to the directory service and attempts to bind using the supplied credentials.
+
+The simplified backend flow looks like this:
+
+1. the user enters a username and password into the application
+2. the application opens an LDAP connection to Active Directory or another LDAP directory
+3. the application performs a bind operation using the supplied credentials
+4. if the bind succeeds, the application treats the user as authenticated
+5. the application may then query group memberships or directory attributes over LDAP
+
+This is why LDAP authentication is common in:
+
+1. third-party enterprise applications
+2. VPN appliances and firewalls
+3. Linux systems integrated with AD
+4. older web apps and middleware products
+
+The key architectural difference is that LDAP bind makes the application a direct participant in password validation. That is very different from Kerberos, where the KDC issues tickets, and very different from SAML or OpenID Connect, where the identity provider authenticates the user and the application consumes an assertion or token.
+
+From a security and modernization standpoint, LDAP authentication is important because many legacy applications still use it, but it is usually not the preferred pattern for modern SaaS and cloud application design. Modern web applications should generally prefer federation or token-based patterns over direct directory binds wherever possible.
 
 ## SAML 2.0
 
@@ -274,10 +301,11 @@ Same protocol. Different IdP. Different policy engine. Different operational mod
 For most modern Microsoft environments, the protocols and models that matter most are:
 
 1. **Kerberos** for Windows domain and on-prem integrated authentication
-2. **OpenID Connect and OAuth 2.0** for modern cloud applications and APIs
-3. **SAML** for enterprise SaaS federation
-4. **Passkeys, CBA, and Windows Hello for Business** for modern phishing-resistant primary authentication
-5. **PHS, PTA, or Federation** for deciding how hybrid users authenticate into Microsoft Entra
+2. **LDAP bind** for legacy and directory-integrated application authentication
+3. **OpenID Connect and OAuth 2.0** for modern cloud applications and APIs
+4. **SAML** for enterprise SaaS federation
+5. **Passkeys, CBA, and Windows Hello for Business** for modern phishing-resistant primary authentication
+6. **PHS, PTA, or Federation** for deciding how hybrid users authenticate into Microsoft Entra
 
 NTLM and WS-Federation are still important, but they are usually modernize-or-support topics rather than preferred greenfield choices.
 
@@ -287,7 +315,8 @@ NTLM and WS-Federation are still important, but they are usually modernize-or-su
 2. OAuth 2.0 is primarily about authorization, while OpenID Connect adds user authentication on top of OAuth.
 3. PHS, PTA, and Federation are sign-in architectures, not authentication protocols.
 4. Kerberos remains the main Windows domain authentication protocol, while NTLM is mostly the legacy or fallback path.
-5. Passkeys, CBA, and Windows Hello for Business all move authentication away from reusable passwords, but they do so using different credential models.
+5. LDAP bind authentication is common in legacy and directory-integrated apps, but it is a direct directory validation pattern rather than a modern federation model.
+6. Passkeys, CBA, and Windows Hello for Business all move authentication away from reusable passwords, but they do so using different credential models.
 
 ## References
 
@@ -296,6 +325,7 @@ NTLM and WS-Federation are still important, but they are usually modernize-or-su
 - [Credentials processes in Windows authentication](https://learn.microsoft.com/en-us/windows-server/security/windows-authentication/credentials-processes-in-windows-authentication)
 - [Kerberos authentication overview](https://learn.microsoft.com/en-us/windows-server/security/kerberos/kerberos-authentication-overview)
 - [NTLM overview](https://learn.microsoft.com/en-us/windows-server/security/kerberos/ntlm-overview)
+- [Lightweight Directory Access Protocol (LDAP)](https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ldap/lightweight-directory-access-protocol-ldap)
 - [Single sign-on SAML protocol](https://learn.microsoft.com/en-us/entra/identity-platform/single-sign-on-saml-protocol)
 - [OpenID Connect on the Microsoft identity platform](https://learn.microsoft.com/en-us/entra/identity-platform/v2-protocols-oidc)
 - [OAuth 2.0 authorization code flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow)

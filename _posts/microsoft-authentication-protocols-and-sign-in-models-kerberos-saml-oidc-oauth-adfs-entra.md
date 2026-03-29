@@ -21,6 +21,8 @@ That mix-up is why identity conversations become confusing so quickly. `AD FS SA
 
 This article focuses on the major authentication and sign-in models you will actually see in Windows, Active Directory, LDAP-integrated applications, AD FS, Microsoft Entra, and SaaS integrations. It is not a list of every authentication mechanism in computing. It is a practical technical map for Microsoft identity engineers.
 
+Before going protocol by protocol, it helps to start with the plain-language identity concepts first. If those concepts are fuzzy, Kerberos, SAML, OAuth, and federation all start sounding like disconnected acronyms instead of different answers to different identity problems.
+
 Primary Microsoft sources for this topic include:
 
 - [Windows authentication overview](https://learn.microsoft.com/en-us/windows-server/security/windows-authentication/windows-authentication-overview)
@@ -40,6 +42,68 @@ Primary Microsoft sources for this topic include:
 
 ![Microsoft authentication protocols map](/assets/blog/auth-protocols/cover.svg)
 
+## The basic concepts first
+
+### What is authentication?
+
+Authentication answers one question: **who are you?**
+
+When a user types a username and password, presents a certificate, touches a security key, or completes a passkey prompt, the system is trying to establish confidence about the identity of the person or workload making the request.
+
+Authentication does not automatically answer what that identity is allowed to do. It only establishes identity with some level of assurance. Microsoft says the same thing differently across its documentation: sign-in methods prove identity, then access controls and authorization logic decide what that identity can access.
+
+### What is authorization?
+
+Authorization answers a different question: **what are you allowed to do now that I know who you are?**
+
+This distinction matters because many failures that users call "authentication problems" are actually authorization problems. A user can authenticate successfully and still be blocked by:
+
+1. group-based app assignment
+2. Microsoft Entra Conditional Access
+3. missing API permissions
+4. application-level role checks
+5. file, mailbox, or SharePoint ACLs
+
+This is also why OAuth 2.0 is so often misunderstood. OAuth mainly tells a resource what the caller is allowed to do. That is authorization, not pure identity proof.
+
+### What is a protocol?
+
+A protocol is simply an agreed technical set of message formats and rules that lets two or more systems complete an identity transaction in a predictable way.
+
+Kerberos is a protocol because the client, domain controller, and server all know how to exchange tickets. SAML is a protocol because the service provider and identity provider both understand how a SAML request and SAML assertion are structured. OpenID Connect is a protocol layer because the application and identity provider both know what an ID token is and how the redirect-based sign-in flow works.
+
+Without a protocol, every application would invent its own sign-in language. Protocols exist so identity systems can trust each other's messages.
+
+### What happens in the backend when a user types a username?
+
+The exact answer depends on the sign-in model, but the pattern is always some version of this:
+
+1. the client captures an identifier such as a username, UPN, or email address
+2. the application or identity provider determines where that identity lives
+3. the system chooses the correct authentication path for that identity
+4. the user is challenged with a password, certificate, passkey, smart card, PIN, or another sign-in method
+5. the identity system validates the proof
+6. the system issues a session, ticket, assertion, or token that downstream services can trust
+7. authorization controls then decide what the now-authenticated identity can actually access
+
+The most important lesson here is that typing a username is usually only the routing trigger. The identity platform first has to decide **which authority should validate this identity** and **which protocol should be used for the rest of the exchange**.
+
+In Active Directory, that may mean a domain controller and Kerberos. In a SaaS app integrated with Microsoft Entra, that may mean a redirect to Entra and an OpenID Connect or SAML exchange. In a legacy appliance, it may mean an LDAP bind straight to the directory.
+
+### What can be returned after successful authentication?
+
+Different protocols produce different proof artifacts:
+
+1. Kerberos returns tickets
+2. NTLM completes a challenge-response validation
+3. SAML returns a signed assertion
+4. WS-Federation returns a federation token
+5. OAuth returns access tokens and often refresh tokens
+6. OpenID Connect returns an ID token and usually OAuth tokens
+7. Passkeys and certificate-based methods usually feed a higher-level token issuance system such as Microsoft Entra, which then issues tokens for applications
+
+That is why identity engineers should think beyond the original credential prompt. The actual thing your application trusts is often not the password itself, but the token, ticket, assertion, or session created after successful authentication.
+
 ## Authentication protocols versus token protocols versus sign-in architectures
 
 The cleanest way to understand the Microsoft identity landscape is to separate the categories before diving into the details.
@@ -51,6 +115,14 @@ The cleanest way to understand the Microsoft identity landscape is to separate t
 **Sign-in architectures** describe where password validation or authentication happens in a Microsoft hybrid environment. Password hash sync, pass-through authentication, and AD FS federation are in this category.
 
 If you do not separate these layers, it becomes difficult to explain why a sign-in uses Kerberos inside the domain, OpenID Connect to a SaaS app, and password hash sync as the cloud authentication architecture behind the scenes.
+
+Another way to say this is:
+
+1. **authentication protocols** answer how identity is proven
+2. **token and federation protocols** answer how that proof is moved between systems
+3. **sign-in architectures** answer where validation really happens in a hybrid environment
+
+Many real sign-ins use all three layers at once.
 
 ## Quick reference
 
@@ -74,6 +146,8 @@ If you do not separate these layers, it becomes difficult to explain why a sign-
 
 Kerberos is the primary authentication protocol for modern Windows domain environments. As Microsoft explains in [Kerberos authentication overview](https://learn.microsoft.com/en-us/windows-server/security/kerberos/kerberos-authentication-overview), it is a ticket-based protocol in which the domain controller hosts the **Key Distribution Center (KDC)** and issues tickets that prove the identity of the user or service.
 
+From first principles, Kerberos exists to solve a basic enterprise problem: users should not have to send their password to every server they access. Instead, a trusted central authority issues cryptographic tickets that servers can rely on.
+
 The backend flow matters more than the acronym:
 
 1. the user signs in and proves knowledge of credentials to the KDC
@@ -90,6 +164,8 @@ Kerberos is also the reason identity engineers need to think in terms of **ticke
 
 NTLM is the older Windows challenge-response protocol and is documented by Microsoft in [NTLM overview](https://learn.microsoft.com/en-us/windows-server/security/kerberos/ntlm-overview). It is still widely encountered because legacy applications, legacy protocols, and broken Kerberos scenarios often fall back to it.
 
+At a very basic level, NTLM solves the same problem Kerberos solves, but with an older model. The server wants proof that the client knows the password-derived secret, but it does not use the Kerberos ticket system to do it.
+
 Unlike Kerberos, NTLM does not rely on the KDC issuing tickets for service access. Instead, it uses a challenge-response model:
 
 1. the client asks for access
@@ -104,6 +180,8 @@ In practical terms, NTLM still matters because any environment that says "Window
 ## LDAP and LDAP bind authentication
 
 LDAP belongs in this conversation, but it needs to be categorized correctly. LDAP is primarily a **directory access protocol**, not a federation protocol and not a ticketing protocol like Kerberos. Microsoft describes LDAP in [Lightweight Directory Access Protocol (LDAP)](https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ldap/lightweight-directory-access-protocol-ldap) as the protocol used by clients to access directory services.
+
+From a beginner's point of view, LDAP is the language applications use to talk to a directory. It can be used to search for users, read group memberships, and in bind scenarios, validate credentials.
 
 When administrators say "LDAP authentication," they usually mean **LDAP bind authentication**. In that model, the application is not asking the domain controller for a Kerberos ticket and it is not redirecting the user to a cloud identity provider. Instead, the application talks directly to the directory service and attempts to bind using the supplied credentials.
 
@@ -130,6 +208,8 @@ From a security and modernization standpoint, LDAP authentication is important b
 
 SAML is one of the most common federation protocols in enterprise SaaS and is documented by Microsoft in [Single sign-on SAML protocol](https://learn.microsoft.com/en-us/entra/identity-platform/single-sign-on-saml-protocol). SAML is not a Windows domain protocol. It is a **browser federation protocol** that moves signed XML assertions between an identity provider and a service provider.
 
+At a basic level, SAML exists so the application does not have to authenticate the user itself. Instead, it trusts a separate identity provider to do that job and send back a signed statement about the user.
+
 The backend flow for SAML looks like this:
 
 1. the user tries to access the service provider
@@ -150,6 +230,8 @@ So when people say "AD FS SAML" and "Entra SAML," they are usually talking about
 
 WS-Federation is another browser federation protocol and appears frequently in older Microsoft application stacks and older Microsoft 365 identity history. It is distinct from SAML even though both are used for federation.
 
+Conceptually, WS-Fed solves the same broad problem as SAML: one system authenticates the user, and another system trusts the resulting token. The difference is in the message model and the application ecosystem around it.
+
 In backend terms, WS-Fed also relies on redirection and a token issuance model:
 
 1. the user hits the application
@@ -165,6 +247,8 @@ Architecturally, WS-Fed is usually encountered when modernizing older federation
 ## OAuth 2.0
 
 OAuth 2.0 is not primarily an authentication protocol. It is an **authorization framework**. Microsoft's [OAuth 2.0 authorization code flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow) makes this explicit by focusing on how clients obtain tokens for APIs and resources.
+
+This is one of the biggest identity concepts to get right. OAuth does not mainly answer "who is the user?" It mainly answers "what can this app or client call?" If the protected resource is an API, OAuth is usually the control plane for access to that API.
 
 The backend flow depends on the grant type, but the most common modern flow is authorization code:
 
@@ -182,6 +266,8 @@ The key conceptual point is that OAuth is about **access to resources**. It tell
 
 OpenID Connect, documented by Microsoft in [OpenID Connect on the Microsoft identity platform](https://learn.microsoft.com/en-us/entra/identity-platform/v2-protocols-oidc), is an authentication layer built on top of OAuth 2.0.
 
+From a basic perspective, OIDC exists because web and mobile apps need more than an access token for APIs. They also need a standardized way to know who signed in. That is what the ID token adds.
+
 The important architectural point is that OIDC adds **identity** to an OAuth-based flow. It introduces the **ID token**, which tells the client who the user is, while OAuth access tokens continue to tell the resource what the client can access.
 
 The simplified backend flow is:
@@ -198,6 +284,8 @@ This is why OIDC is the standard answer for modern web app sign-in with Microsof
 
 Passkeys are Microsoft's modern phishing-resistant authentication method and are covered in [Register a passkey (FIDO2)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-register-passkey) and the Entra authentication methods documentation. In protocol terms, passkeys rely on FIDO2 and WebAuthn concepts: the authenticator generates a public/private key pair, the private key stays protected on the device or authenticator, and the identity provider validates challenge responses using the registered public key.
 
+From first principles, passkeys replace the reusable shared secret model of passwords with an asymmetric key model. The server stores a public key, and only the authenticator holds the private key needed to answer the challenge.
+
 The backend model is fundamentally different from passwords:
 
 1. during registration, the authenticator creates a key pair
@@ -212,6 +300,8 @@ This is why passkeys are phishing resistant. There is no reusable password secre
 
 Microsoft Entra certificate-based authentication, documented in [Set up Microsoft Entra certificate-based authentication](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-certificate-based-authentication) and [What is Microsoft Entra certificate-based authentication?](https://learn.microsoft.com/en-us/azure/active-directory/authentication/concept-certificate-based-authentication), uses X.509 certificates as the primary credential.
 
+At the most basic level, certificate authentication means the system trusts a certificate and its chain of issuance rather than trusting a password typed by the user.
+
 The backend flow is certificate-oriented rather than password-oriented:
 
 1. the client presents a user certificate during the sign-in flow
@@ -224,6 +314,8 @@ This matters because Entra CBA removes the need for AD FS when organizations wan
 ## Windows Hello for Business
 
 Windows Hello for Business is not just a local biometric unlock feature. Microsoft documents in [How Windows Hello for Business authentication works](https://learn.microsoft.com/en-us/windows/security/identity-protection/hello-for-business/hello-how-it-works-authentication) that it is a passwordless, two-factor enterprise authentication system built around device-bound keys plus a local gesture such as PIN or biometrics.
+
+This is why Windows Hello for Business should not be described as "logging in with a PIN." The PIN is only the local unlock gesture. The actual backend proof is performed using the device-bound key that Windows Hello protects.
 
 The backend behavior depends on join state and trust model, but the Microsoft Entra joined flow illustrates the design well:
 
@@ -240,6 +332,8 @@ This is a very different model from password logon. The user's device-bound priv
 
 Password hash sync, described in [What is password hash synchronization with Microsoft Entra ID?](https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/whatis-phs), is not a protocol. It is a **hybrid sign-in architecture**.
 
+It belongs in this article because many people ask "what authentication are we using?" when what they really mean is "where is the password being validated?" PHS answers that architectural question.
+
 In this model:
 
 1. Microsoft Entra Connect synchronizes a hash of the on-prem AD password hash to Microsoft Entra
@@ -251,6 +345,8 @@ This architecture is often misunderstood because administrators think "AD authen
 ## Pass-through authentication
 
 Pass-through authentication, documented in [User sign-in with Microsoft Entra pass-through authentication](https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/how-to-connect-pta), is another hybrid sign-in architecture.
+
+Like PHS, PTA is not a protocol spoken by the application. It is a design choice about where Microsoft Entra gets the password-validation answer from.
 
 The difference from PHS is where password validation happens:
 
@@ -265,6 +361,8 @@ So in PTA, the cloud sign-in page is still Microsoft Entra, but the **password c
 ## Federation with AD FS or PingFederate
 
 Federation, documented in [What is federation with Microsoft Entra ID?](https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/whatis-fed), is the third major Microsoft hybrid sign-in model.
+
+This is the most externally obvious hybrid model because the user is often redirected away from Microsoft Entra to a federated identity provider such as AD FS. The important backend point is that Microsoft Entra is no longer the primary credential-validation authority for that domain.
 
 In this design:
 

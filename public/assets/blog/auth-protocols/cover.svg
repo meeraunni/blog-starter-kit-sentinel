@@ -1,0 +1,64 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="900" rx="40" fill="#07101A"/>
+  <rect x="40" y="40" width="1520" height="820" rx="30" fill="url(#bg)"/>
+  <rect x="96" y="96" width="520" height="170" rx="24" fill="#0E1725" stroke="#30485F"/>
+  <text x="136" y="160" fill="#A7BDD2" font-family="Arial, sans-serif" font-size="34" letter-spacing="5">MICROSOFT AUTHENTICATION</text>
+  <text x="136" y="220" fill="#F4F8FD" font-family="Arial, sans-serif" font-size="58" font-weight="700">Protocols and</text>
+  <text x="136" y="274" fill="#75C2FF" font-family="Arial, sans-serif" font-size="52" font-weight="700">Sign-In Models</text>
+
+  <rect x="120" y="360" width="260" height="120" rx="22" fill="#0D1827" stroke="#2E628B"/>
+  <rect x="120" y="520" width="260" height="120" rx="22" fill="#0D1827" stroke="#2E628B"/>
+  <rect x="430" y="360" width="260" height="120" rx="22" fill="#0D1827" stroke="#2E628B"/>
+  <rect x="430" y="520" width="260" height="120" rx="22" fill="#0D1827" stroke="#2E628B"/>
+  <rect x="740" y="360" width="260" height="120" rx="22" fill="#0D1827" stroke="#2E628B"/>
+  <rect x="740" y="520" width="260" height="120" rx="22" fill="#0D1827" stroke="#2E628B"/>
+  <rect x="1050" y="360" width="260" height="120" rx="22" fill="#0D1827" stroke="#2E628B"/>
+  <rect x="1050" y="520" width="260" height="120" rx="22" fill="#0D1827" stroke="#2E628B"/>
+
+  <text x="165" y="412" fill="#F4F8FD" font-family="Arial, sans-serif" font-size="32" font-weight="700">Kerberos</text>
+  <text x="165" y="450" fill="#A7BDD2" font-family="Arial, sans-serif" font-size="24">Tickets and KDC</text>
+
+  <text x="170" y="572" fill="#F4F8FD" font-family="Arial, sans-serif" font-size="32" font-weight="700">NTLM</text>
+  <text x="170" y="610" fill="#A7BDD2" font-family="Arial, sans-serif" font-size="24">Challenge response</text>
+
+  <text x="482" y="412" fill="#F4F8FD" font-family="Arial, sans-serif" font-size="32" font-weight="700">SAML</text>
+  <text x="482" y="450" fill="#A7BDD2" font-family="Arial, sans-serif" font-size="24">Browser assertions</text>
+
+  <text x="470" y="572" fill="#F4F8FD" font-family="Arial, sans-serif" font-size="32" font-weight="700">WS-Fed</text>
+  <text x="470" y="610" fill="#A7BDD2" font-family="Arial, sans-serif" font-size="24">Legacy federation</text>
+
+  <text x="793" y="412" fill="#F4F8FD" font-family="Arial, sans-serif" font-size="32" font-weight="700">OAuth 2.0</text>
+  <text x="793" y="450" fill="#A7BDD2" font-family="Arial, sans-serif" font-size="24">API authorization</text>
+
+  <text x="775" y="572" fill="#F4F8FD" font-family="Arial, sans-serif" font-size="32" font-weight="700">OpenID Connect</text>
+  <text x="775" y="610" fill="#A7BDD2" font-family="Arial, sans-serif" font-size="24">Identity over OAuth</text>
+
+  <text x="1100" y="412" fill="#F4F8FD" font-family="Arial, sans-serif" font-size="32" font-weight="700">Passkeys</text>
+  <text x="1100" y="450" fill="#A7BDD2" font-family="Arial, sans-serif" font-size="24">FIDO2 / WebAuthn</text>
+
+  <text x="1088" y="572" fill="#F4F8FD" font-family="Arial, sans-serif" font-size="32" font-weight="700">CBA / WHfB</text>
+  <text x="1088" y="610" fill="#A7BDD2" font-family="Arial, sans-serif" font-size="24">Key and certificate auth</text>
+
+  <path d="M380 420H430" stroke="#4587B4" stroke-width="4"/>
+  <path d="M690 420H740" stroke="#4587B4" stroke-width="4"/>
+  <path d="M1000 420H1050" stroke="#4587B4" stroke-width="4"/>
+  <path d="M380 580H430" stroke="#4587B4" stroke-width="4"/>
+  <path d="M690 580H740" stroke="#4587B4" stroke-width="4"/>
+  <path d="M1000 580H1050" stroke="#4587B4" stroke-width="4"/>
+
+  <rect x="1250" y="120" width="220" height="110" rx="22" fill="#111D2D" stroke="#31506B"/>
+  <text x="1290" y="170" fill="#F4F8FD" font-family="Arial, sans-serif" font-size="28" font-weight="700">AD FS</text>
+  <text x="1290" y="205" fill="#A7BDD2" font-family="Arial, sans-serif" font-size="22">Federation IdP</text>
+
+  <rect x="1250" y="250" width="220" height="110" rx="22" fill="#111D2D" stroke="#31506B"/>
+  <text x="1282" y="300" fill="#F4F8FD" font-family="Arial, sans-serif" font-size="28" font-weight="700">Entra ID</text>
+  <text x="1282" y="335" fill="#A7BDD2" font-family="Arial, sans-serif" font-size="22">Cloud IdP</text>
+
+  <defs>
+    <linearGradient id="bg" x1="100" y1="80" x2="1510" y2="860" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#111A29"/>
+      <stop offset="0.55" stop-color="#0A1320"/>
+      <stop offset="1" stop-color="#081019"/>
+    </linearGradient>
+  </defs>
+</svg>

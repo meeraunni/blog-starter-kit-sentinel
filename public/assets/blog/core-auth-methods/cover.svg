@@ -1,0 +1,26 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="900" rx="40" fill="#07101A"/>
+  <rect x="40" y="40" width="1520" height="820" rx="30" fill="url(#bg1)"/>
+  <text x="120" y="150" fill="#A7BED2" font-family="Arial, sans-serif" font-size="34" letter-spacing="5">CORE AUTHENTICATION</text>
+  <text x="120" y="220" fill="#F5F8FD" font-family="Arial, sans-serif" font-size="62" font-weight="700">Kerberos, NTLM,</text>
+  <text x="120" y="282" fill="#74C3FF" font-family="Arial, sans-serif" font-size="56" font-weight="700">LDAP, Passkeys, CBA</text>
+  <rect x="110" y="360" width="260" height="120" rx="22" fill="#0F1827" stroke="#2E628B"/>
+  <rect x="410" y="360" width="260" height="120" rx="22" fill="#0F1827" stroke="#2E628B"/>
+  <rect x="710" y="360" width="260" height="120" rx="22" fill="#0F1827" stroke="#2E628B"/>
+  <rect x="1010" y="360" width="260" height="120" rx="22" fill="#0F1827" stroke="#2E628B"/>
+  <rect x="260" y="540" width="260" height="120" rx="22" fill="#0F1827" stroke="#2E628B"/>
+  <rect x="760" y="540" width="320" height="120" rx="22" fill="#0F1827" stroke="#2E628B"/>
+  <text x="170" y="430" fill="#F5F8FD" font-family="Arial, sans-serif" font-size="32" font-weight="700">Kerberos</text>
+  <text x="485" y="430" fill="#F5F8FD" font-family="Arial, sans-serif" font-size="32" font-weight="700">NTLM</text>
+  <text x="790" y="430" fill="#F5F8FD" font-family="Arial, sans-serif" font-size="32" font-weight="700">LDAP Bind</text>
+  <text x="1085" y="430" fill="#F5F8FD" font-family="Arial, sans-serif" font-size="32" font-weight="700">Passkeys</text>
+  <text x="340" y="610" fill="#F5F8FD" font-family="Arial, sans-serif" font-size="32" font-weight="700">Certificates</text>
+  <text x="845" y="610" fill="#F5F8FD" font-family="Arial, sans-serif" font-size="32" font-weight="700">Windows Hello for Business</text>
+  <defs>
+    <linearGradient id="bg1" x1="120" y1="90" x2="1490" y2="850" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#121B29"/>
+      <stop offset="0.55" stop-color="#0B1321"/>
+      <stop offset="1" stop-color="#08101A"/>
+    </linearGradient>
+  </defs>
+</svg>

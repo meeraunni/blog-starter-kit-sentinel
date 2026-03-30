@@ -1,0 +1,31 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1600" height="900" rx="40" fill="#07101A"/>
+  <rect x="40" y="40" width="1520" height="820" rx="30" fill="url(#bg4)"/>
+  <text x="120" y="150" fill="#A7BED2" font-family="Arial, sans-serif" font-size="34" letter-spacing="5">CUSTOM DOMAINS AND DNS</text>
+  <text x="120" y="220" fill="#F5F8FD" font-family="Arial, sans-serif" font-size="62" font-weight="700">Entra, Microsoft 365,</text>
+  <text x="120" y="282" fill="#74C3FF" font-family="Arial, sans-serif" font-size="56" font-weight="700">SPF, DKIM, DMARC</text>
+  <rect x="140" y="380" width="230" height="110" rx="22" fill="#101926" stroke="#2E628B"/>
+  <rect x="430" y="380" width="230" height="110" rx="22" fill="#101926" stroke="#2E628B"/>
+  <rect x="720" y="380" width="230" height="110" rx="22" fill="#101926" stroke="#2E628B"/>
+  <rect x="1010" y="380" width="230" height="110" rx="22" fill="#101926" stroke="#2E628B"/>
+  <rect x="1300" y="380" width="180" height="110" rx="22" fill="#101926" stroke="#2E628B"/>
+  <text x="215" y="447" fill="#F5F8FD" font-family="Arial, sans-serif" font-size="30" font-weight="700">TXT</text>
+  <text x="505" y="447" fill="#F5F8FD" font-family="Arial, sans-serif" font-size="30" font-weight="700">MX</text>
+  <text x="785" y="447" fill="#F5F8FD" font-family="Arial, sans-serif" font-size="30" font-weight="700">CNAME</text>
+  <text x="1070" y="447" fill="#F5F8FD" font-family="Arial, sans-serif" font-size="30" font-weight="700">SPF / DKIM</text>
+  <text x="1350" y="447" fill="#F5F8FD" font-family="Arial, sans-serif" font-size="30" font-weight="700">DMARC</text>
+  <path d="M370 435H430" stroke="#4B8FC2" stroke-width="5"/>
+  <path d="M660 435H720" stroke="#4B8FC2" stroke-width="5"/>
+  <path d="M950 435H1010" stroke="#4B8FC2" stroke-width="5"/>
+  <path d="M1240 435H1300" stroke="#4B8FC2" stroke-width="5"/>
+  <circle cx="1180" cy="640" r="120" fill="#0F1827" stroke="#2E628B" stroke-width="4"/>
+  <text x="1102" y="633" fill="#F5F8FD" font-family="Arial, sans-serif" font-size="30" font-weight="700">Domain</text>
+  <text x="1098" y="673" fill="#A7BED2" font-family="Arial, sans-serif" font-size="24">Ownership</text>
+  <defs>
+    <linearGradient id="bg4" x1="120" y1="90" x2="1490" y2="850" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#121B29"/>
+      <stop offset="0.55" stop-color="#0A1321"/>
+      <stop offset="1" stop-color="#08111B"/>
+    </linearGradient>
+  </defs>
+</svg>

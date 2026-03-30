@@ -1,6 +1,6 @@
 ---
 title: "Federation and Token Protocols Explained: SAML, WS-Federation, OAuth 2.0, and OpenID Connect"
-excerpt: "A technical guide to federation and token protocols, including SAML, WS-Federation, OAuth 2.0, and OpenID Connect, with examples, identity-provider roles, and backend flow analysis."
+excerpt: "A detailed technical guide to federation and token protocols, including SAML, WS-Federation, OAuth 2.0, and OpenID Connect, with examples, identity-provider roles, and backend flow analysis."
 coverImage: "/assets/blog/federation-token-protocols/cover.svg"
 date: "2026-03-29T09:10:00.000Z"
 author:
@@ -11,9 +11,9 @@ ogImage:
 
 ## Overview
 
-This article focuses on federation and token protocols. These are not the same thing as core credential-validation methods like Kerberos or passkeys. Instead, these protocols define how identity proof and authorization data move between systems such as identity providers, applications, and APIs.
+Federation and token protocols are often explained badly because people collapse several different ideas into one sentence. They say "we use OAuth for sign-in," or "the app uses SAML," or "Entra authenticates the app," without separating the actual protocol, the role of the identity provider, and the role of the application or API.
 
-The protocols covered here are:
+This article focuses on the protocols that move identity proof and authorization data between systems:
 
 1. SAML 2.0
 2. WS-Federation
@@ -26,171 +26,126 @@ The main references for this category are [Single sign-on SAML protocol](https:/
 
 ## What this category means
 
-Federation and token protocols do not usually validate the original password, passkey, or certificate themselves. Instead, they describe how systems exchange identity or access artifacts after authentication has occurred or as part of a coordinated sign-in flow.
+Federation and token protocols usually do not validate the original password or passkey themselves. Instead, they define how one system hands identity or access proof to another.
 
-This is the category where terms such as **identity provider**, **service provider**, **client**, **relying party**, and **resource server** become important.
+That is why this category is fundamentally about **trust transfer**. A user may authenticate once at an identity provider, and then an application or API trusts a token or assertion issued by that provider. If you understand that principle, the differences between SAML, WS-Federation, OAuth, and OpenID Connect become much easier to reason about.
 
-## Identity provider, service provider, client, and resource server
+## The systems involved
 
-Before looking at the protocols, it helps to separate the systems involved.
+Before looking at the protocols, it helps to identify the systems that participate in these flows.
 
-### Identity provider
+An **identity provider (IdP)** authenticates the identity and issues a proof artifact that other systems can trust. Microsoft Entra ID, AD FS, and Okta are common examples.
 
-An **identity provider (IdP)** authenticates the user and issues identity proof that another system can trust.
+A **service provider (SP)** is the term most often used in SAML. It is the application that trusts the identity provider's SAML assertion and turns it into a local session. Salesforce and ServiceNow are common examples.
 
-Examples:
+A **client** or **relying party** is the term used more often in OpenID Connect and OAuth. It is the application obtaining tokens from the identity platform.
 
-1. Microsoft Entra ID
-2. AD FS
-3. Okta
+A **resource server** is the API or service that receives an access token and decides whether the caller is authorized. Microsoft Graph is the most familiar Microsoft example.
 
-### Service provider
-
-A **service provider (SP)** is the application that trusts a SAML assertion from an identity provider and creates a local session.
-
-Examples:
-
-1. Salesforce trusting Microsoft Entra as the SAML IdP
-2. ServiceNow trusting AD FS as the SAML IdP
-
-### Client or relying party
-
-A **client** or **relying party** is the application using OpenID Connect or OAuth to obtain tokens.
-
-Examples:
-
-1. an ASP.NET web app using OIDC with Microsoft Entra
-2. a mobile app using OAuth and OIDC
-
-### Resource server
-
-A **resource server** is the API or service that consumes access tokens.
-
-Examples:
-
-1. Microsoft Graph
-2. a custom API protected by Microsoft Entra
+These role names matter because protocols are not systems. SAML is not an identity provider. OAuth is not an application. OpenID Connect is not Microsoft Entra. The protocol is the language of the trust exchange; the systems are the actors speaking that language.
 
 ## SAML 2.0
 
 **SAML** stands for **Security Assertion Markup Language**.
 
-### What it means
+### What SAML means
 
-SAML is a browser federation protocol that allows an application to delegate user authentication to an identity provider. The application trusts a signed SAML assertion rather than validating the user's credential itself.
+SAML is a browser federation protocol that allows the application to outsource authentication to an identity provider. The application does not validate the password itself. Instead, it trusts a signed SAML assertion stating that the identity provider authenticated the user and that the assertion is intended for that service provider.
 
 ### Example scenario
 
-A user tries to access ServiceNow. ServiceNow redirects the browser to Microsoft Entra ID. Microsoft Entra authenticates the user, issues a SAML assertion, and the browser posts that assertion back to ServiceNow. ServiceNow validates it and creates the session.
+An employee browses to ServiceNow. ServiceNow is configured as a SAML service provider and Microsoft Entra is configured as the SAML identity provider. The browser is redirected to Entra, the user signs in, Entra issues a SAML assertion, and the browser posts that assertion back to ServiceNow. ServiceNow validates the assertion and creates the app session.
 
 ### What happens in the backend
 
-1. the user browses to the service provider
-2. the service provider redirects the browser to the identity provider
-3. the identity provider authenticates the user
-4. the identity provider creates a signed SAML assertion
-5. the browser posts that assertion to the service provider
-6. the service provider validates the assertion's signature, issuer, audience, and time conditions
-7. the service provider creates the local application session
+The service provider starts by redirecting the user to the identity provider. The identity provider authenticates the user using whatever methods it controls. It then creates a signed SAML assertion containing identity claims, issuer information, audience, and time bounds. The browser posts that assertion back to the service provider. The service provider validates the assertion carefully, especially the signature, audience, issuer, and expiry conditions. If the assertion is valid, the application creates its own local session.
+
+The key point is that the service provider is trusting the identity provider's signed statement. The application is not proving the user's identity independently.
 
 ### Why it matters
 
-SAML is still heavily used for enterprise SaaS SSO. The application is trusting the IdP's assertion, not directly proving the user's password itself.
+SAML is still heavily used for enterprise SaaS single sign-on. Many organizations use Microsoft Entra or AD FS as the SAML identity provider for internal and external business applications. Identity engineers need to understand SAML because it remains one of the most common enterprise browser federation patterns.
 
 ## WS-Federation
 
 **WS-Federation** stands for **Web Services Federation**.
 
-### What it means
+### What WS-Federation means
 
-WS-Federation is another browser federation model, historically common in older Microsoft and AD FS-centric application ecosystems.
+WS-Federation solves a similar broad problem to SAML: one system authenticates the user, and another system trusts the resulting token. It sits more naturally in older Microsoft web application ecosystems and historical AD FS integrations.
 
 ### Example scenario
 
-An older ASP.NET application uses AD FS for sign-in through WS-Federation. The app redirects the user to AD FS, AD FS authenticates the user, and then returns a federation token to the app.
+An older ASP.NET application uses AD FS for sign-in. Instead of modern OpenID Connect, the app uses WS-Federation redirects and token handling because that was the integration model available when the application was built.
 
 ### What happens in the backend
 
-1. the application redirects the browser to the federation provider
-2. the federation provider authenticates the user
-3. the federation provider issues a token for the relying party
-4. the browser returns the token to the application
-5. the application validates the token and creates its local session
+The application redirects the browser to the federation provider. The federation provider authenticates the user and issues a federation token for the application. The browser sends that token back to the application, which validates it and creates its local session.
+
+Although the pattern sounds similar to SAML, the message format and protocol behavior are different. That difference matters when troubleshooting or modernizing older application stacks. You cannot assume that every browser federation application can switch from WS-Fed to SAML or OIDC without reconfiguration or code changes.
 
 ### Why it matters
 
-WS-Federation is important mostly because many older Microsoft workloads and older enterprise web applications still rely on it. Identity engineers usually encounter it during support or modernization projects.
+WS-Federation is less important for greenfield application design today, but it remains highly relevant in support and modernization work. A lot of Microsoft enterprise history runs through WS-Fed and AD FS.
 
 ## OAuth 2.0
 
 **OAuth 2.0** stands for **Open Authorization 2.0**.
 
-### What it means
+### What OAuth means
 
-OAuth is mainly about authorization, not identity. It allows a client to obtain an access token that a resource server can trust when deciding what the caller is allowed to do.
+OAuth is mainly about authorization. It tells a protected resource what a client is allowed to do. That is the single most important thing to understand before working with any modern API architecture. OAuth is not primarily about the identity of the user from the application's point of view. It is about delegated or application access to resources.
 
 ### Example scenario
 
-A web application signs the user in and then needs to call Microsoft Graph. The app gets an OAuth access token from Microsoft Entra and presents it to Graph to read the user's profile.
+A web application needs to call Microsoft Graph after the user signs in. The app does not send the user's password to Graph and it does not ask Graph to trust the application's local session. Instead, the app acquires an OAuth access token from Microsoft Entra and presents that token to Microsoft Graph.
 
 ### What happens in the backend
 
-Using the authorization code flow:
+In the common authorization code flow, the client redirects the user to the authorization server. The user authenticates and consents if needed. The authorization server returns an authorization code. The client redeems that code at the token endpoint and receives an access token, and often a refresh token. The client then presents the access token to the resource server. The resource server validates the token and enforces scopes or roles based on the token content.
 
-1. the client redirects the user to the authorization server
-2. the user authenticates and consents if required
-3. the authorization server returns an authorization code
-4. the client redeems that code at the token endpoint
-5. the authorization server issues an access token and often a refresh token
-6. the client presents the access token to the resource server
-7. the resource server validates the token and enforces scopes or roles
+The core idea is that the API trusts the token issued by the authorization server, not the local session of the web app that called it.
 
 ### Why it matters
 
-OAuth is the foundation for API security in Microsoft Entra. If an app needs to call Microsoft Graph or another protected API, OAuth is usually part of the design.
+OAuth is the control plane for API access in Microsoft Entra and in modern cloud identity more broadly. If a workload needs to call Microsoft Graph, Exchange Online APIs, SharePoint APIs, or a custom protected API, OAuth is usually in the design somewhere.
 
 ## OpenID Connect
 
 **OpenID Connect (OIDC)** is an authentication layer built on top of OAuth 2.0.
 
-### What it means
+### What OpenID Connect means
 
-OIDC gives an application a standard way to know who the user is by issuing an **ID token**. It uses OAuth-style flows but adds explicit identity semantics.
+OpenID Connect adds identity semantics to an OAuth-style flow. It introduces the **ID token**, which gives the application a standard way to know who signed in. This is why modern web sign-in discussions almost always mention both OIDC and OAuth together. The application typically uses OIDC for user sign-in and OAuth for downstream API access.
 
 ### Example scenario
 
-A custom web app uses Microsoft Entra for user sign-in. The app gets an ID token to establish who the user is, and it may also get OAuth access tokens for downstream APIs.
+A custom web app uses Microsoft Entra for sign-in. The app redirects the user to Entra, receives an ID token to establish who the user is, and may also receive OAuth access tokens if it needs to call downstream APIs.
 
 ### What happens in the backend
 
-1. the application redirects the user to Microsoft Entra with an OIDC request
-2. the user authenticates
-3. Microsoft Entra returns an authorization code or tokens depending on the flow
-4. the app receives an ID token
-5. the app validates the ID token's signature, audience, issuer, and expiry
-6. the app creates its local user session
-7. if needed, the app also uses OAuth access tokens for APIs
+The application redirects the user to Microsoft Entra with an OpenID Connect request. Microsoft Entra authenticates the user and returns an authorization code or tokens depending on the flow. The application receives an ID token, validates the signature, audience, issuer, and expiry, and then creates its local user session. If the app also needs API access, it uses OAuth access tokens in parallel.
+
+This is why OpenID Connect is not "just another token format." It is the structured identity layer that tells the app who the signed-in user is.
 
 ### Why it matters
 
-OIDC is the standard pattern for modern web and native application sign-in because it solves the user-authentication problem in a token-native way.
+OIDC is the standard pattern for modern cloud and mobile app sign-in because it gives applications a clean, token-native identity model without forcing them to validate passwords directly.
 
-## How these protocols differ
+## How the protocols differ
 
-The most useful comparison is this:
+The most useful technical distinction is not just which protocol name is newer. It is what each protocol is fundamentally trying to move.
 
-1. SAML and WS-Federation are browser federation protocols that return assertions or federation tokens
-2. OAuth 2.0 returns access tokens for APIs and focuses on authorization
-3. OpenID Connect adds identity on top of OAuth by returning an ID token
+SAML and WS-Federation are primarily browser federation models in which one system issues identity proof for another to trust. OAuth is an authorization framework for protected resources and APIs. OpenID Connect is an identity layer on top of OAuth that gives applications a standard way to know who the user is.
 
-This is why you should not say "OAuth is authentication" without qualification. In most designs, OIDC is the identity layer and OAuth is the access layer.
+That is why saying "we use OAuth for authentication" is incomplete at best. In many real designs, the more correct statement is that the application uses OpenID Connect for user authentication and OAuth 2.0 for API authorization.
 
 ## Key implementation points
 
-1. Federation and token protocols move identity or access proof between systems; they are not always the thing that validates the original credential.
-2. SAML and WS-Federation are most naturally explained using identity provider and service provider language.
-3. OAuth 2.0 is mainly about API authorization.
-4. OpenID Connect is the modern token-based answer to web and app user authentication.
+1. Federation and token protocols are about moving trust between systems, not necessarily about validating the original credential.
+2. SAML and WS-Federation are best explained in terms of identity providers and service providers.
+3. OAuth 2.0 is mainly about authorization to APIs and resources.
+4. OpenID Connect adds user identity semantics to OAuth-style flows.
 
 ## References
 

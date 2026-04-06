@@ -9,17 +9,23 @@ export default function Footer() {
             Sentinel Identity
           </p>
           <h2 className="mt-3 max-w-2xl text-2xl font-semibold tracking-[-0.03em] text-slate-950">
-            Microsoft Entra blog posts, implementation notes, and advisory perspectives.
+            Independent Microsoft identity analysis, implementation notes, and advisory perspectives.
           </h2>
           <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600">
-            Insightful reporting, implementation notes, and advisory-led perspectives on Entra ID, Conditional
-            Access, MFA strategy, and tenant resilience.
+            Original long-form writing focused on Microsoft Entra, authentication, Conditional Access, tenant
+            hardening, and the operational details identity engineers need in production.
           </p>
         </div>
 
         <div className="grid gap-3 text-sm text-slate-600 lg:justify-items-end">
           <Link href="/" className="transition hover:text-slate-950">
             Blog
+          </Link>
+          <Link href="/about" className="transition hover:text-slate-950">
+            About
+          </Link>
+          <Link href="/editorial-policy" className="transition hover:text-slate-950">
+            Editorial policy
           </Link>
           <Link href="/services" className="transition hover:text-slate-950">
             Advisory services

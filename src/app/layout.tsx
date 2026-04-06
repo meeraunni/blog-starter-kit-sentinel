@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     template: `%s | ${CMS_NAME}`,
   },
   description:
-    "Premium editorial analysis on Microsoft Entra, Conditional Access, MFA strategy, identity architecture, and tenant hardening.",
+    "Independent long-form technical writing on Microsoft Entra, Conditional Access, authentication, identity architecture, DNS, and tenant hardening.",
   openGraph: {
     images: [HOME_OG_IMAGE_URL],
   },
@@ -36,6 +36,24 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Sentinel Identity",
+    url: "https://sentinelidentity.ca",
+    email: "info@sentinelidentity.ca",
+    sameAs: ["https://sentinelidentity.ca"],
+  };
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Sentinel Identity",
+    url: "https://sentinelidentity.ca",
+    description:
+      "Independent long-form technical writing on Microsoft Entra, authentication, Conditional Access, DNS, and tenant hardening.",
+  };
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -76,6 +94,14 @@ export default function RootLayout({
         />
         <meta name="theme-color" content="#020617" />
         <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
       </head>
       <body
         className={cn(

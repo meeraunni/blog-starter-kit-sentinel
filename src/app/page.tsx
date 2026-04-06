@@ -59,6 +59,39 @@ export default async function Index() {
             <ConsultingForm />
           </div>
         </section>
+
+        <section className="border-t border-slate-200/80 pb-24 pt-12">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(280px,0.9fr)]">
+            <div className="max-w-3xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-900/80">
+                About this site
+              </p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-slate-950 md:text-4xl">
+                Technical writing for Microsoft identity engineers, not generic marketing summaries.
+              </h2>
+              <p className="mt-5 text-base leading-8 text-slate-600">
+                Sentinel Identity publishes detailed Microsoft Entra, authentication, Conditional Access, DNS,
+                and tenant security articles intended for administrators, architects, and cloud engineers who
+                need implementation-level understanding.
+              </p>
+              <p className="mt-4 text-base leading-8 text-slate-600">
+                Articles are written as technical reference material, with official Microsoft documentation linked
+                inline where platform behavior, policy flow, and configuration details need to be validated.
+              </p>
+            </div>
+
+            <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">
+                Editorial standards
+              </p>
+              <div className="mt-5 grid gap-4 text-sm leading-7 text-slate-600">
+                <p>Long-form technical articles focused on Microsoft identity operations and architecture.</p>
+                <p>Official Microsoft sources linked throughout posts where product behavior needs validation.</p>
+                <p>Public privacy, terms, and cookie pages for transparency and reader trust.</p>
+              </div>
+            </div>
+          </div>
+        </section>
       </Container>
     </main>
   );

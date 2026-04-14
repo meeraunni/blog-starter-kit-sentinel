@@ -33,6 +33,9 @@ export function PostBody({ content }: Props) {
         prose-hr:my-12
         prose-img:rounded-[1.75rem]
         prose-img:shadow-[0_20px_50px_rgba(15,23,42,0.12)]
+        prose-figcaption:mt-3
+        prose-figcaption:text-sm
+        prose-figcaption:text-slate-500
         prose-p:leading-8
         prose-li:leading-8
         ${markdownStyles["markdown"]}`}

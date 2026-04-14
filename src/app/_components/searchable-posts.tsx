@@ -48,6 +48,10 @@ export default function SearchablePosts({ posts }: Props) {
                   Microsoft Entra Blog
                 </h1>
               </div>
+              <p className="mt-5 max-w-2xl text-base leading-8 text-slate-300">
+                Long-form technical writing on Microsoft Entra, authentication, Conditional Access, DNS, and
+                tenant operations, written for administrators and engineers who need implementation detail.
+              </p>
             </div>
 
             <form

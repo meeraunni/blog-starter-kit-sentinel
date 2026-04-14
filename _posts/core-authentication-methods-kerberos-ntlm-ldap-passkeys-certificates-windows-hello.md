@@ -1,6 +1,6 @@
 ---
-title: "Core Authentication Methods Explained: Kerberos, NTLM, LDAP Bind, Passkeys, Certificate-Based Authentication, and Windows Hello for Business"
-excerpt: "A detailed technical guide to core authentication methods, including Kerberos, NTLM, LDAP bind, passkeys, certificate-based authentication, and Windows Hello for Business, with examples and backend flow analysis."
+title: "Core Authentication Methods"
+excerpt: "A technical guide to Kerberos, NTLM, LDAP bind, passkeys, certificate-based authentication, and Windows Hello for Business, focused on what each method proves and how the backend validates it."
 coverImage: "/assets/blog/core-auth-methods/cover.svg"
 date: "2026-03-29T09:00:00.000Z"
 author:
@@ -11,187 +11,106 @@ ogImage:
 
 ## Overview
 
-When engineers say "authentication," they often jump directly into product names or acronyms: Kerberos, NTLM, LDAP, passkeys, Windows Hello, smart cards. That jump is one of the reasons authentication design gets discussed poorly. These technologies are not interchangeable, and they are not solving the same problem in the same way.
+Identity teams often talk about authentication as if it were one flat topic. In practice, the proof model behind authentication changes everything. A Kerberos ticket, an NTLM challenge-response exchange, an LDAP bind, a passkey assertion, a client certificate, and Windows Hello for Business all answer the same high-level question, but they answer it with very different backend mechanics.
 
-This article focuses on the category of authentication methods that directly validate a secret, a challenge response, a private key, or a certificate chain. In other words, these are the mechanisms that answer the core identity question: **how is the user or device actually proving identity?**
-
-The methods covered here are:
-
-1. Kerberos
-2. NTLM
-3. LDAP bind authentication
-4. passkeys with FIDO2 and WebAuthn
-5. certificate-based authentication
-6. Windows Hello for Business
+This article focuses on the methods that directly validate a credential or directly prove possession of a key. It does not cover browser federation protocols such as Security Assertion Markup Language (SAML) or OpenID Connect (OIDC), and it does not cover hybrid sign-in architecture such as Password Hash Synchronization (PHS) or Pass-Through Authentication (PTA). Those sit one layer above. This document stays at the point where a system decides whether the presented proof is real.
 
 The primary references for this category are [Windows authentication overview](https://learn.microsoft.com/en-us/windows-server/security/windows-authentication/windows-authentication-overview), [Kerberos authentication overview](https://learn.microsoft.com/en-us/windows-server/security/kerberos/kerberos-authentication-overview), [NTLM overview](https://learn.microsoft.com/en-us/windows-server/security/kerberos/ntlm-overview), [Lightweight Directory Access Protocol (LDAP)](https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ldap/lightweight-directory-access-protocol-ldap), [Register a passkey (FIDO2)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-register-passkey), [Set up Microsoft Entra certificate-based authentication](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-certificate-based-authentication), and [How Windows Hello for Business authentication works](https://learn.microsoft.com/en-us/windows/security/identity-protection/hello-for-business/hello-how-it-works-authentication).
 
 ![Core authentication methods](/assets/blog/core-auth-methods/cover.svg)
 
-## What this category means
+## Start with the basic model
 
-Core authentication methods are different from federation protocols and different from hybrid sign-in architectures. Federation protocols describe how one system passes identity proof to another. Hybrid sign-in architectures describe where validation happens when Active Directory and Microsoft Entra work together. Core authentication methods are more fundamental than both. They are the actual mechanisms used to establish trust in the first place.
+Authentication is the act of proving identity. Authorization is the decision about what that identity is allowed to do after the proof is accepted. A protocol is the message contract that tells both sides how to exchange and validate that proof. A credential is the secret or key material that backs the proof. A session, token, ticket, or cookie is usually the artifact created after authentication succeeds so that the system does not have to re-run the entire proof ceremony on every request.
 
-That distinction matters because one real sign-in can use several layers at once. A user may unlock a device with Windows Hello for Business, obtain a Primary Refresh Token from Microsoft Entra, and then use OpenID Connect to sign in to a SaaS application. If you do not separate the authentication method from the token protocol from the application flow, the entire sign-in story becomes muddy.
+When a user types a username, almost nothing security-relevant has happened yet. The username only tells the system which identity object or metadata set to look up. The real work starts afterward. The authenticating system has to locate the account, select the correct validation path, obtain the needed proof from the user or device, and compare that proof to something it trusts. That "something" may be password-derived material, a registered public key, a ticketing authority, or a certificate chain.
+
+This is why authentication incidents almost never live at the username box. They live in the layers behind it: Key Distribution Center availability, Service Principal Name mismatch, domain controller reachability, LDAP bind behavior, attestation validation, certificate mapping, device key registration, or token bootstrap after a key-based sign-in.
 
 ## Kerberos
 
-**Kerberos** is the primary ticket-based authentication protocol used in Active Directory domain environments.
+Kerberos is the default ticket-based authentication protocol in an Active Directory Domain Services environment. Microsoft explains in [Kerberos authentication overview](https://learn.microsoft.com/en-us/windows-server/security/kerberos/kerberos-authentication-overview) that Windows implements Kerberos version 5 and uses the Key Distribution Center, or KDC, on the domain controller as the authority that issues tickets.
 
-### What Kerberos means
+The easiest way to understand Kerberos is to begin with the problem it was designed to solve. In a large enterprise, users should not have to hand a reusable password to every file share, IIS application, SQL Server, or line-of-business application they use. That model scales poorly and exposes the password too broadly. Kerberos improves this by introducing a trusted ticket issuer. The user proves identity to the KDC once, and the KDC then issues tickets that other services can trust.
 
-At its core, Kerberos exists to solve one enterprise problem cleanly: a user should not have to send their password to every service they access. Instead, a trusted authority issues tickets that other systems can rely on. In Active Directory, that trusted authority is the **Key Distribution Center (KDC)** hosted by the domain controller.
+Consider a normal corporate scenario. A user signs in to a domain-joined Windows workstation, opens a file share, browses to an intranet site, and launches an internal application backed by SQL Server. The user is not being asked for another password at every hop. Instead, Windows obtains a Ticket Granting Ticket, or TGT, during sign-in. Later, when the user needs a service, the client redeems that TGT for a service ticket tied to the Service Principal Name, or SPN, of the target service.
 
-The important idea is that Kerberos turns authentication into a ticketing problem. The user proves identity to the KDC once, and the KDC then issues cryptographic proof that other services can trust. That is why Kerberos is central to Windows single sign-on.
+The backend sequence is what makes Kerberos elegant. The client first proves knowledge of password-derived key material or another supported secret to the KDC. The KDC returns the TGT. When the client later needs access to a specific service, it asks the KDC for a service ticket for that SPN. The KDC issues the ticket in a form the service can validate. The client presents that service ticket to the server, and the server uses it to establish the local session.
 
-### Example scenario
+From the service's perspective, the important point is that it is not directly validating the user's password. It is trusting the KDC's cryptographic statement. That separation is the reason Kerberos supports strong single sign-on and delegation patterns that older challenge-response systems struggle to match.
 
-Consider a domain-joined laptop. The user signs in to Windows in the morning and later opens an internal IIS site, a SQL-integrated application, and a file share such as `\\fileserver\finance`. If the environment is healthy, those later services usually do not ask the user to re-enter credentials. They rely on Kerberos tickets issued earlier in the logon process.
-
-### What happens in the backend
-
-When the user signs in, Windows uses the user's credentials to talk to the KDC. If authentication succeeds, the KDC issues a **Ticket Granting Ticket (TGT)**. That TGT is not the final proof used by every application. It is a higher-level ticket that allows the client to ask for other tickets later.
-
-When the user needs a service, the client presents the TGT to the KDC and requests a **service ticket** for the target service principal name. The KDC verifies that the user can request the ticket, packages the service identity information correctly, and returns a service ticket for that destination. The client then presents that service ticket to the actual application or server. The server validates the ticket and creates the local session.
-
-This is why Kerberos troubleshooting often revolves around KDC behavior, service principal names, delegation, and ticket caches rather than around the original password prompt. Once the password has been used to obtain the TGT, most later access decisions depend on tickets, not on password entry.
-
-### Why it matters
-
-Kerberos is still the most important protocol for classic Windows and Active Directory authentication. If you work with domain-joined devices, on-prem IIS, SQL-integrated authentication, SMB, or constrained delegation, you are working in a Kerberos world whether you say the word out loud or not.
+This also explains why Kerberos troubleshooting often surprises teams. A user can successfully sign in to Windows and still fail later when accessing a service because the TGT path is healthy but the service ticket path is not. Duplicate SPNs, DNS problems, clock skew, broken delegation, or stale service account configuration can all break the service access path even when the original workstation logon succeeded.
 
 ## NTLM
 
-**NTLM** stands for **NT LAN Manager**. It is the older Windows challenge-response authentication protocol.
+NTLM, which expands to NT LAN Manager, is the older Windows challenge-response authentication protocol. Microsoft still documents it in [NTLM overview](https://learn.microsoft.com/en-us/windows-server/security/kerberos/ntlm-overview) because it remains present in production, especially as a fallback path for older workloads.
 
-### What NTLM means
+NTLM solves a similar broad problem to Kerberos in that it avoids sending the raw password over the wire in clear text. But the design is different. Instead of building a ticketing system around a centralized authority, NTLM keeps the server much closer to the validation transaction. The server sends a challenge. The client computes a response based on password-derived material. The server then validates that response, directly or with help from a domain controller.
 
-NTLM is the legacy answer to the same broad question Kerberos answers: how does the system prove the client knows the secret without sending the raw password around? But NTLM solves it in a much older and less scalable way. Instead of a central ticketing authority issuing reusable service trust, NTLM uses a challenge-response exchange between the client and the server.
+A common enterprise example is an internal web application configured for Integrated Windows Authentication where Kerberos should be working but does not because the SPN is missing or bound to the wrong identity. The client falls back to NTLM, the application still appears to work, and the underlying identity problem remains hidden until someone needs delegation or multi-hop access.
 
-### Example scenario
+The backend consequence of NTLM is that the server remains deeply involved in the proof exchange. It is not simply trusting a KDC-issued ticket. That makes NTLM less flexible than Kerberos for delegation and large-scale trust brokering. It also means NTLM often shows up where infrastructure or applications are not fully prepared for proper Kerberos operation.
 
-A user accesses an old internal web application running under Windows Integrated Authentication. Because the service principal name is missing or the app is not built correctly for Kerberos, the environment silently falls back to NTLM. The user may not notice the protocol shift at all, but the security and delegation characteristics of the session are now different.
-
-### What happens in the backend
-
-The client requests access. The server sends a challenge. The client computes a response using password-derived material and sends that response back. The server validates the response locally or by involving a domain controller. If validation succeeds, the server creates the local session.
-
-What makes NTLM fundamentally different from Kerberos is that the server remains much more directly involved in credential validation. There is no equivalent of the Kerberos KDC issuing service tickets ahead of time for later access reuse. That is why NTLM does not scale as elegantly for true single sign-on and why it is weaker for modern delegation scenarios.
-
-### Why it matters
-
-Identity engineers still need to understand NTLM because modern environments still trip into it. Legacy applications, broken Kerberos setups, name mismatches, and old network paths can all cause NTLM fallback. If you only understand Kerberos, you will miss a large part of real-world Windows authentication troubleshooting.
+Engineers need to understand NTLM not because it is the future, but because it is still part of the present. Legacy web apps, appliances, old SMB scenarios, and misconfigured integrated-auth workloads continue to surface NTLM during investigations. If you do not understand what it is doing, you can misread a fallback success as architectural health.
 
 ## LDAP bind authentication
 
-**LDAP** stands for **Lightweight Directory Access Protocol**. LDAP itself is primarily a directory access protocol. The specific authentication pattern people usually mean is **LDAP bind**.
+Lightweight Directory Access Protocol, or LDAP, is primarily a protocol for querying and modifying directory information. When administrators say "LDAP authentication," they usually mean LDAP bind. That distinction matters because LDAP itself is not a full ticketing or federation architecture. The bind operation is simply the step where the client proves identity to the directory.
 
-### What LDAP bind means
+LDAP bind is best understood as direct credential validation against the directory. An application prompts the user for credentials, opens an LDAP connection, and attempts to bind using those credentials. If the bind succeeds, the application treats the user as authenticated. It may then perform additional directory queries to look up group membership, organizational attributes, or account state for authorization decisions.
 
-LDAP bind authentication is not a ticketing system and not a federation system. It is a direct directory-validation pattern. The application talks to the directory itself and asks the directory to validate the credentials supplied by the user.
+This pattern is common in VPN appliances, firewalls, Linux workloads, Java applications, and older enterprise products that were designed before modern federation became the default answer. A user types a corporate username and password into the application itself, and the application asks Active Directory whether that credential is valid.
 
-This is a very different trust model from both Kerberos and SAML. In Kerberos, the server trusts the KDC-issued ticket. In SAML, the application trusts an identity provider assertion. In LDAP bind, the application is much more directly involved in the username and password validation path.
+The backend implication is important. The application remains in the middle of the credential path. It is not redirecting the user to an identity provider and then consuming a token. It is collecting the password and presenting it to the directory. That means the application becomes part of the attack surface, part of the logging path, and part of the troubleshooting surface. Secure bind choice, certificate trust for LDAPS, account lockout behavior, and group query patterns all matter.
 
-### Example scenario
+This is why LDAP bind is still common but usually not the architecture identity teams want for new SaaS-style applications. It remains useful in mixed infrastructure and device integration, but it keeps too much credential responsibility inside the application tier.
 
-A VPN concentrator, firewall, Linux host, or older enterprise application prompts the user for a username and password and has an LDAP integration configured to Active Directory. When the user enters the credentials, the device or app performs a bind operation directly against the directory and decides whether the login should succeed based on that result.
+## Passkeys with FIDO2 and WebAuthn
 
-### What happens in the backend
+FIDO2 stands for Fast IDentity Online, and WebAuthn stands for Web Authentication. Passkeys are the user-facing deployment model built on those standards. The key architectural shift is that passkeys replace reusable shared secrets with asymmetric cryptography.
 
-The user enters credentials into the application. The application opens an LDAP connection to the directory. It then performs a bind operation using the supplied identity and credential. If the bind succeeds, the application treats the user as authenticated. After that, it often performs additional LDAP queries to retrieve group memberships, account attributes, or authorization-relevant metadata.
+In a password design, the user and the verifying system are tied together by a secret that can be replayed or phished if an attacker captures it. In a passkey design, the authenticator generates a public/private key pair. The private key remains on the authenticator or with the platform provider. The relying party stores only the public key and later validates a signed challenge against that public key.
 
-The critical architectural point is that the application stays in the middle of the password-validation path. That is why LDAP bind is so common in third-party infrastructure and also why it is considered a more legacy integration style than modern token federation.
+That is why passkeys are such a strong response to phishing. The authenticator is not handing the relying party a secret the user knows. It is proving possession of a private key that is scoped to the relying party. A fake page cannot simply steal and replay that proof in the way it can with a password.
 
-### Why it matters
+A practical example is a user signing in to Microsoft Entra with a hardware security key, a synced passkey from a platform ecosystem, or a passkey stored in Microsoft Authenticator. During registration, the authenticator generates the key pair and Microsoft Entra stores the public-key metadata. At sign-in, Microsoft Entra issues a challenge. The authenticator signs it. Entra validates the result and then issues the normal session and token artifacts for the relying application landscape.
 
-LDAP bind remains common in enterprise infrastructure because many products were built long before modern cloud federation became normal. If you manage VPNs, older middleware, Linux-AD integrations, or appliances, LDAP bind still matters. But for new browser and SaaS applications, it is usually not the preferred design because it keeps the application too close to the raw credential-validation path.
-
-## Passkeys, FIDO2, and WebAuthn
-
-**FIDO2** comes from the **Fast IDentity Online Alliance**, and **WebAuthn** stands for **Web Authentication**. Passkeys are the user-facing model built on those standards.
-
-### What passkeys mean
-
-Passkeys replace reusable passwords with an asymmetric cryptography model. Instead of a shared secret that both the user and the service know, the authenticator creates a public/private key pair. The private key stays protected on the authenticator or device. The service stores the public key and later validates cryptographic proof generated with the private key.
-
-This changes the threat model completely. A phishing page can steal a password because the password is something the user knows and can type anywhere. A passkey flow is different because the authenticator signs a challenge for the relying party, and the server validates that signature against the registered public key.
-
-### Example scenario
-
-A user signs in to Microsoft Entra with a phone-based passkey or a hardware security key. No password is typed into the browser. The user approves the local device prompt, and the authenticator signs the challenge. Microsoft Entra validates the result and then issues the usual cloud tokens.
-
-### What happens in the backend
-
-During registration, the authenticator generates a public/private key pair. The service stores the public key and method metadata. During sign-in, the service issues a challenge. The authenticator signs that challenge with the private key. The identity provider validates the signature using the stored public key. After successful validation, the identity provider continues with whatever token or session issuance belongs to the application flow.
-
-The important thing to understand is that the passkey itself is not the final application session. It is the strong authentication event that allows the identity provider to create the next layer of trust, usually in the form of tokens or sessions.
-
-### Why it matters
-
-Passkeys are one of the strongest practical answers to password phishing because there is no reusable password to intercept and replay. For engineers, the important concepts are authenticator type, registration policy, attestation, client support matrix, and how the identity provider maps the passkey method to its normal application token issuance path.
+For engineers, the real complexity is not the signature math. It is the control plane around the signature. Which authenticator types are allowed? Is attestation required? Which AAGUIDs are allowed? How will users bootstrap registration? Which browsers and operating systems support the intended rollout? Those questions determine whether passkeys work cleanly in production.
 
 ## Certificate-based authentication
 
-**Certificate-based authentication (CBA)** uses X.509 certificates instead of passwords as the primary proof of identity.
+Certificate-based authentication, or CBA, uses X.509 certificates rather than passwords as the primary proof. Microsoft documents the Entra implementation in [Set up Microsoft Entra certificate-based authentication](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-certificate-based-authentication).
 
-### What certificate-based authentication means
+The easiest way to understand CBA is to ask what the backend trusts. It is not trusting that the user knows a password. It is trusting that the client can present a certificate that chains to a trusted certification authority, satisfies any validity and revocation checks, and maps correctly to the expected user identity.
 
-In certificate-based authentication, the system is not asking whether the user knows a password. It is asking whether the client can present a certificate that chains to a trusted authority and maps correctly to the expected identity. Trust comes from the certificate chain, the validity of the certificate, and the directory mapping logic.
+This pattern is common in highly regulated environments such as government, defense, and healthcare, where smart cards or certificate-backed devices are part of the standard sign-in model. A user presents the certificate, the authentication service checks the chain and mapping, and a successful validation leads to session creation or token issuance.
 
-### Example scenario
+The backend validation path is built on public key infrastructure, or PKI. The authenticating system validates the certificate chain, checks the validity period, applies trust-anchor rules, evaluates revocation or policy checks as configured, and maps the certificate to the target account. If any of those stages fail, the user is not authenticated even if the certificate still exists on the device.
 
-A government agency or healthcare organization issues user certificates on smart cards or managed endpoints. When a user signs in to Microsoft Entra, the client presents the certificate and Microsoft Entra validates the chain, mapping, and policy before continuing.
-
-### What happens in the backend
-
-The client presents the certificate. The identity provider validates the certificate chain, checks the validity period, applies mapping logic, and evaluates policy conditions. If those checks pass, the user is considered authenticated and the identity provider continues with its normal token issuance path.
-
-This is a very different design from password-based authentication because the server is trusting a public key infrastructure and mapping logic instead of a password validation event.
-
-### Why it matters
-
-Certificate-based authentication matters in environments with existing PKI maturity, strong hardware credential requirements, or regulatory requirements that favor certificate-backed identity. It is also strategically important because Microsoft Entra CBA allows some organizations to move certificate auth directly into the cloud identity provider rather than depending on federated certificate auth through AD FS.
+This gives certificate-based authentication a very different operational character from password-based methods. When CBA breaks, the root cause is often certificate issuance, revocation, chain trust, mapping logic, or lifecycle management rather than a human memory problem. Strong security comes with PKI operational responsibility.
 
 ## Windows Hello for Business
 
-**Windows Hello for Business (WHfB)** is a passwordless enterprise authentication design built around device-bound keys and a local unlock gesture such as a PIN or biometrics.
+Windows Hello for Business, or WHfB, is one of the most misunderstood authentication technologies in the Microsoft ecosystem because users experience it through a deceptively simple interface. They see a PIN or biometric prompt and assume that PIN or biometric is the credential. Microsoft explains in [How Windows Hello for Business authentication works](https://learn.microsoft.com/en-us/windows/security/identity-protection/hello-for-business/hello-how-it-works-authentication) that this is not the correct model.
 
-### What Windows Hello for Business means
+The PIN or biometric is a local unlock gesture. The real credential is the device-bound key pair registered for the identity. The local gesture only unlocks the private key so that Windows can use it to answer the authentication challenge. That is why a Hello PIN is not just "a shorter password." The backend does not trust the PIN itself. It trusts the successful use of the protected private key.
 
-Windows Hello for Business is often explained incorrectly as "logging in with a PIN." That description is not technically accurate. The PIN or biometric is only the local gesture that unlocks the private key on the device. The actual backend authentication event uses that device-bound key, not the PIN itself.
+A normal enterprise example is a Microsoft Entra joined device. The user unlocks the laptop with face recognition or a PIN. Windows uses that successful local gesture to unlock the private key. It then requests a nonce from Microsoft Entra, signs it with the device-bound key, and obtains a Primary Refresh Token, or PRT. That PRT becomes the anchor for downstream cloud single sign-on.
 
-### Example scenario
+The backend path therefore spans device registration, key registration, and token issuance. When Windows Hello for Business fails, the root cause can be in device state, join state, key trust, Trusted Platform Module health, or cloud token issuance. If an engineer treats it as "PIN login trouble," the investigation will usually start in the wrong place.
 
-A user unlocks a Microsoft Entra joined Windows laptop with facial recognition. From the user's point of view, it feels like a local convenience feature. In reality, Windows uses the unlocked device-bound key to prove identity to Microsoft Entra and obtain cloud sign-in state, including a Primary Refresh Token.
+## Putting the methods side by side
 
-### What happens in the backend
+These methods all authenticate, but they do not establish trust the same way. Kerberos relies on centralized ticket issuance. NTLM relies on challenge-response with password-derived material. LDAP bind relies on direct directory validation. Passkeys and Windows Hello for Business rely on registered public keys and private-key operations. Certificate-based authentication relies on PKI trust and identity mapping.
 
-The user performs a local gesture. Windows uses that gesture to unlock the protected private key. The Windows authentication components request a nonce from Microsoft Entra. The device signs the nonce with the private key. Microsoft Entra validates the signature using the registered public key and, if validation succeeds, issues a **Primary Refresh Token (PRT)** and related session material.
-
-The key point is that the PIN is not traveling to the server as the credential. The key pair is the real server-trusted authentication artifact.
-
-### Why it matters
-
-Windows Hello for Business is important because it brings key-based authentication into the Windows sign-in experience without forcing users to understand the cryptography behind it. For engineers, the important concepts are trust model, join state, key registration, and how the resulting authentication event turns into a PRT and downstream single sign-on.
-
-## How these methods relate to each other
-
-These methods all prove identity, but they do so using very different trust assumptions:
-
-1. Kerberos uses central ticket issuance through the KDC
-2. NTLM uses challenge-response without Kerberos ticketing
-3. LDAP bind validates credentials directly against a directory
-4. passkeys and Windows Hello use private keys and challenge signing
-5. certificate-based auth uses certificate chain trust and mapping
-
-That is why a mature identity engineer should avoid talking about "authentication" as if it were one flat topic. Each of these methods produces different operational behavior, different troubleshooting paths, and different attack surfaces.
+That difference changes everything downstream: what the backend trusts, what infrastructure must be healthy, what can be delegated, what can be phished, and what breaks first during an outage. Mature identity engineering depends on recognizing those differences early instead of flattening them under one generic label.
 
 ## Key implementation points
 
-1. Kerberos remains the primary domain ticketing protocol for classic Active Directory environments.
-2. NTLM is still operationally important because fallback and legacy paths continue to exist.
-3. LDAP bind is common in third-party and legacy integrations because the app validates credentials directly against the directory.
-4. Passkeys, certificate-based authentication, and Windows Hello for Business all reduce dependence on reusable passwords, but they are not the same design.
+1. Kerberos, NTLM, LDAP bind, passkeys, certificate-based authentication, and Windows Hello for Business all authenticate identities, but they do so with different proof models and different trust boundaries.
+2. Kerberos and NTLM are both common in Active Directory environments, but their delegation behavior and troubleshooting patterns are very different.
+3. LDAP bind remains relevant in mixed infrastructure, but it keeps the application closer to raw credential validation than modern federation designs do.
+4. Key-based and certificate-based methods reduce dependence on reusable passwords, but they shift the operational burden into device trust, attestation, PKI, and credential lifecycle management.
 
 ## References
 

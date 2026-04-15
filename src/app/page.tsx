@@ -34,34 +34,6 @@ export default async function Index() {
           </div>
         </section>
 
-        <section className="border-t border-stone-200 pb-16 pt-12">
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(280px,0.9fr)]">
-            <div className="max-w-3xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-stone-500">
-                Standards
-              </p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-slate-950 md:text-4xl">
-                A technical blog built for engineers, not keyword filler.
-              </h2>
-              <p className="mt-5 text-base leading-8 text-slate-600">
-                The site is being structured as a focused Microsoft identity publication: cleaner titles,
-                clearer post hierarchy, source-led writing, and page layouts that make dense technical material easier to read.
-              </p>
-            </div>
-
-            <div className="rounded-[1.8rem] border border-stone-200 bg-[#fcfbf8] p-7 shadow-[0_18px_45px_rgba(15,23,42,0.06)]">
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-stone-500">
-                What readers should expect
-              </p>
-              <div className="mt-5 grid gap-4 text-sm leading-7 text-slate-600">
-                <p>Architecture-first explanations with backend flow, not generic summaries.</p>
-                <p>Source-led articles with Microsoft documentation linked inline where behavior matters.</p>
-                <p>Searchable long-form posts aimed at admins, architects, and cloud engineers.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <section id="consulting" className="border-t border-stone-200 pb-24 pt-12">
           <div className="mb-8 max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-[0.28em] text-stone-500">

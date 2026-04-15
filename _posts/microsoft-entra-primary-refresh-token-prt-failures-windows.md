@@ -1,5 +1,5 @@
 ---
-title: "Microsoft Entra ID: Troubleshoot Primary Refresh Token (PRT) Failures on Windows"
+title: "PRT Failures on Windows"
 excerpt: "A detailed technical guide to Microsoft Entra Primary Refresh Token failures on Windows, including dsregcmd analysis, device trust, broker behavior, network dependencies, and remediation design."
 coverImage: "/assets/blog/prt-failures/cover.svg"
 date: "2026-03-28T09:10:00.000Z"

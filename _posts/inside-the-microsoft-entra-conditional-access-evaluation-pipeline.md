@@ -1,5 +1,5 @@
 ---
-title: "Inside the Microsoft Entra Conditional Access Evaluation Pipeline"
+title: "Conditional Access Evaluation Pipeline"
 excerpt: "A top-to-bottom engineering explanation of how Microsoft Entra Conditional Access evaluates scope, combines controls, and influences token issuance."
 coverImage: "/assets/blog/conditional-access/pipeline.svg"
 date: "2026-03-12T05:35:07.322Z"

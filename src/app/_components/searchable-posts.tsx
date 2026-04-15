@@ -36,36 +36,49 @@ export default function SearchablePosts({ posts }: Props) {
 
   return (
     <>
-      <section className="border-b border-slate-800 bg-[radial-gradient(circle_at_top_left,rgba(217,119,6,0.16),transparent_24%),radial-gradient(circle_at_85%_20%,rgba(16,185,129,0.12),transparent_22%),linear-gradient(135deg,#0f172a_0%,#111827_45%,#1f2937_100%)] text-white">
+      <section className="border-b border-stone-200 bg-[linear-gradient(180deg,#f8f5ef_0%,#fbfaf7_65%,#ffffff_100%)]">
         <div className="mx-auto max-w-7xl px-6 lg:px-10">
-          <div className="grid gap-8 py-14 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-center lg:py-16">
+          <div className="grid gap-8 py-14 lg:grid-cols-[minmax(0,1.1fr)_420px] lg:items-start lg:py-18">
             <div>
-              <p className="text-sm font-medium uppercase tracking-[0.24em] text-slate-300">
+              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-stone-500">
                 Sentinel Identity
               </p>
-              <div className="mt-4 inline-flex px-0 py-2">
-                <h1 className="text-4xl font-semibold tracking-[-0.05em] text-white md:text-5xl">
+              <div className="mt-4">
+                <h1 className="max-w-3xl text-4xl font-semibold tracking-[-0.06em] text-slate-950 md:text-6xl">
                   Microsoft Entra Blog
                 </h1>
               </div>
-              <p className="mt-5 max-w-2xl text-base leading-8 text-slate-300">
-                Long-form technical writing on Microsoft Entra, authentication, Conditional Access, DNS, and
-                tenant operations, written for administrators and engineers who need implementation detail.
+              <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600">
+                Field notes, implementation detail, and architecture analysis for engineers and IT admins
+                working with Microsoft identity.
               </p>
+
+              <div className="mt-8 flex flex-wrap gap-3 text-sm font-medium text-slate-600">
+                <span className="rounded-full border border-stone-300 bg-white px-4 py-2">Conditional Access</span>
+                <span className="rounded-full border border-stone-300 bg-white px-4 py-2">Passkeys</span>
+                <span className="rounded-full border border-stone-300 bg-white px-4 py-2">Authentication</span>
+                <span className="rounded-full border border-stone-300 bg-white px-4 py-2">DNS and Domains</span>
+              </div>
             </div>
 
             <form
               onSubmit={(event) => event.preventDefault()}
-              className="rounded-xl border border-white/10 bg-white/10 p-2 shadow-[0_14px_30px_rgba(2,6,23,0.18)] backdrop-blur-sm"
+              className="rounded-[1.75rem] border border-stone-300 bg-[#111827] p-3 shadow-[0_24px_60px_rgba(15,23,42,0.16)]"
             >
+              <div className="mb-3 px-2 pt-1 text-xs font-semibold uppercase tracking-[0.22em] text-stone-300">
+                Search the archive
+              </div>
               <input
                 type="search"
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Search this blog"
                 aria-label="Search this blog"
-                className="w-full rounded-lg border border-white/10 bg-white px-4 py-3 text-base text-slate-950 outline-none placeholder:text-slate-400"
+                className="w-full rounded-2xl border border-stone-300 bg-white px-4 py-3 text-base text-slate-950 outline-none placeholder:text-slate-400"
               />
+              <p className="px-2 pb-1 pt-3 text-sm leading-6 text-stone-300">
+                Search titles, excerpts, and article body text for Entra topics, error codes, and design patterns.
+              </p>
             </form>
           </div>
         </div>

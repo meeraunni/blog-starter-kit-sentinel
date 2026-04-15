@@ -1,5 +1,5 @@
 ---
-title: "Microsoft Entra ID: Troubleshoot 'Require device to be marked as compliant' Sign-In Failures"
+title: "Why Compliant Devices Still Get Blocked"
 excerpt: "A detailed technical guide to why Microsoft Entra can block a sign-in from an Intune-compliant device, including device identity proof, browser support, client certificate behavior, and Conditional Access evaluation."
 coverImage: "/assets/blog/compliant-device-blocked/cover.svg"
 date: "2026-03-27T21:20:00.000Z"

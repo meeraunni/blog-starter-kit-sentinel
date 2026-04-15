@@ -1,5 +1,5 @@
 ---
-title: "Microsoft Entra Backup and Recovery (Preview): Architecture, Scope, Difference Reports, Recovery Workflow, and Limitations"
+title: "Entra Backup and Recovery"
 excerpt: "A technical document for Microsoft Entra administrators covering how Microsoft Entra Backup and Recovery works, what it can recover, supported objects and properties, difference reports, recovery behavior, soft deletion, troubleshooting, and operational design guidance."
 coverImage: "/assets/blog/entra-backup-recovery/cover.svg"
 date: "2026-03-28T20:30:00.000Z"

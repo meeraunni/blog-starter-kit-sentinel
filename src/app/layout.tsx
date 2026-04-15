@@ -1,6 +1,8 @@
 import Footer from "@/app/_components/footer";
 import NewsletterSync from "@/app/_components/newsletter-sync";
+import VisitorTracker from "@/app/_components/visitor-tracker";
 import { CMS_NAME, HOME_OG_IMAGE_URL } from "@/lib/constants";
+import { getSiteUrl } from "@/lib/site";
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Manrope, Sora } from "next/font/google";
@@ -20,13 +22,37 @@ const sora = Sora({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: {
     default: `${CMS_NAME} | Microsoft Entra Blog`,
     template: `%s | ${CMS_NAME}`,
   },
   description:
     "Independent long-form technical writing on Microsoft Entra, Conditional Access, authentication, identity architecture, DNS, and tenant hardening.",
+  keywords: [
+    "Microsoft Entra",
+    "Conditional Access",
+    "Microsoft identity",
+    "passkeys",
+    "Azure identity",
+    "technical blog",
+  ],
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
+    type: "website",
+    url: getSiteUrl(),
+    title: `${CMS_NAME} | Microsoft Entra Blog`,
+    description:
+      "Independent long-form technical writing on Microsoft Entra, Conditional Access, authentication, identity architecture, DNS, and tenant hardening.",
+    images: [HOME_OG_IMAGE_URL],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${CMS_NAME} | Microsoft Entra Blog`,
+    description:
+      "Independent long-form technical writing on Microsoft Entra, Conditional Access, authentication, identity architecture, DNS, and tenant hardening.",
     images: [HOME_OG_IMAGE_URL],
   },
 };
@@ -52,6 +78,11 @@ export default function RootLayout({
     url: "https://sentinelidentity.ca",
     description:
       "Independent long-form technical writing on Microsoft Entra, authentication, Conditional Access, DNS, and tenant hardening.",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: "https://sentinelidentity.ca/?q={search_term_string}",
+      "query-input": "required name=search_term_string",
+    },
   };
 
   return (
@@ -111,6 +142,7 @@ export default function RootLayout({
         )}
       >
         <NewsletterSync />
+        <VisitorTracker />
         <ThemeSwitcher />
         <div className="min-h-screen">{children}</div>
         <Footer />

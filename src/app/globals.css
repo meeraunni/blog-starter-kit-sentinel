@@ -16,7 +16,7 @@
 
   body {
     font-family: var(--font-sans), sans-serif;
-    @apply bg-slate-50 text-slate-700;
+    @apply bg-[#fbfaf7] text-slate-700;
   }
 
   ::selection {

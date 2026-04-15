@@ -2,18 +2,18 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-slate-200/80 bg-white/80 backdrop-blur-sm">
+    <footer className="border-t border-stone-200 bg-[#fbfaf7]">
       <div className="mx-auto grid max-w-7xl gap-10 px-6 py-12 lg:grid-cols-[minmax(0,1fr)_auto] lg:px-10">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-slate-500">
+          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-stone-500">
             Sentinel Identity
           </p>
           <h2 className="mt-3 max-w-2xl text-2xl font-semibold tracking-[-0.03em] text-slate-950">
-            Independent Microsoft identity analysis, implementation notes, and advisory perspectives.
+            Technical writing on Microsoft identity, tenant design, and production troubleshooting.
           </h2>
           <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600">
-            Original long-form writing focused on Microsoft Entra, authentication, Conditional Access, tenant
-            hardening, and the operational details identity engineers need in production.
+            Sentinel Identity is being shaped as a focused technical publication for engineers and IT admins who
+            want implementation detail, not broad marketing summaries.
           </p>
         </div>
 

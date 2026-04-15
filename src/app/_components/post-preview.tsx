@@ -60,8 +60,8 @@ export function PostPreview({
 }: Props) {
   return (
     <article
-      className={`group rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_24px_60px_rgba(15,23,42,0.06)] ${
-        featured ? "lg:grid lg:grid-cols-[minmax(320px,0.95fr)_minmax(0,1.05fr)] lg:gap-8 lg:p-8" : "flex h-full flex-col gap-5"
+      className={`group rounded-[1.6rem] border border-stone-200 bg-white p-6 shadow-[0_18px_45px_rgba(15,23,42,0.05)] ${
+        featured ? "lg:grid lg:grid-cols-[minmax(320px,1fr)_minmax(0,1fr)] lg:gap-8 lg:p-8" : "flex h-full flex-col gap-5"
       }`}
     >
       <div className={featured ? "mb-6 lg:mb-0" : ""}>
@@ -73,7 +73,7 @@ export function PostPreview({
           <span>
             <DateFormatter dateString={date} />
           </span>
-          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[0.68rem] tracking-[0.18em] text-slate-600">
+          <span className="rounded-full bg-stone-100 px-2.5 py-1 text-[0.68rem] tracking-[0.18em] text-slate-600">
             Analysis
           </span>
         </div>
@@ -92,7 +92,7 @@ export function PostPreview({
           {highlightMatches(excerpt, query)}
         </p>
 
-        <div className="mt-6 flex items-center justify-between gap-4">
+        <div className="mt-6 flex items-center justify-between gap-4 border-t border-stone-200 pt-5">
           <Avatar name={author?.name || "Sentinel Identity"} />
           <Link
             href={`/posts/${slug}`}

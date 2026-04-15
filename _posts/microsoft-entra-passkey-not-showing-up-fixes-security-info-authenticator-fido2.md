@@ -1,5 +1,5 @@
 ---
-title: "Microsoft Entra ID: Troubleshoot Missing Passkey Registration Options"
+title: "Missing Passkey Registration Options"
 excerpt: "Technical troubleshooting for when Passkey (FIDO2) does not appear in Security info or Microsoft Authenticator, including Authentication Methods policy, MFA bootstrap, platform support, and authenticator constraints."
 coverImage: "/assets/blog/passkey-not-showing/cover.svg"
 date: "2026-03-27T21:40:00.000Z"

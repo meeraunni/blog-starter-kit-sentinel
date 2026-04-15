@@ -1,5 +1,5 @@
 ---
-title: "Microsoft Entra Agent ID: Security Architecture, Conditional Access, Governance, Risk, and Network Controls for AI Agents"
+title: "Agent ID Security Architecture"
 excerpt: "A technical guide to Microsoft Entra Agent ID, including the agent identity model, Conditional Access enforcement, identity governance, risk detection, and network-level controls for AI agents."
 coverImage: "/assets/blog/agent-id-security/cover.svg"
 date: "2026-03-28T22:30:00.000Z"

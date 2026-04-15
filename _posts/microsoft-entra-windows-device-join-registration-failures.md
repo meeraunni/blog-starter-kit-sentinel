@@ -1,5 +1,5 @@
 ---
-title: "Microsoft Entra ID: Troubleshoot Windows Device Join and Registration Failures"
+title: "Windows Device Join Failures"
 excerpt: "A detailed technical guide to Microsoft Entra join and registration failures on Windows, including device registration service flow, pending objects, dsregcmd analysis, and downstream impact on compliance and PRT."
 coverImage: "/assets/blog/windows-join/cover.svg"
 date: "2026-03-28T09:20:00.000Z"

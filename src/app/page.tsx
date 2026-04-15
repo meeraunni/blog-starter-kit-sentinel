@@ -15,24 +15,56 @@ export default async function Index() {
       <Container>
         {allPosts.length > 0 && <SearchablePosts posts={allPosts} />}
 
-        <section className="pb-16 pt-6 lg:pt-10">
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(340px,1.05fr)] lg:items-start">
+        <section className="border-t border-stone-200 pb-16 pt-12 lg:pt-14">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(340px,0.95fr)] lg:items-start">
             <div className="max-w-2xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-900/80">
+              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-stone-500">
                 Subscribe
               </p>
               <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-slate-950 md:text-4xl">
-                Get new Microsoft Entra posts by email.
+                Get new posts without watching the feed.
               </h2>
+              <p className="mt-4 text-base leading-8 text-slate-600">
+                Join the mailing list for new articles on Microsoft Entra, Conditional Access, authentication,
+                and identity operations.
+              </p>
             </div>
 
             <SubscribeForm />
           </div>
         </section>
 
-        <section id="consulting" className="pb-24 pt-2 lg:pt-6">
+        <section className="border-t border-stone-200 pb-16 pt-12">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(280px,0.9fr)]">
+            <div className="max-w-3xl">
+              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-stone-500">
+                Standards
+              </p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-slate-950 md:text-4xl">
+                A technical blog built for engineers, not keyword filler.
+              </h2>
+              <p className="mt-5 text-base leading-8 text-slate-600">
+                The site is being structured as a focused Microsoft identity publication: cleaner titles,
+                clearer post hierarchy, source-led writing, and page layouts that make dense technical material easier to read.
+              </p>
+            </div>
+
+            <div className="rounded-[1.8rem] border border-stone-200 bg-[#fcfbf8] p-7 shadow-[0_18px_45px_rgba(15,23,42,0.06)]">
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-stone-500">
+                What readers should expect
+              </p>
+              <div className="mt-5 grid gap-4 text-sm leading-7 text-slate-600">
+                <p>Architecture-first explanations with backend flow, not generic summaries.</p>
+                <p>Source-led articles with Microsoft documentation linked inline where behavior matters.</p>
+                <p>Searchable long-form posts aimed at admins, architects, and cloud engineers.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="consulting" className="border-t border-stone-200 pb-24 pt-12">
           <div className="mb-8 max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-900/80">
+            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-stone-500">
               Advisory
             </p>
             <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-slate-950 md:text-4xl">
@@ -45,51 +77,18 @@ export default async function Index() {
           </div>
 
           <div className="grid gap-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(340px,1.15fr)] lg:items-start">
-            <div className="rounded-[2rem] border border-slate-200/80 bg-slate-50 p-6 shadow-[0_20px_50px_rgba(15,23,42,0.05)]">
+            <div className="rounded-[1.8rem] border border-stone-200 bg-[#fcfbf8] p-6 shadow-[0_18px_45px_rgba(15,23,42,0.05)]">
               <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">
                 What to include
               </p>
               <div className="mt-5 grid gap-4 text-sm leading-7 text-slate-600">
                 <p>Your Entra environment size, main pain points, and what kind of review you need.</p>
                 <p>Conditional Access gaps, authentication issues, tenant hardening concerns, or admin exposure.</p>
-                <p>A clear intake path helps turn readers into consulting leads once they trust your writing.</p>
+                <p>Use the form to start an assessment conversation without needing a separate email thread first.</p>
               </div>
             </div>
 
             <ConsultingForm />
-          </div>
-        </section>
-
-        <section className="border-t border-slate-200/80 pb-24 pt-12">
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(280px,0.9fr)]">
-            <div className="max-w-3xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-900/80">
-                About this site
-              </p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-slate-950 md:text-4xl">
-                Technical writing for Microsoft identity engineers, not generic marketing summaries.
-              </h2>
-              <p className="mt-5 text-base leading-8 text-slate-600">
-                Sentinel Identity publishes detailed Microsoft Entra, authentication, Conditional Access, DNS,
-                and tenant security articles intended for administrators, architects, and cloud engineers who
-                need implementation-level understanding.
-              </p>
-              <p className="mt-4 text-base leading-8 text-slate-600">
-                Articles are written as technical reference material, with official Microsoft documentation linked
-                inline where platform behavior, policy flow, and configuration details need to be validated.
-              </p>
-            </div>
-
-            <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">
-                Editorial standards
-              </p>
-              <div className="mt-5 grid gap-4 text-sm leading-7 text-slate-600">
-                <p>Long-form technical articles focused on Microsoft identity operations and architecture.</p>
-                <p>Official Microsoft sources linked throughout posts where product behavior needs validation.</p>
-                <p>Public privacy, terms, and cookie pages for transparency and reader trust.</p>
-              </div>
-            </div>
           </div>
         </section>
       </Container>

@@ -1,5 +1,5 @@
 ---
-title: "Microsoft Entra ID: Browser Support for Device-Based Conditional Access"
+title: "Conditional Access Browser Support"
 excerpt: "A detailed technical guide to browser behavior in device-based Conditional Access, including Edge, Chrome, Safari, private browsing, client certificate behavior, and support-matrix design."
 coverImage: "/assets/blog/browser-policy/cover.svg"
 date: "2026-03-27T21:00:00.000Z"

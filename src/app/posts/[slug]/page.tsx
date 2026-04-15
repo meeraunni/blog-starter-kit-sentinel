@@ -4,6 +4,7 @@ import { getAllPosts, getPostBySlug } from "@/lib/api";
 import { CMS_NAME } from "@/lib/constants";
 import markdownToHtml from "@/lib/markdownToHtml";
 import { estimateReadingTime, extractTableOfContents } from "@/lib/post-format";
+import { getBaseUrl } from "@/lib/site";
 import Alert from "@/app/_components/alert";
 import Container from "@/app/_components/container";
 import Header from "@/app/_components/header";
@@ -65,8 +66,21 @@ export async function generateMetadata(props: Params): Promise<Metadata> {
 
   return {
     title,
+    description: post.excerpt,
+    alternates: {
+      canonical: `/posts/${post.slug}`,
+    },
     openGraph: {
       title,
+      description: post.excerpt,
+      type: "article",
+      url: getBaseUrl(`/posts/${post.slug}`),
+      images: [post.ogImage.url],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: post.excerpt,
       images: [post.ogImage.url],
     },
   };

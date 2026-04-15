@@ -1,5 +1,5 @@
 ---
-title: "Microsoft Entra Passkeys Explained: Architecture, Registration, Sign-In, and Policy"
+title: "How Passkeys Work in Entra"
 excerpt: "A technical guide to Microsoft Entra passkeys for administrators, including passkey types, registration flows, Authentication Methods policy, Conditional Access, and deployment design."
 coverImage: "/assets/blog/passkeys-explained/cover.svg"
 date: "2026-03-27T20:10:00.000Z"

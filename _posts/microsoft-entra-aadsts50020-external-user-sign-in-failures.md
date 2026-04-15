@@ -1,5 +1,5 @@
 ---
-title: "Microsoft Entra ID: Troubleshoot AADSTS50020 External User Sign-In Failures"
+title: "AADSTS50020 Sign-In Failures"
 excerpt: "A detailed technical guide to AADSTS50020 in Microsoft Entra ID, including resource-tenant identity resolution, invitation redemption, cross-tenant access, and external identity design."
 coverImage: "/assets/blog/aadsts50020/cover.svg"
 date: "2026-03-28T09:30:00.000Z"

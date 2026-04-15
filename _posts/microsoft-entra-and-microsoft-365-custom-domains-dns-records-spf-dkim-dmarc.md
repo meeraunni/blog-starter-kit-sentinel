@@ -1,5 +1,5 @@
 ---
-title: "Microsoft Entra and Microsoft 365 Custom Domains Explained: DNS Basics, Domain Verification, MX, CNAME, TXT, SPF, DKIM, and DMARC"
+title: "Custom Domains and DNS for Microsoft 365"
 excerpt: "A detailed technical guide to buying a domain, understanding DNS, adding a custom domain to Microsoft Entra and Microsoft 365, and configuring DNS records such as MX, TXT, CNAME, SPF, DKIM, and DMARC."
 coverImage: "/assets/blog/custom-domains-dns/cover.svg"
 date: "2026-03-29T10:30:00.000Z"

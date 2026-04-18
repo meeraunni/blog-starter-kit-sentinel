@@ -15,20 +15,6 @@ export function MoreStories({ posts, query }: Props) {
 
   return (
     <section id="latest" className="pb-20 pt-10 lg:pb-24 lg:pt-12">
-      <div className="mb-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-stone-500">
-            Latest coverage
-          </p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-slate-950 md:text-4xl">
-            Technical articles written for production work.
-          </h2>
-        </div>
-        <p className="max-w-md text-sm leading-7 text-slate-600 lg:justify-self-end">
-          Implementation notes, troubleshooting flows, and architecture detail shaped for Microsoft identity teams.
-        </p>
-      </div>
-
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_320px] lg:items-start">
         <div>
           {featuredPost && (

@@ -1,5 +1,13 @@
 import Header from "@/app/_components/header";
 
+export const metadata = {
+  title: "Unsubscribe",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
 type Props = {
   searchParams: Promise<{
     status?: string;

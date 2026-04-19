@@ -1,6 +1,12 @@
 import Header from "@/app/_components/header";
+import Link from "next/link";
+import { getAllPosts } from "@/lib/api";
+import { getAllTopics } from "@/lib/post-taxonomy";
 
 export default function AboutPage() {
+  const posts = getAllPosts();
+  const topics = getAllTopics().filter((topic) => topic.label !== "Microsoft Entra").length;
+
   return (
     <main>
       <Header />
@@ -24,6 +30,14 @@ export default function AboutPage() {
             Content is written as long-form technical material and links official Microsoft documentation where
             product behavior, configuration requirements, or support boundaries need to be validated.
           </p>
+        </div>
+
+        <div className="mt-10 flex flex-wrap gap-3 text-sm font-medium text-slate-700">
+          <span className="rounded-full border border-stone-300 bg-white px-4 py-2">{posts.length} published articles</span>
+          <span className="rounded-full border border-stone-300 bg-white px-4 py-2">{topics} core topic groups</span>
+          <Link href="/archive" className="rounded-full border border-stone-300 bg-white px-4 py-2 transition hover:border-slate-950 hover:text-slate-950">
+            Browse archive
+          </Link>
         </div>
 
         <div className="mt-12 grid gap-6 lg:grid-cols-3">

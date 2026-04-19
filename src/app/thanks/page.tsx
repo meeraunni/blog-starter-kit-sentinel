@@ -1,6 +1,14 @@
 import Header from "@/app/_components/header";
 import Link from "next/link";
 
+export const metadata = {
+  title: "Thanks",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
 type Props = {
   searchParams: Promise<{
     form?: string;

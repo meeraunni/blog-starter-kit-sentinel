@@ -24,6 +24,9 @@ export default function Footer() {
           <Link href="/archive" className="transition hover:text-slate-950">
             Archive
           </Link>
+          <Link href="/topics" className="transition hover:text-slate-950">
+            Topics
+          </Link>
           <Link href="/about" className="transition hover:text-slate-950">
             About
           </Link>

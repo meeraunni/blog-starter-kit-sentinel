@@ -2,6 +2,7 @@ import Link from "next/link";
 
 const navItems = [
   { href: "/", label: "Blog" },
+  { href: "/archive", label: "Archive" },
   { href: "/about", label: "About" },
   { href: "/services", label: "Advisory" },
 ];
@@ -39,10 +40,10 @@ export default function Header() {
           </nav>
 
           <Link
-            href="/services#assessment"
+            href="/archive"
             className="inline-flex items-center rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-slate-900 transition hover:border-slate-950 hover:bg-slate-950 hover:text-white"
           >
-            Contact
+            Archive
           </Link>
         </div>
       </div>

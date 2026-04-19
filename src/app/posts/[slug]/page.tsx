@@ -23,12 +23,35 @@ export default async function Post(props: Params) {
   const content = await markdownToHtml(post.content || "");
   const readingTime = estimateReadingTime(post.content || "");
   const tableOfContents = extractTableOfContents(post.content || "");
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.date,
+    dateModified: post.date,
+    author: {
+      "@type": "Organization",
+      name: post.author?.name || "Sentinel Identity",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Sentinel Identity",
+      url: "https://sentinelidentity.ca",
+    },
+    mainEntityOfPage: getBaseUrl(`/posts/${post.slug}`),
+    image: getBaseUrl(post.ogImage.url),
+  };
 
   return (
     <main>
       <Alert preview={post.preview} />
       <Header />
       <Container>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+        />
         <article className="pb-20 pt-6 lg:pb-24">
           <PostHeader
             title={post.title}

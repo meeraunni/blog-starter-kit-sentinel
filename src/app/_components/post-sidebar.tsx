@@ -15,7 +15,7 @@ export default function PostSidebar({ items, readingTime }: Props) {
         </p>
         <div className="mt-4 space-y-3 text-sm leading-7 text-slate-600">
           <p>{readingTime} min read</p>
-          <p>Long-form technical reference with linked source material.</p>
+          <p>Original technical article intended for Microsoft identity administrators and engineers.</p>
         </div>
       </div>
 
@@ -45,11 +45,11 @@ export default function PostSidebar({ items, readingTime }: Props) {
 
       <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-[0_18px_40px_rgba(15,23,42,0.05)]">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
-          Editorial approach
+          Publication
         </p>
         <p className="mt-4 text-sm leading-7 text-slate-600">
-          Articles on Sentinel Identity are written as implementation-focused technical guides with official
-          Microsoft documentation linked where platform behavior needs verification.
+          Sentinel Identity publishes Microsoft identity articles as long-form reference material with source links
+          where product behavior, policy flow, or support boundaries need validation.
         </p>
       </div>
     </aside>

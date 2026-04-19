@@ -1,12 +1,13 @@
 import Container from "@/app/_components/container";
-import ConsultingForm from "@/app/_components/consulting-form";
 import Header from "@/app/_components/header";
 import SearchablePosts from "@/app/_components/searchable-posts";
-import SubscribeForm from "@/app/_components/subscribe-form";
 import { getAllPosts } from "@/lib/api";
+import { getTopicSummary } from "@/lib/post-taxonomy";
+import Link from "next/link";
 
 export default async function Index() {
   const allPosts = getAllPosts();
+  const topics = getTopicSummary(allPosts).slice(0, 6);
 
   return (
     <main className="relative overflow-hidden">
@@ -15,52 +16,50 @@ export default async function Index() {
       <Container>
         {allPosts.length > 0 && <SearchablePosts posts={allPosts} />}
 
-        <section className="border-t border-stone-200 pb-16 pt-12 lg:pt-14">
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(340px,0.95fr)] lg:items-start">
-            <div className="max-w-2xl">
+        <section className="border-t border-stone-200 pb-24 pt-12">
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(280px,0.9fr)]">
+            <div className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.28em] text-stone-500">
-                Subscribe
+                Archive and topics
               </p>
               <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-slate-950 md:text-4xl">
-                Get new posts without watching the feed.
+                Browse the site like a technical publication, not a landing page.
               </h2>
-              <p className="mt-4 text-base leading-8 text-slate-600">
-                Join the mailing list for new articles on Microsoft Entra, Conditional Access, authentication,
-                and identity operations.
+              <p className="mt-5 text-base leading-8 text-slate-600">
+                The archive is organized for administrators and engineers who need to find articles by theme and
+                come back to them later as reference material.
               </p>
-            </div>
-
-            <SubscribeForm />
-          </div>
-        </section>
-
-        <section id="consulting" className="border-t border-stone-200 pb-24 pt-12">
-          <div className="mb-8 max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-stone-500">
-              Advisory
-            </p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-slate-950 md:text-4xl">
-              Need help reviewing a Microsoft Entra tenant?
-            </h2>
-            <p className="mt-4 text-base leading-8 text-slate-600">
-              If a post resonates with the issues you are dealing with, use the form below to request an assessment
-              or advisory support.
-            </p>
-          </div>
-
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,0.85fr)_minmax(340px,1.15fr)] lg:items-start">
-            <div className="rounded-[1.8rem] border border-stone-200 bg-[#fcfbf8] p-6 shadow-[0_18px_45px_rgba(15,23,42,0.05)]">
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">
-                What to include
-              </p>
-              <div className="mt-5 grid gap-4 text-sm leading-7 text-slate-600">
-                <p>Your Entra environment size, main pain points, and what kind of review you need.</p>
-                <p>Conditional Access gaps, authentication issues, tenant hardening concerns, or admin exposure.</p>
-                <p>Use the form to start an assessment conversation without needing a separate email thread first.</p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                {topics.map((topic) => (
+                  <span
+                    key={topic.topic}
+                    className="rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-slate-700"
+                  >
+                    {topic.topic} · {topic.count}
+                  </span>
+                ))}
               </div>
             </div>
 
-            <ConsultingForm />
+            <div className="rounded-[1.8rem] border border-stone-200 bg-[#fcfbf8] p-7 shadow-[0_18px_45px_rgba(15,23,42,0.06)]">
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-stone-500">
+                Publication links
+              </p>
+              <div className="mt-5 grid gap-3 text-sm leading-7 text-slate-600">
+                <Link href="/archive" className="transition hover:text-slate-950">
+                  Browse the full archive
+                </Link>
+                <Link href="/about" className="transition hover:text-slate-950">
+                  About the publication
+                </Link>
+                <Link href="/editorial-policy" className="transition hover:text-slate-950">
+                  Editorial policy
+                </Link>
+                <Link href="/services" className="transition hover:text-slate-950">
+                  Advisory services
+                </Link>
+              </div>
+            </div>
           </div>
         </section>
       </Container>

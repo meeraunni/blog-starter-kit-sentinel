@@ -31,8 +31,8 @@ export function HeroPost({
             Featured post
           </p>
         </div>
-        <Link href="/services#assessment" className="text-sm font-medium text-slate-500 transition hover:text-slate-950">
-          Advisory services
+        <Link href="/archive" className="text-sm font-medium text-slate-500 transition hover:text-slate-950">
+          Archive
         </Link>
       </div>
 

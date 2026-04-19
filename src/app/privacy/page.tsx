@@ -9,13 +9,12 @@ export default function PrivacyPage() {
         <h1 className="mt-3 text-4xl font-semibold tracking-[-0.04em] text-slate-950">Privacy Policy</h1>
         <div className="mt-8 space-y-6 text-base leading-8 text-slate-600">
           <p>
-            Sentinel Identity collects the information you choose to submit through blog subscription and advisory
-            inquiry forms. This information is used to respond to your request, deliver blog updates, and improve
-            the services offered through this website.
+            Sentinel Identity collects the information you choose to submit through blog subscription forms.
+            This information is used to deliver blog updates, maintain the website, and understand site usage.
           </p>
           <p>
-            Information submitted through forms may include your name, email address, company details, and the
-            context you provide in your message. We do not sell your personal information.
+            Information submitted through forms may include your name and email address. We do not sell your
+            personal information.
           </p>
           <p>
             This website may use analytics, cookies, and advertising technologies to understand usage and support

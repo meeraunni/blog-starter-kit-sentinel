@@ -21,17 +21,14 @@ export default function Footer() {
           <Link href="/" className="transition hover:text-slate-950">
             Blog
           </Link>
+          <Link href="/archive" className="transition hover:text-slate-950">
+            Archive
+          </Link>
           <Link href="/about" className="transition hover:text-slate-950">
             About
           </Link>
           <Link href="/editorial-policy" className="transition hover:text-slate-950">
             Editorial policy
-          </Link>
-          <Link href="/services" className="transition hover:text-slate-950">
-            Advisory services
-          </Link>
-          <Link href="/services#assessment" className="transition hover:text-slate-950">
-            Request an assessment
           </Link>
           <Link href="/privacy" className="transition hover:text-slate-950">
             Privacy

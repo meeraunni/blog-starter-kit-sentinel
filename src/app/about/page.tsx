@@ -37,7 +37,7 @@ export default function AboutPage() {
           <div className="rounded-[2rem] border border-slate-200 bg-white p-7 shadow-[0_24px_60px_rgba(15,23,42,0.06)]">
             <h2 className="text-2xl font-semibold tracking-[-0.03em] text-slate-950">Audience</h2>
             <p className="mt-4 text-base leading-8 text-slate-600">
-              Identity administrators, Microsoft 365 engineers, architects, consultants, and readers who need
+              Identity administrators, Microsoft 365 engineers, architects, and readers who need
               implementation-level explanations rather than light overview content.
             </p>
           </div>

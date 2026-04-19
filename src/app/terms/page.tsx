@@ -10,15 +10,14 @@ export default function TermsPage() {
         <div className="mt-8 space-y-6 text-base leading-8 text-slate-600">
           <p>
             The content on Sentinel Identity is provided for general information and educational purposes. It does
-            not create a consulting engagement unless explicitly agreed in writing.
+            not create a client, advisory, or service relationship.
           </p>
           <p>
             You may read, reference, and share links to the content, but you may not reproduce or republish
             substantial portions without permission.
           </p>
           <p>
-            Sentinel Identity may update or remove content, services, and site functionality at any time without
-            notice.
+            Sentinel Identity may update or remove content and site functionality at any time without notice.
           </p>
         </div>
       </section>

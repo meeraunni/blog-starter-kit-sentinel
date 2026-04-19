@@ -1,9 +1,11 @@
 import type { MetadataRoute } from "next";
 import { getAllPosts } from "@/lib/api";
+import { getAllTopics } from "@/lib/post-taxonomy";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://sentinelidentity.ca";
   const posts = getAllPosts();
+  const topics = getAllTopics();
 
   const staticRoutes = [
     "",
@@ -23,5 +25,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: post.date ? new Date(post.date) : new Date(),
   }));
 
-  return [...staticRoutes, ...postRoutes];
+  const topicRoutes = topics.map((topic) => ({
+    url: `${baseUrl}/topics/${topic.slug}`,
+    lastModified: new Date(),
+  }));
+
+  return [...staticRoutes, ...topicRoutes, ...postRoutes];
 }

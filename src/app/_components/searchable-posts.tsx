@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Post } from "@/interfaces/post";
 import { MoreStories } from "./more-stories";
+import { getTopicByLabel } from "@/lib/post-taxonomy";
 
 type Props = {
   posts: Post[];
@@ -54,10 +56,15 @@ export default function SearchablePosts({ posts }: Props) {
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3 text-sm font-medium text-slate-600">
-                <span className="rounded-full border border-stone-300 bg-white px-4 py-2">Conditional Access</span>
-                <span className="rounded-full border border-stone-300 bg-white px-4 py-2">Passkeys</span>
-                <span className="rounded-full border border-stone-300 bg-white px-4 py-2">Authentication</span>
-                <span className="rounded-full border border-stone-300 bg-white px-4 py-2">DNS and Domains</span>
+                {["Conditional Access", "Passkeys", "Authentication", "Domains and DNS"].map((topic) => (
+                  <Link
+                    key={topic}
+                    href={`/topics/${getTopicByLabel(topic).slug}`}
+                    className="rounded-full border border-stone-300 bg-white px-4 py-2 transition hover:border-slate-950 hover:text-slate-950"
+                  >
+                    {topic}
+                  </Link>
+                ))}
               </div>
             </div>
 

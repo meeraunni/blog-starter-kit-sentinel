@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Conditional Access sign-in evaluation pipeline diagram">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b1220"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.06)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0.02)"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.18" cy="-0.1" r="0.7">
+      <stop offset="0%" stop-color="rgba(8,145,178,0.35)"/>
+      <stop offset="100%" stop-color="rgba(8,145,178,0)"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <text x="72" y="92" font-family="system-ui, sans-serif" font-size="18" letter-spacing="6" fill="#67e8f9" text-transform="uppercase">CONDITIONAL ACCESS</text>
+  <text x="72" y="160" font-family="system-ui, sans-serif" font-size="64" font-weight="700" letter-spacing="-1.5" fill="#ffffff">Sign-in log forensics</text>
+  <text x="72" y="210" font-family="system-ui, sans-serif" font-size="24" fill="#cbd5e1">From token request to evaluation verdict.</text>
+
+  <g transform="translate(72,300)">
+    <g>
+      <rect width="220" height="120" rx="20" fill="url(#card)" stroke="rgba(255,255,255,0.15)"/>
+      <text x="20" y="34" font-family="system-ui, sans-serif" font-size="12" letter-spacing="3" fill="#67e8f9">STEP 1</text>
+      <text x="20" y="68" font-family="system-ui, sans-serif" font-size="22" font-weight="600" fill="#ffffff">Token request</text>
+      <text x="20" y="96" font-family="system-ui, sans-serif" font-size="14" fill="#cbd5e1">user · client · resource</text>
+    </g>
+    <g transform="translate(260,0)">
+      <rect width="220" height="120" rx="20" fill="url(#card)" stroke="rgba(255,255,255,0.15)"/>
+      <text x="20" y="34" font-family="system-ui, sans-serif" font-size="12" letter-spacing="3" fill="#67e8f9">STEP 2</text>
+      <text x="20" y="68" font-family="system-ui, sans-serif" font-size="22" font-weight="600" fill="#ffffff">CA filter</text>
+      <text x="20" y="96" font-family="system-ui, sans-serif" font-size="14" fill="#cbd5e1">scope · target · exclude</text>
+    </g>
+    <g transform="translate(520,0)">
+      <rect width="220" height="120" rx="20" fill="url(#card)" stroke="rgba(255,255,255,0.15)"/>
+      <text x="20" y="34" font-family="system-ui, sans-serif" font-size="12" letter-spacing="3" fill="#67e8f9">STEP 3</text>
+      <text x="20" y="68" font-family="system-ui, sans-serif" font-size="22" font-weight="600" fill="#ffffff">Conditions</text>
+      <text x="20" y="96" font-family="system-ui, sans-serif" font-size="14" fill="#cbd5e1">device · risk · location</text>
+    </g>
+    <g transform="translate(780,0)">
+      <rect width="320" height="120" rx="20" fill="rgba(8,145,178,0.18)" stroke="rgba(103,232,249,0.4)"/>
+      <text x="20" y="34" font-family="system-ui, sans-serif" font-size="12" letter-spacing="3" fill="#67e8f9">VERDICT</text>
+      <text x="20" y="68" font-family="system-ui, sans-serif" font-size="22" font-weight="600" fill="#ffffff">Allow · Block · MFA · Re-auth</text>
+      <text x="20" y="96" font-family="system-ui, sans-serif" font-size="14" fill="#cbd5e1">written to SigninLogs</text>
+    </g>
+  </g>
+
+  <text x="72" y="560" font-family="system-ui, sans-serif" font-size="14" letter-spacing="4" fill="#94a3b8">SENTINELIDENTITY.CA · MICROSOFT ENTRA REFERENCE</text>
+</svg>

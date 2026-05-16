@@ -36,3 +36,52 @@
     font-family: var(--font-display), var(--font-sans), sans-serif;
   }
 }
+
+@layer components {
+  /* MS Learn–style callouts produced by markdownToHtml */
+  .callout {
+    @apply my-8 rounded-2xl border-l-4 px-6 py-5 not-italic;
+  }
+  .callout .callout-label {
+    @apply m-0 mb-2 text-xs font-semibold uppercase tracking-[0.18em];
+  }
+  .callout .callout-body > p:first-child {
+    @apply mt-0;
+  }
+  .callout .callout-body > p:last-child {
+    @apply mb-0;
+  }
+  .callout-note {
+    @apply border-cyan-700 bg-cyan-50/60 text-slate-700;
+  }
+  .callout-note .callout-label {
+    @apply text-cyan-800;
+  }
+  .callout-tip {
+    @apply border-emerald-600 bg-emerald-50/60 text-slate-700;
+  }
+  .callout-tip .callout-label {
+    @apply text-emerald-800;
+  }
+  .callout-important {
+    @apply border-violet-700 bg-violet-50/60 text-slate-700;
+  }
+  .callout-important .callout-label {
+    @apply text-violet-800;
+  }
+  .callout-warning,
+  .callout-caution {
+    @apply border-amber-600 bg-amber-50/60 text-slate-700;
+  }
+  .callout-warning .callout-label,
+  .callout-caution .callout-label {
+    @apply text-amber-800;
+  }
+
+  /* Anchor affordance on hover */
+  .markdown-content h2:hover::before,
+  .markdown-content h3:hover::before {
+    content: "#";
+    @apply mr-2 text-slate-300;
+  }
+}

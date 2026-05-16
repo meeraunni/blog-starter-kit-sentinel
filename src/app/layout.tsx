@@ -1,7 +1,7 @@
 import Footer from "@/app/_components/footer";
 import NewsletterSync from "@/app/_components/newsletter-sync";
 import VisitorTracker from "@/app/_components/visitor-tracker";
-import { CMS_NAME, HOME_OG_IMAGE_URL } from "@/lib/constants";
+import { CMS_NAME } from "@/lib/constants";
 import { getSiteUrl } from "@/lib/site";
 import type { Metadata } from "next";
 import Script from "next/script";
@@ -46,14 +46,14 @@ export const metadata: Metadata = {
     title: `${CMS_NAME} | Microsoft Entra Blog`,
     description:
       "Independent long-form technical writing on Microsoft Entra, Conditional Access, authentication, identity architecture, DNS, and tenant hardening.",
-    images: [HOME_OG_IMAGE_URL],
+    images: ["/opengraph-image"],
   },
   twitter: {
     card: "summary_large_image",
     title: `${CMS_NAME} | Microsoft Entra Blog`,
     description:
       "Independent long-form technical writing on Microsoft Entra, Conditional Access, authentication, identity architecture, DNS, and tenant hardening.",
-    images: [HOME_OG_IMAGE_URL],
+    images: ["/opengraph-image"],
   },
 };
 

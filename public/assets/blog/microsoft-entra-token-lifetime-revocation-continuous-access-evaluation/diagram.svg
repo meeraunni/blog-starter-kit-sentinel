@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Token lifetimes and CAE flow diagram">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b1220"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.06)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0.02)"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="-0.1" r="0.7">
+      <stop offset="0%" stop-color="rgba(8,145,178,0.32)"/>
+      <stop offset="100%" stop-color="rgba(8,145,178,0)"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <text x="72" y="92" font-family="system-ui, sans-serif" font-size="18" letter-spacing="6" fill="#67e8f9">MICROSOFT ENTRA · CAE</text>
+  <text x="72" y="170" font-family="system-ui, sans-serif" font-size="60" font-weight="700" letter-spacing="-1.5" fill="#ffffff">Tokens, revocation, CAE</text>
+  <text x="72" y="216" font-family="system-ui, sans-serif" font-size="22" fill="#cbd5e1">Critical events propagate in near real time.</text>
+
+  <g transform="translate(72,290)">
+    <rect width="320" height="160" rx="20" fill="url(#card)" stroke="rgba(255,255,255,0.15)"/>
+    <text x="22" y="36" font-family="system-ui, sans-serif" font-size="12" letter-spacing="3" fill="#67e8f9">ACCESS TOKEN</text>
+    <text x="22" y="70" font-family="system-ui, sans-serif" font-size="22" font-weight="600" fill="#ffffff">60–90 min default</text>
+    <text x="22" y="100" font-family="system-ui, sans-serif" font-size="14" fill="#cbd5e1">Variable with CAE.</text>
+    <text x="22" y="128" font-family="system-ui, sans-serif" font-size="14" fill="#cbd5e1">Re-evaluated on critical events.</text>
+
+    <g transform="translate(360,0)">
+      <rect width="320" height="160" rx="20" fill="url(#card)" stroke="rgba(255,255,255,0.15)"/>
+      <text x="22" y="36" font-family="system-ui, sans-serif" font-size="12" letter-spacing="3" fill="#67e8f9">REFRESH TOKEN</text>
+      <text x="22" y="70" font-family="system-ui, sans-serif" font-size="22" font-weight="600" fill="#ffffff">Rolling, long-lived</text>
+      <text x="22" y="100" font-family="system-ui, sans-serif" font-size="14" fill="#cbd5e1">Bound to client + user.</text>
+      <text x="22" y="128" font-family="system-ui, sans-serif" font-size="14" fill="#cbd5e1">Revocable by policy or risk.</text>
+    </g>
+
+    <g transform="translate(720,0)">
+      <rect width="380" height="160" rx="20" fill="rgba(8,145,178,0.18)" stroke="rgba(103,232,249,0.4)"/>
+      <text x="22" y="36" font-family="system-ui, sans-serif" font-size="12" letter-spacing="3" fill="#67e8f9">CRITICAL EVENTS</text>
+      <text x="22" y="70" font-family="system-ui, sans-serif" font-size="22" font-weight="600" fill="#ffffff">Password · risk · CA change</text>
+      <text x="22" y="100" font-family="system-ui, sans-serif" font-size="14" fill="#cbd5e1">CAE-capable clients re-auth.</text>
+      <text x="22" y="128" font-family="system-ui, sans-serif" font-size="14" fill="#cbd5e1">Non-CAE wait for token expiry.</text>
+    </g>
+  </g>
+
+  <text x="72" y="560" font-family="system-ui, sans-serif" font-size="14" letter-spacing="4" fill="#94a3b8">SENTINELIDENTITY.CA · MICROSOFT ENTRA REFERENCE</text>
+</svg>

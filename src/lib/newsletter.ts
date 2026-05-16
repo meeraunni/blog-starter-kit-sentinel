@@ -153,6 +153,37 @@ export async function sendSubscriptionConfirmation(values: {
   });
 }
 
+export async function sendContactEmail(values: {
+  name: string;
+  email: string;
+  subject?: string;
+  message: string;
+}) {
+  const resend = getResend();
+  const from = getMailFrom();
+  const to = getContactInbox();
+  const subjectLine = values.subject?.trim()
+    ? `Contact: ${values.subject.trim()}`
+    : `New Sentinel Identity contact from ${values.name}`;
+
+  await resend.emails.send({
+    from,
+    to: [to],
+    replyTo: values.email,
+    subject: subjectLine,
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #0f172a;">
+        <h1 style="font-size: 22px; margin-bottom: 16px;">New contact message</h1>
+        <p><strong>Name:</strong> ${escapeHtml(values.name)}</p>
+        <p><strong>Email:</strong> ${escapeHtml(values.email)}</p>
+        <p><strong>Subject:</strong> ${escapeHtml(values.subject || "(no subject)")}</p>
+        <p><strong>Message:</strong></p>
+        <p style="white-space: pre-wrap;">${escapeHtml(values.message)}</p>
+      </div>
+    `,
+  });
+}
+
 export async function sendConsultingRequestEmail(values: {
   name: string;
   company?: string;

@@ -103,6 +103,19 @@ export function getPostsByTopic(posts: Post[], slug: string) {
   return posts.filter((post) => getPostTopics(post).includes(topic.label));
 }
 
+export function getAdjacentPosts(posts: Post[], currentSlug: string) {
+  const index = posts.findIndex((post) => post.slug === currentSlug);
+  if (index === -1) {
+    return { previous: null, next: null };
+  }
+  // posts are ordered newest-first, so "previous" (older article) is at index + 1
+  // and "next" (newer article) is at index - 1.
+  return {
+    previous: posts[index + 1] ?? null,
+    next: posts[index - 1] ?? null,
+  };
+}
+
 export function getRelatedPosts(posts: Post[], currentPost: Post, limit = 3) {
   const currentTopics = new Set(getPostTopics(currentPost));
 

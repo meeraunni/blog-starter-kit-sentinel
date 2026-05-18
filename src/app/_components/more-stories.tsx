@@ -1,74 +1,66 @@
 import Link from "next/link";
+import { Fragment, ReactNode } from "react";
 import { Post } from "@/interfaces/post";
-import { PostPreview } from "./post-preview";
 import DateFormatter from "./date-formatter";
+import { getPostTopics, getTopicByLabel } from "@/lib/post-taxonomy";
 
 type Props = {
   posts: Post[];
   query?: string;
 };
 
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function highlight(text: string, query?: string): ReactNode {
+  const normalised = query?.trim();
+  if (!normalised) return text;
+  const pattern = new RegExp(`(${escapeRegExp(normalised)})`, "gi");
+  const parts = text.split(pattern);
+  return parts.map((part, i) =>
+    part.toLowerCase() === normalised.toLowerCase() ? (
+      <mark key={i} className="rounded bg-amber-200/80 px-1 text-slate-950">
+        {part}
+      </mark>
+    ) : (
+      <Fragment key={i}>{part}</Fragment>
+    ),
+  );
+}
+
 export function MoreStories({ posts, query }: Props) {
-  const [featuredPost, ...remainingPosts] = posts;
-  const railPosts = remainingPosts.slice(0, 4);
-  const gridPosts = remainingPosts.slice(4);
-
   return (
-    <section id="latest" className="pb-20 pt-10 lg:pb-24 lg:pt-12">
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1.2fr)_320px] lg:items-start">
-        <div>
-          {featuredPost && (
-            <div className="mb-10">
-              <PostPreview
-                title={featuredPost.title}
-                coverImage={featuredPost.coverImage}
-                date={featuredPost.date}
-                author={featuredPost.author}
-                slug={featuredPost.slug}
-                excerpt={featuredPost.excerpt}
-                query={query}
-                featured
-              />
+    <ul className="divide-y divide-stone-200 border-y border-stone-200">
+      {posts.map((post) => {
+        const topics = getPostTopics(post).slice(0, 2);
+        return (
+          <li key={post.slug} className="py-6">
+            <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+              <DateFormatter dateString={post.date} />
+              {topics.map((topic) => (
+                <Fragment key={topic}>
+                  <span aria-hidden="true">·</span>
+                  <Link
+                    href={`/topics/${getTopicByLabel(topic).slug}`}
+                    className="hover:text-slate-900"
+                  >
+                    {topic}
+                  </Link>
+                </Fragment>
+              ))}
             </div>
-          )}
-        </div>
-
-        <aside className="rounded-[1.8rem] border border-stone-200 bg-[#fcfbf8] p-6 shadow-[0_18px_45px_rgba(15,23,42,0.06)]">
-          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-stone-500">
-            Recent posts
-          </p>
-          <div className="mt-4 divide-y divide-stone-200">
-            {railPosts.map((post) => (
-              <div key={post.slug} className="py-4 first:pt-0 last:pb-0">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                  <DateFormatter dateString={post.date} />
-                </p>
-                <Link
-                  href={`/posts/${post.slug}`}
-                  className="mt-2 block text-lg font-semibold leading-7 tracking-[-0.02em] text-slate-950 transition hover:text-cyan-900"
-                >
-                  {post.title}
-                </Link>
-              </div>
-            ))}
-          </div>
-        </aside>
-      </div>
-
-      <div className="grid gap-8 md:grid-cols-2">
-        {gridPosts.map((post) => (
-          <PostPreview
-            key={post.slug}
-            title={post.title}
-            coverImage={post.coverImage}
-            date={post.date}
-            author={post.author}
-            slug={post.slug}
-            excerpt={post.excerpt}
-            query={query}
-          />
-        ))}
-      </div>
-    </section>
+            <h3 className="mt-2 text-xl font-semibold tracking-[-0.01em] text-slate-950 md:text-2xl">
+              <Link href={`/posts/${post.slug}`} className="hover:text-cyan-900">
+                {highlight(post.title, query)}
+              </Link>
+            </h3>
+            <p className="mt-2 max-w-3xl text-base leading-7 text-slate-600">
+              {highlight(post.excerpt, query)}
+            </p>
+          </li>
+        );
+      })}
+    </ul>
   );
 }

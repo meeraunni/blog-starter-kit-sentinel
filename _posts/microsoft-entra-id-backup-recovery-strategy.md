@@ -1,500 +1,219 @@
 ---
-title: "Entra Backup and Recovery"
-excerpt: "A technical document for Microsoft Entra administrators covering how Microsoft Entra Backup and Recovery works, what it can recover, supported objects and properties, difference reports, recovery behavior, soft deletion, troubleshooting, and operational design guidance."
+title: "Microsoft Entra Backup and Recovery: Operating Model, Incident Playbook, and the Limits Microsoft Doesn't Lead With"
+excerpt: "An operator's view of Microsoft Entra Backup and Recovery — what it can and cannot do, where it differs from on-prem AD backup, an incident response playbook for accidental bulk changes, and a separation-of-duties workflow for multi-team recovery approval."
 coverImage: "/assets/blog/entra-backup-recovery/cover.svg"
-date: "2026-03-28T20:30:00.000Z"
+date: "2026-05-09T09:00:00.000Z"
 author:
-  name: "Sentinel Identity"
+  name: "M.U"
 ogImage:
   url: "/assets/blog/entra-backup-recovery/cover.svg"
 ---
 
-## Why this feature matters
+## The recovery story you actually need to tell
 
-Microsoft Entra Backup and Recovery is not just another recycle-bin view in the admin center. As Microsoft explains in the [overview](https://learn.microsoft.com/en-us/entra/backup/overview), it is a built-in backup and recovery capability that lets administrators recover supported Microsoft Entra directory objects to a previously known-good state after accidental change or security compromise.
+A new feature gets announced. The headline reads "Microsoft Entra Backup and Recovery." Everyone breathes a sigh of relief and the recovery section of the disaster-recovery runbook stops being touched. Six months later there's an incident, someone reaches for the runbook, and the team discovers — under real time pressure — that the feature does not do what they thought it did. It does not reconstruct hard-deleted objects, it does not restore the tenant to "yesterday at 3pm," and it does not exempt you from the conditional access policy that's now blocking your own admins from running the recovery action.
 
-That distinction matters because the service is doing more than restoring deleted objects. The backup engine also compares current tenant state with a historical snapshot and applies a recovery action based on the type of drift that occurred since the backup.
+Microsoft Entra Backup and Recovery is genuinely useful — but it's a *delta-based reconciliation engine* with specific recovery actions on specific object types, not a tenant-image restore. The teams who get the most out of it are the ones who internalised that distinction before the incident, designed the operating model around it, and wrote the multi-team approval workflow into a document before they needed it. This article is the operator's view.
 
-The right technical question is therefore not "Can Entra restore deleted objects?" The better question is:
+The Microsoft references are [Backup and Recovery overview](https://learn.microsoft.com/entra/backup/overview), [backup, difference report, and recovery model](https://learn.microsoft.com/entra/backup/backup-difference-report-recovery-model), [soft deletion](https://learn.microsoft.com/entra/backup/soft-deletion), [view available backups](https://learn.microsoft.com/entra/backup/view-available-backups), [troubleshooting](https://learn.microsoft.com/entra/backup/troubleshooting), and the related [restore a deleted user](https://learn.microsoft.com/entra/identity/users/users-restore) page for soft-delete restore semantics.
 
-**How does Microsoft Entra Backup and Recovery model state, detect drift, and apply recovery actions across supported object types?**
+## The product in one paragraph
 
-That is the question this article answers.
+Entra Backup and Recovery runs an automatic daily backup of supported tenant objects (users, groups, applications, conditional access policies, named locations, custom security attribute assignments, and a growing list), retains five days of history, stores the backups in the same geo as the tenant, and exposes two main operations: produce a **difference report** between the current state and a chosen backup, then trigger a **recovery action** that applies the documented per-difference-type action (re-create deleted objects via soft-delete restore, revert updates, or soft-delete objects that didn't exist at the backup point). The backups are immutable to anyone signed in to the tenant — including Global Administrators — which is the key security property and the reason it's defensible against rogue-admin scenarios. It does not create wholly new objects from nothing, it does not hard-delete objects, and it does not currently cover every object type in the directory.
 
-![Microsoft Entra Backup and Recovery](/assets/blog/entra-backup-recovery/cover.svg)
+## How it differs from on-prem AD authoritative restore
 
-## What Microsoft Entra Backup and Recovery actually does
+Most administrators carry mental models from on-prem Active Directory recovery, and those models lead to wrong expectations:
 
-As documented in the [overview](https://learn.microsoft.com/en-us/entra/backup/overview), Microsoft Entra Backup and Recovery currently:
+| Behaviour | On-prem AD authoritative restore | Entra Backup and Recovery |
+|---|---|---|
+| Restore unit | A NTDS.dit snapshot, replicated to other DCs | Per-object delta application against current state |
+| Hard-deleted object recovery | Yes — restored from the snapshot | No — object must still be soft-deleted within 30-day retention |
+| Granularity | Whole forest / domain / OU subtree | Per supported object type |
+| Backup ownership | Customer (Windows Server Backup, third-party) | Microsoft (immutable, customer cannot disable) |
+| Retention | Customer-decided | 5 days, not adjustable |
+| Roll-forward operations | Tombstone lifetime + USN reanimation | Soft-delete restore + property update |
+| Authoritative across the directory | Yes | Only within supported object/property scope |
 
-- runs automatically once per day
-- retains up to five days of backup history
-- stores backups in the same geo-location as the tenant
-- prevents signed-in users and apps, even highly privileged ones, from turning off, deleting, or modifying the backups
+The most consequential difference is the **hard-delete** behaviour. On-prem AD authoritative restore can pull back an object that's been gone for months, as long as your tape rotation includes a date when it existed. Entra cannot. If a user object has been hard-deleted (or soft-deleted more than 30 days ago and aged out of the recycle bin), Entra Backup and Recovery has no operation that brings it back — because the operation it would perform is "restore from soft-delete," and there's no soft-deleted shadow left to restore.
 
-That tells you something important about the backend design. This is a **Microsoft-controlled snapshot service**, not a customer-managed export job. Administrators consume backup points and recovery workflows, but they do not own the scheduling engine or the backup storage lifecycle.
+> [!IMPORTANT]
+> If your incident playbook contains the words "and then we'll restore the deleted users from yesterday's backup," verify whether those users are *soft-deleted* (recoverable) or *hard-deleted* (gone). The terminology matters more than it sounds.
 
-From an operations perspective, that means:
+## What's in scope today, and what isn't
 
-- you do not configure backup frequency
-- you do not prune backup points
-- you do not upload or import backup sets
-- you work within Microsoft’s fixed retention and recovery model
+The supported object types and properties have been growing through the preview and into GA. The set as documented in [Backup and Recovery overview](https://learn.microsoft.com/entra/backup/overview) currently includes users, groups (including their memberships), applications and service principals, named locations, conditional access policies, and a defined property set on each. **What it does not cover** (or covers only partially) — and these are the gaps that bite during real incidents — typically includes:
 
-As mentioned [here](https://learn.microsoft.com/en-us/entra/backup/view-available-backups), each backup is a point-in-time view of supported tenant objects and attributes, with one backup created per day and retained for five days.
+- **Privileged Identity Management role assignments and configurations.** Manage these separately via PIM's own history.
+- **Identity Protection risk policies and risky-user / risky-sign-in history.** Out of scope.
+- **Authentication Methods policy state changes.** Some property sets covered, others not — verify against the current docs before depending on it.
+- **Cross-tenant access settings.** Out of scope.
+- **B2B guest user property updates** in some scenarios.
+- **Custom security attribute *definitions*.** Assignments are covered; the underlying schema definitions are not.
 
-## Tenant and role prerequisites
+Treat this list as a moving target. The right operational habit is: every six months, re-read the supported-object documentation and update your DR runbook's "covered / not covered" appendix. Anything not covered needs a manual procedure documented separately.
 
-The feature is still in preview, and Microsoft is explicit about the operating boundary in the [overview](https://learn.microsoft.com/en-us/entra/backup/overview) and [troubleshooting guide](https://learn.microsoft.com/en-us/entra/backup/troubleshooting):
+> [!WARNING]
+> Discovering that a critical object type is *not* covered during the incident is the most expensive way to find out. The thirty minutes spent reviewing the supported list during a calm Wednesday afternoon pay for themselves the first time the runbook would have led you down a dead end.
 
-- only workforce tenants are supported
-- External ID and Azure AD B2C tenants are not supported
-- the tenant must have Microsoft Entra ID P1 or P2 licensing
-- admins need either `Microsoft Entra Backup Reader`, `Microsoft Entra Backup Administrator`, or `Global Administrator`
+## The recovery actions, in operator terms
 
-Role separation is meaningful here.
+When you run a difference report between a backup and the current state, every detected delta lines up with one of four recovery actions:
 
-As Microsoft documents [here](https://learn.microsoft.com/en-us/entra/backup/overview):
+| Delta type | Action Entra performs | Operator note |
+|---|---|---|
+| Object existed at backup, deleted since | **Soft-delete restore** | Only works if the object is still in the 30-day soft-delete window |
+| Object existed at backup, properties changed since | **Property revert** to backup values | Only the *supported property set* is reverted; out-of-scope properties keep their current values |
+| Object didn't exist at backup, exists now | **Soft-delete the object** | Effectively undoes a "new object" change |
+| Object was already soft-deleted at backup, now restored | **Soft-delete the object again** | Used when an unauthorised restore needs to be reverted |
 
-- `Microsoft Entra Backup Reader` can view backups, review difference reports, and review recovery history
-- `Microsoft Entra Backup Administrator` can also create difference reports and trigger recovery
+The Microsoft reference for these actions is [backup, difference report, and recovery model](https://learn.microsoft.com/entra/backup/backup-difference-report-recovery-model). The implication that catches teams off guard is the third row: **running recovery against a backup older than the creation of a legitimate new object will *delete* that new object**. This is the right behaviour for the design ("restore tenant to its state at the backup point") but it means recovery is destructive in the forward direction as well as the backward direction.
 
-That separation is operationally useful because it allows a review workflow where one team investigates drift and a smaller set of admins is allowed to initiate recovery.
+> [!IMPORTANT]
+> Always run a *difference report first*, review it object by object, and only then run the recovery action — and run it scoped to the specific objects you intend to remediate, not the whole report.
 
-## The recovery model is state-based, not object-cloning
+## A real-feeling incident walkthrough
 
-The most important page in the document set is the [backup, difference report, and recovery model](https://learn.microsoft.com/en-us/entra/backup/backup-difference-report-recovery-model).
+The scenario, anonymised from a pattern I've seen play out: at 14:30, a junior administrator runs a Graph PowerShell script that's meant to update the department attribute on ~50 users and instead updates `accountEnabled = false` on 4,800 users because of a buggy ForEach loop and an unfiltered query. Within fifteen minutes, the help desk is overwhelmed with "I can't sign in" tickets, the leadership Slack channel lights up, and someone in the identity team reaches for the Backup and Recovery feature.
 
-Microsoft defines the recovery action based on what changed since the backup:
+The right sequence:
 
-- if an object was added after the backup, recovery soft-deletes it
-- if an object was updated, recovery updates the object back to the backup value
-- if an object was soft-deleted, recovery restores it
-- if an object was restored after the backup, recovery soft-deletes it again
+### Step 1: Stop the bleeding (5 minutes)
 
-This is the real backend behavior that admins need to understand.
+Disable the running script if it's still running. Identify the script's identity (signed-in user or service principal) and revoke its sessions:
 
-Microsoft Entra Backup and Recovery is not replaying a full tenant image. It is evaluating the delta between a backup point and the current tenant state, then applying object-level remediation actions to supported objects and supported attributes.
+```powershell
+Connect-MgGraph -Scopes "User.RevokeSessions.All", "Directory.AccessAsUser.All"
+Revoke-MgUserSignInSession -UserId "junior.admin@contoso.com"
+```
 
-That also explains two architectural limits Microsoft calls out directly in the same article:
+If a service principal performed the action, rotate its credentials and remove the over-privileged role assignment. This stops new damage while you plan the recovery.
 
-- it **does not create new objects**
-- it **does not hard-delete objects**
+### Step 2: Scope the damage (10 minutes)
 
-So if an admin expects this feature to reconstruct a hard-deleted object from nothing, that expectation is wrong. Microsoft says this directly [here](https://learn.microsoft.com/en-us/entra/backup/backup-difference-report-recovery-model).
+Query the audit log for what the script actually changed, so you know what to recover:
 
-## Soft deletion is the foundation of the recovery system
+```kql
+AuditLogs
+| where TimeGenerated between (datetime(2026-05-09T14:30:00Z) .. datetime(2026-05-09T15:00:00Z))
+| where InitiatedBy.user.userPrincipalName == "junior.admin@contoso.com"
+| where OperationName == "Update user"
+| extend Target = tostring(TargetResources[0].userPrincipalName)
+| extend Changes = TargetResources[0].modifiedProperties
+| project TimeGenerated, Target, Changes
+| order by TimeGenerated asc
+```
 
-Microsoft’s [soft deletion article](https://learn.microsoft.com/en-us/entra/backup/soft-deletion) is important because it explains the lower-level object lifecycle that Backup and Recovery builds on.
+Save the resulting list. This is your authoritative "objects to evaluate for recovery" set. Do not skip this step; running recovery without it is the path to *also* reverting changes that were legitimate and concurrent.
 
-When an object that supports soft delete is deleted:
+### Step 3: Choose the recovery point
 
-- the object is no longer active for authentication or authorization
-- Microsoft Entra retains the object data for 30 days
-- the object can be restored during that retention window
+In the Entra admin centre, open Backup and Recovery → backups list. Identify the most recent backup *before* the incident time. If the script ran at 14:30 and your daily backup runs at 02:00, the 02:00 backup is your recovery point. Anything in the tenant changed *legitimately* between 02:00 and 14:30 will appear in the difference report and will be reverted unless you exclude it.
 
-This matters because Backup and Recovery uses soft delete as one of its recovery actions. If drift analysis determines that an object exists now but should not exist relative to the selected backup, the service can move that object into a soft-deleted state. If an object was soft-deleted after the backup but existed at the backup point, the service can restore it.
+### Step 4: Generate the difference report, scoped
 
-This is why Microsoft describes soft deletion as a foundational capability [here](https://learn.microsoft.com/en-us/entra/backup/soft-deletion).
+This is the step that separates "controlled recovery" from "secondary incident." Generate the report against the chosen backup point, then **filter** the report's recovery selection to just the objects in your audit-log query result from step 2. The Microsoft tooling supports per-object selection — don't bulk-apply.
 
-## Supported object types are broader than many admins expect, but not complete
+### Step 5: Recovery approval (separation of duties)
 
-Microsoft documents the current scope in the [overview](https://learn.microsoft.com/en-us/entra/backup/overview) and the more detailed [supported objects and recoverable properties](https://learn.microsoft.com/en-us/entra/backup/scope-supported-objects-limitations) article.
+Production recovery actions should not be authorised by the same person who diagnosed the incident, and they should not be performed by the person who caused the incident. The minimum approval shape:
 
-Supported object categories include:
+- **Diagnostician** (the on-call identity engineer who scoped the damage in steps 1-2). Reads the difference report. Writes the recovery plan.
+- **Recovery operator** (a separate engineer with the `Microsoft Entra Backup Administrator` role). Reviews the plan and runs the recovery operation.
+- **Recorder** (the incident commander). Documents the plan, the approval, the execution time, and any deviations in the incident ticket.
 
-- users
-- groups
-- applications
-- service principals
-- Conditional Access policies
-- named location policies
-- authentication methods policy
-- authorization policy
-- organization
+The two roles `Microsoft Entra Backup Reader` and `Microsoft Entra Backup Administrator` exist specifically to support this separation, as documented in the [overview](https://learn.microsoft.com/entra/backup/overview). Assign the Reader role widely (anyone who might investigate). Assign the Administrator role narrowly (a small named pool, ideally just-in-time via PIM).
 
-But the important engineering detail is this:
+### Step 6: Execute, then verify
 
-**support is property-based, not "full object rollback" across every possible field.**
+Run the scoped recovery. Immediately afterwards, run a sample sign-in test for 5-10 of the affected users to confirm they can sign in. Spot-check group memberships if the script had cascading effects. Watch the audit log:
 
-Microsoft states that recovery applies only to the supported properties listed in the article and does not imply full object rollback [here](https://learn.microsoft.com/en-us/entra/backup/scope-supported-objects-limitations).
+```kql
+AuditLogs
+| where TimeGenerated > ago(15m)
+| where Category == "DirectoryManagement"
+| where OperationName has "Restore" or OperationName has "Recovery"
+| project TimeGenerated, OperationName, Target = tostring(TargetResources[0].userPrincipalName), Result
+| order by TimeGenerated desc
+```
 
-That single sentence is one of the most important constraints in the whole feature.
+### Step 7: Post-incident — close the gap that enabled the script
 
-## What is actually in scope for recovery
+The recovery is the proximate fix. The underlying issue is that a junior administrator had a permission set that let them update 4,800 user objects without review. Move that role to PIM with eligible-only assignment, require approval for activation, and add a Conditional Access policy that requires phishing-resistant MFA for the activation. The next time someone runs the wrong script, they get a prompt; the time after that, they don't have the right at all.
 
-### Users
+## Multi-team approval workflow as a written procedure
 
-Microsoft lists supported user properties in the [supported objects article](https://learn.microsoft.com/en-us/entra/backup/scope-supported-objects-limitations), including:
+Most tenants don't have a written workflow for this. They have one written *after* the first incident. Write it before.
 
-- `AccountEnabled`
-- `DisplayName`
-- `UserPrincipalName`
-- `Mail`
-- `Department`
-- `JobTitle`
-- `UsageLocation`
-- `PerUserMfaState`
+The minimum document:
 
-But Microsoft also explicitly says that **manager and sponsor changes are not in scope**.
+- **Who can trigger a difference report?** (Backup Reader role; wide assignment.)
+- **Who can run a recovery action?** (Backup Administrator; narrow, PIM-eligible, JIT activation only.)
+- **What approval is required for a recovery action affecting > N objects?** (Pick N for your org — 25 is a reasonable default. Above the threshold, require a named second-approver before running.)
+- **Where is the recovery plan documented?** (Incident ticket with a fixed template; the difference report attached as evidence.)
+- **What happens if the recovery itself goes wrong?** (Identify the next backup point; identify whether the *failed* recovery itself is now in the audit log; have the rollback procedure pre-written.)
+- **What's the post-incident communication?** (Who emails affected users? When? With what wording?)
 
-That means a user object can be partially recoverable while relationship data around that object is still outside recovery scope.
+A document this short can be drafted in an afternoon. The cost of *not* having it is measured in minutes of additional outage per incident.
 
-### Groups
+## Day-to-day operational pattern
 
-Group support includes properties such as:
+Beyond incident response, the feature has a steady-state use that pays for itself: **drift detection**. A weekly difference report against the oldest available backup surfaces accidental and unauthorised changes that would otherwise sit unnoticed.
 
-- `DisplayName`
-- `Description`
-- `Mail`
-- `MailEnabled`
-- `SecurityEnabled`
+```powershell
+# Pseudo-code; the actual cmdlet surface is evolving — check current Graph PowerShell SDK
+Connect-MgGraph -Scopes "EntraBackup.Read.All"
+$oldest = Get-MgBeta...EntraBackup | Sort-Object CreatedDateTime | Select-Object -First 1
+$diff   = New-MgBeta...EntraBackupDifferenceReport -BackupId $oldest.Id
+$diff | Export-Csv weekly-drift-report.csv
+```
 
-But Microsoft notes [here](https://learn.microsoft.com/en-us/entra/backup/scope-supported-objects-limitations) that:
+Triage the CSV against your change-management log. Anything in the diff that isn't in the change log is either: (a) a legitimate change that didn't get logged (process gap), (b) an automated change from a script or workflow you forgot existed (operational hygiene gap), or (c) an actual unauthorised change (incident).
 
-- group ownership changes are not in scope
-- dynamic group rule changes are not in scope
+> [!TIP]
+> Drift reports also catch the *negative* failure: changes that *should* have happened but didn't, because a runbook silently failed and nobody noticed. If a weekly automation is supposed to set a property and the drift report doesn't show it, the automation is broken.
 
-This is a good example of why admins should not read "groups are supported" too casually. Group existence and some attributes are recoverable. Ownership and dynamic rule logic are different questions.
+## Common questions
 
-### Conditional Access and named locations
+### Can Backup and Recovery restore Conditional Access policies that were modified or deleted?
 
-For Conditional Access policies and named locations, Microsoft states that **all properties are in scope** in the [supported objects article](https://learn.microsoft.com/en-us/entra/backup/scope-supported-objects-limitations).
+Yes, for the property set Microsoft documents as in scope. Run the difference report scoped to the Conditional Access objects, review the proposed reverts, and apply. The most common operational use is reverting a policy that was tightened too far during an incident response and now needs to be relaxed back to its prior state.
 
-That is a strong capability and one of the highest-value parts of the feature, because Conditional Access mistakes can break tenant-wide sign-in.
+### What's the recovery story for hard-deleted users beyond the 30-day window?
 
-### Authentication methods policy
+There isn't one within the Backup and Recovery feature. If hard-deleted users beyond 30 days are a recoverable scenario you need to support, the answer is *prevention*: lock down the hard-delete permission via PIM, monitor `AuditLogs` for "Delete user" operations with alerting, and never grant hard-delete rights to scripts.
 
-Microsoft says recovery supports these policy families [here](https://learn.microsoft.com/en-us/entra/backup/scope-supported-objects-limitations):
+### Is the backup data stored in our tenant's geo?
 
-- email one-time passcode
-- FIDO2 passkey
-- Authenticator app
-- voice call
-- SMS
-- third-party software OATH
-- Temporary Access Pass
-- certificate-based authentication
+Yes. Microsoft commits in the [overview](https://learn.microsoft.com/entra/backup/overview) that backups are stored in the same geo as the tenant. This matters for data-residency compliance.
 
-This matters operationally because a bad authentication-methods change can affect registration and sign-in paths across the tenant, not just one admin blade.
+### What licenses are required?
 
-### Applications
+Microsoft Entra ID P1 or P2, per the troubleshooting and overview pages. Workforce tenants only; External ID and B2C tenants are not covered today.
 
-Microsoft documents a defined set of supported application properties, such as:
+### Can a Global Administrator turn this feature off?
 
-- `DisplayName`
-- `Description`
-- `RequiredResourceAccess`
-- `SignInAudience`
-- `OptionalClaims`
-- `GroupMembershipClaims`
-- `ServicePrincipalLockConfiguration`
+No — that's the explicit immutability property. A signed-in user, even a Global Administrator, cannot disable, delete, or modify the backups. This is the security guarantee that makes the feature defensible against rogue-admin scenarios.
 
-That is meaningful, but still bounded. It is not the same as "the entire application object is always fully restorable in every dimension."
+### How does this interact with our existing third-party Entra backup tools?
 
-### Service principals and related permissions
+Most third-party tools were built before the Microsoft-native feature existed, and they used different mechanisms (Graph snapshotting, change-feed monitoring). They are not obsolete — they may cover object types Microsoft doesn't, and they may offer longer retention. The right operating model is to use both: Microsoft-native as the primary, immutable recovery surface for the supported object set, and the third-party tool for whatever gaps remain.
 
-The service principal section is especially important.
+### What's the expected RPO and RTO?
 
-Microsoft states [here](https://learn.microsoft.com/en-us/entra/backup/scope-supported-objects-limitations) that service principal recovery is the anchor for related permissions, and when a service principal is recovered, Backup and Recovery also restores:
+RPO is up to 24 hours (one backup per day). RTO depends on the recovery scope — a small targeted recovery (a few dozen users) takes minutes; a large reconciliation (thousands of objects) can take hours and should be planned in a change window.
 
-- OAuth2 permission grants where the recovered service principal is the target object
-- app role assignments where the recovered service principal is the target object
+## What to take away
 
-But Microsoft also adds an important constraint:
-
-- only admin-created delegated grants in scope as `consentType = AllPrincipals` and `principalId = null` are supported
-- user-consent-generated OAuth2 permission grants are not supported
-
-That is the kind of detail that changes the real-world recovery story. If your app relied heavily on user-consented delegated permissions, you should not assume this feature fully reconstructs that consent landscape.
-
-### Organization and authorization policy
-
-Microsoft also supports selected tenant-level settings in the `organization` object and `authorization policy`, including items such as:
-
-- guest user role behavior
-- tenant-level per-user MFA settings under `StrongAuthenticationDetails`
-- pieces of `StrongAuthenticationPolicy`
-
-Again, the key takeaway is selective tenant-state recovery, not universal rollback.
-
-## Difference reports are the control point before recovery
-
-The operational heart of the feature is the difference report.
-
-As Microsoft explains in [Create and review difference reports](https://learn.microsoft.com/en-us/entra/backup/create-review-difference-reports), a difference report compares the current tenant state with a selected backup and shows objects that were:
-
-- created
-- modified
-- soft-deleted
-- restored
-
-It also shows:
-
-- changed attributes
-- changed links such as group membership
-
-This is the part of the feature admins should treat as their preview and validation stage before writing changes back into the tenant.
-
-Microsoft’s guidance is explicit [here](https://learn.microsoft.com/en-us/entra/backup/overview): always run a difference report, review the changes, and then decide what to recover.
-
-### Scoping options
-
-Microsoft allows you to scope difference reports in three ways [here](https://learn.microsoft.com/en-us/entra/backup/create-review-difference-reports):
-
-- all supported objects
-- by object type
-- by object ID
-
-For object ID scoping, Microsoft allows up to 100 object IDs across supported object types.
-
-That gives you a useful recovery pattern:
-
-- use broad reports when you suspect wide tenant drift
-- use narrow reports when you know the incident domain, such as Conditional Access only
-- use object ID scope for surgical investigation of one critical object
-
-### Why the first report is slower
-
-Microsoft explains in the [recovery model article](https://learn.microsoft.com/en-us/entra/backup/backup-difference-report-recovery-model) that the first time you create a difference report against a given backup, the backup data first has to be loaded before comparison starts.
-
-Microsoft’s documented planning estimates are:
-
-- up to 1 hour for smaller tenants
-- up to 2.5 hours for very large tenants
-
-The second report against the same backup is faster because the data-loading step is reused.
-
-This is not just a UX detail. It reveals the processing model:
-
-1. load backup dataset
-2. compute drift against current tenant state
-3. materialize a report
-
-That is why Microsoft also notes that for 100,000 object and/or link changes, full report generation can take around 45 minutes, as mentioned [here](https://learn.microsoft.com/en-us/entra/backup/backup-difference-report-recovery-model).
-
-## Only one job runs at a time
-
-This is one of the most operationally important limits.
-
-Microsoft states in both the [recovery model article](https://learn.microsoft.com/en-us/entra/backup/backup-difference-report-recovery-model) and the [recover objects article](https://learn.microsoft.com/en-us/entra/backup/recover-objects) that only **one job can run at a time**, including:
-
-- difference reports
-- recovery jobs
-
-That means an active report blocks recovery startup, and an active recovery blocks new reporting.
-
-From an incident-response perspective, this matters because:
-
-- you cannot parallelize multiple recovery investigations in the same tenant
-- your team needs to coordinate who owns the active job
-- broad exploratory reports can delay urgent surgical recovery if launched carelessly
-
-## How recovery is actually executed
-
-Microsoft documents two recovery entry points in [Recover objects](https://learn.microsoft.com/en-us/entra/backup/recover-objects):
-
-- recover from a completed difference report
-- recover directly from a backup
-
-The safer path is usually the first one, because you have already reviewed the drift.
-
-### Recover from a difference report
-
-When you recover from a difference report:
-
-- the recovery reuses the scope of that report
-- you cannot apply different filters at recovery time
-- you can recover a single high-priority object from the changed attributes panel
-
-The single-object recovery path is important for practical operations because it lets you avoid a full scoped recovery job when one object is the actual outage cause.
-
-### Recover directly from a backup
-
-Microsoft also lets you recover directly from a backup with scope filters:
-
-- all supported objects
-- only certain object types
-- only specific object IDs
-
-But Microsoft gives a clear warning [here](https://learn.microsoft.com/en-us/entra/backup/recover-objects): recovery actions apply directly to the tenant and cannot be undone automatically.
-
-That warning should change admin behavior. This is not a "test restore" workflow. This is a live control-plane mutation.
-
-## The subtle but critical point about point-in-time reports
-
-One of the easiest mistakes to make is to treat the difference report as if it were a frozen recovery plan.
-
-Microsoft says something very important in [Recover objects](https://learn.microsoft.com/en-us/entra/backup/recover-objects): difference reports are point-in-time comparisons, and if objects are modified after the report is created, those later changes are not reflected in the report. Recovery still applies to the tenant’s **most current state**.
-
-That means:
-
-- the report is an analysis artifact
-- the recovery job is still applied to live, current tenant state
-- more drift can happen between report generation and recovery start
-
-This is the kind of backend detail that can surprise admins in a fast-moving incident. If many changes are happening, create the report, review it quickly, and recover with clear control over concurrent admin activity.
-
-## What you can see in backups and history
-
-As documented in [View available backups](https://learn.microsoft.com/en-us/entra/backup/view-available-backups), the Backups page shows:
-
-- available backups for the last five days
-- backup timestamps
-- backup IDs
-
-From there, you can start either a difference report or a recovery.
-
-The [Recovery History](https://learn.microsoft.com/en-us/entra/backup/review-recovery-history) page then shows:
-
-- recovery status
-- the backup point used
-- recovery start and completion time
-- number of objects and links modified
-
-Microsoft also notes that recovery history is retained for five days after completion.
-
-That short retention window means recovery history is useful for recent operations and troubleshooting, but not as a long-term audit system by itself.
-
-## What the feature still does not solve
-
-The limitations section in [Supported objects and recoverable properties](https://learn.microsoft.com/en-us/entra/backup/scope-supported-objects-limitations) and the [recovery model article](https://learn.microsoft.com/en-us/entra/backup/backup-difference-report-recovery-model) is where admins need to be especially disciplined.
-
-### Hard-deleted objects are not recoverable
-
-Microsoft states this repeatedly:
-
-- hard-deleted objects cannot be recovered
-- Backup and Recovery does not recreate hard-deleted objects
-- only soft-deleted or modified objects can be restored
-
-That is not a minor exception. It is a design boundary.
-
-### On-premises synchronized objects show up in reports but are not recoverable here
-
-Microsoft explains [here](https://learn.microsoft.com/en-us/entra/backup/backup-difference-report-recovery-model) that synchronized users and groups from on-premises AD can appear in difference reports, but recovery is not supported through this feature because the source of authority remains on-premises Active Directory.
-
-This is exactly the right behavior architecturally. Drift can be detected in Entra, but authoritative restoration must happen where the object is mastered.
-
-### Supported object does not mean every property is supported
-
-Microsoft’s supported-object page is explicit that:
-
-- some relationships are not in scope
-- some rule logic is not in scope
-- some permission grant scenarios are not in scope
-
-This means backup coverage should be interpreted at the attribute level, not only at the object-type label.
-
-## Troubleshooting the feature the way Microsoft documents it
-
-The [troubleshooting article](https://learn.microsoft.com/en-us/entra/backup/troubleshooting) is more useful than it looks, because it tells you what failures Microsoft expects in real tenants.
-
-### Issue: no backups are listed
-
-Microsoft says fewer than five visible days or duplicate-looking timestamps can happen during onboarding or transient backend conditions, and this does not indicate data loss or backup failure. Microsoft’s documented resolution is effectively to wait; the service continues creating new backups automatically.
-
-That is useful because it tells you not to overdiagnose temporary backup-list gaps during early service initialization.
-
-### Issue: a difference report or recovery job will not start
-
-Microsoft’s documented root causes are:
-
-- another job is already running
-- the admin lacks the required role
-- the object type is not supported in the current release
-
-This maps directly to the service design:
-
-- global tenant job lock
-- role-gated operations
-- preview-limited object coverage
-
-### Issue: expected changes are missing from a difference report
-
-Microsoft’s troubleshooting guidance says to verify:
-
-- the object type and property are supported
-- the object really changed after the backup
-- the missing item was not hard-deleted
-
-That tells you the diagnostic order. First validate scope, then timing, then deletion type. Do not assume the report is wrong before checking whether the change actually falls inside product scope.
-
-### Issue: long-running jobs
-
-Microsoft’s guidance here is straightforward and consistent with the backend model:
-
-- large tenants take longer
-- large change sets take longer
-- first use of a backup is slower because of data loading
-
-If the job eventually completes, this is usually a scale-and-processing issue, not necessarily a service fault.
-
-### Issue: recovery completed with warnings or did not restore what you expected
-
-The documentation points you back to the scope boundaries:
-
-- unsupported objects or attributes are not recovered
-- objects may have changed after the report was created
-- hard-deleted objects are not recoverable
-
-That is why difference report review and controlled timing are so important.
-
-## Operational guidance for Entra administrators
-
-If I were advising an Entra operations team on how to use this feature well, the working model would be:
-
-1. Treat backups as Microsoft-managed recovery points, not as customer-owned exports.
-2. Start with a difference report unless the incident is so urgent that direct recovery is justified.
-3. Scope narrowly when possible, especially for Conditional Access, named locations, or a small set of critical objects.
-4. Remember that reports are point-in-time comparisons, but recovery is applied to current tenant state.
-5. Do not assume object support means every property and relationship is recoverable.
-6. Do not assume hard delete is reversible.
-7. Coordinate incident response because only one report or recovery job can run at a time.
-
-## The practical value of the video walkthrough
-
-The video you linked, [here](https://www.youtube.com/watch?v=72nowrDIlQU), is useful in combination with the Microsoft documentation because it helps visualize the admin workflow:
-
-- inspect backups
-- generate a difference report
-- review scope and changed objects
-- recover either the selected scope or a specific object
-- verify the result in recovery history
-
-That workflow matches the Microsoft documentation set closely. The value is not just knowing where the buttons are. The value is understanding the service semantics behind those buttons.
-
-## Final takeaway
-
-Microsoft Entra Backup and Recovery is a real recovery control plane for supported Entra objects, but it is not an unlimited tenant rollback engine.
-
-Its actual behavior, as documented by Microsoft, is:
-
-- one automatic backup per day
-- five days of retention
-- state comparison through difference reports
-- recovery actions driven by object drift
-- soft-delete-aware restore and rollback behavior
-- strict limits around hard deletes, synced objects, unsupported attributes, and one-job-at-a-time execution
-
-If an Entra administrator understands those mechanics, they can use the feature properly:
-
-- to review tenant drift
-- to restore supported objects and properties safely
-- to recover from bad changes without guessing
-- and to avoid assuming the product can do things Microsoft never said it can do
-
-That is the level at which this feature should be operated.
+Microsoft Entra Backup and Recovery is the right tool for the right job, but only if you understand what job it does. It is a delta-reconciliation engine, not a tenant-image restore. It cannot resurrect hard-deleted objects, it cannot extend its five-day retention, and it does not yet cover every object type in the directory. The operating model that gets the most out of it has three legs: a written multi-team approval workflow with separation of duties, a steady-state weekly drift report against the oldest available backup, and a documented appendix listing exactly which object types are and aren't in scope for *this* tenant *this* quarter. With those three in place, the feature genuinely earns its line in the disaster-recovery runbook. Without them, it's a button that looks reassuring until you press it.
 
 ## References
 
-- [Microsoft Entra Backup and Recovery overview](https://learn.microsoft.com/en-us/entra/backup/overview)
-- [Backup, difference report, and recovery model](https://learn.microsoft.com/en-us/entra/backup/backup-difference-report-recovery-model)
-- [Supported objects and recoverable properties](https://learn.microsoft.com/en-us/entra/backup/scope-supported-objects-limitations)
-- [Soft deletion in Microsoft Entra Backup and Recovery](https://learn.microsoft.com/en-us/entra/backup/soft-deletion)
-- [View available backups](https://learn.microsoft.com/en-us/entra/backup/view-available-backups)
-- [Create and review difference reports](https://learn.microsoft.com/en-us/entra/backup/create-review-difference-reports)
-- [Recover objects](https://learn.microsoft.com/en-us/entra/backup/recover-objects)
-- [Review recovery history](https://learn.microsoft.com/en-us/entra/backup/review-recovery-history)
-- [Troubleshoot Microsoft Entra Backup and Recovery](https://learn.microsoft.com/en-us/entra/backup/troubleshooting)
-- [Video walkthrough](https://www.youtube.com/watch?v=72nowrDIlQU)
+- [Microsoft Entra Backup and Recovery overview — Microsoft Learn](https://learn.microsoft.com/entra/backup/overview)
+- [Backup, difference report, and recovery model — Microsoft Learn](https://learn.microsoft.com/entra/backup/backup-difference-report-recovery-model)
+- [Soft deletion in Microsoft Entra — Microsoft Learn](https://learn.microsoft.com/entra/backup/soft-deletion)
+- [View available backups — Microsoft Learn](https://learn.microsoft.com/entra/backup/view-available-backups)
+- [Backup and Recovery troubleshooting — Microsoft Learn](https://learn.microsoft.com/entra/backup/troubleshooting)
+- [Restore or remove a deleted user — Microsoft Learn](https://learn.microsoft.com/entra/identity/users/users-restore)
+- [Microsoft Entra built-in roles — Microsoft Learn](https://learn.microsoft.com/entra/identity/role-based-access-control/permissions-reference)
+- [Privileged Identity Management — Microsoft Learn](https://learn.microsoft.com/entra/id-governance/privileged-identity-management/pim-configure)

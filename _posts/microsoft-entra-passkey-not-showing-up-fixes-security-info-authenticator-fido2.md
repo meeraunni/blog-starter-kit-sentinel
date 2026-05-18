@@ -1,167 +1,280 @@
 ---
-title: "Missing Passkey Registration Options"
-excerpt: "Technical troubleshooting for when Passkey (FIDO2) does not appear in Security info or Microsoft Authenticator, including Authentication Methods policy, MFA bootstrap, platform support, and authenticator constraints."
+title: "When the Passkey Option Won't Appear in Microsoft Entra Security Info: Diagnostic Script and Prevention Design"
+excerpt: "The Microsoft Entra passkey option is missing or fails silently in Security info. Walk the seven-layer diagnostic, run the included Graph-based check script, and apply the policy-design pattern that prevents the failure mode at scale."
 coverImage: "/assets/blog/passkey-not-showing/cover.svg"
-date: "2026-03-27T21:40:00.000Z"
+date: "2026-05-11T09:00:00.000Z"
 author:
-  name: "Sentinel Identity"
+  name: "M.U"
 ogImage:
   url: "/assets/blog/passkey-not-showing/cover.svg"
 ---
 
-## Scope of the failure
+## The symptom that's actually seven different failures
 
-This article is about one specific failure pattern:
+The user opens Security info, taps **Add sign-in method**, and the passkey option isn't there. Or it's there but greyed out. Or they tap through it and registration silently fails. Or it works for them but not for the colleague sitting next to them on what looks like the same device.
 
-- the user goes to **Security info**
-- the user expects to add **Passkey**
-- the option is missing, blocked, or never completes registration
+This is one of the highest-volume troubleshooting topics in any Microsoft Entra rollout, and it's actively misleading because the user-facing symptom — "I can't add a passkey" — has at least seven distinct root causes spread across four different control surfaces. Treating it as a single problem produces escalations that ping between the help desk, the identity team, and Microsoft Support with nobody making progress.
 
-That failure is usually not caused by "passkeys being broken." In Microsoft Entra ID, passkey registration depends on several independent control points:
+This article gives you the layered diagnostic that maps the symptom to the actual cause, a PowerShell script you can hand to the help desk to run against the user's account, and the policy-design pattern that prevents most of the failure modes from happening in the first place. The Microsoft references throughout are the authoritative source: [Authentication methods policy](https://learn.microsoft.com/entra/identity/authentication/concept-authentication-methods-manage), [Register a passkey (FIDO2)](https://learn.microsoft.com/entra/identity/authentication/how-to-register-passkey), [passkey policy](https://learn.microsoft.com/entra/identity/authentication/how-to-enable-passkey-fido2), [Temporary Access Pass](https://learn.microsoft.com/entra/identity/authentication/howto-authentication-temporary-access-pass), and [FIDO2 compatibility matrix](https://learn.microsoft.com/entra/identity/authentication/concept-fido2-compatibility).
 
-- [Authentication Methods policy](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-authentication-methods-manage)
-- the [passkey registration flow](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-register-passkey)
-- a valid [strong-authentication bootstrap path](https://learn.microsoft.com/en-us/entra/identity/authentication/howto-authentication-temporary-access-pass)
-- the supported platform and authenticator combination documented in the [passkey compatibility matrix](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-fido2-compatibility)
+## The seven layers, in order
 
-When the option is missing, the useful question is not "does this device support passkeys in general?" The useful question is:
+Every passkey-not-appearing incident is exactly one of these:
 
-**At which layer did Entra stop offering or accepting the registration path?**
+| # | Layer | What's wrong | Where to look |
+|---|---|---|---|
+| 1 | **Authentication Methods policy** | FIDO2/passkey is disabled or the user isn't in the targeting group | Entra admin centre → Protection → Authentication methods → FIDO2 |
+| 2 | **Passkey profile (preview)** | A profile narrows allowed AAGUIDs and the device's authenticator isn't permitted | Entra admin centre → Authentication methods → FIDO2 → Passkey profiles |
+| 3 | **MFA bootstrap missing** | User has no usable MFA, can't satisfy the recent-MFA prerequisite | `Get-MgUserAuthenticationMethod` for the user |
+| 4 | **Recent MFA session expired** | User has MFA configured but their session is older than 10 minutes | The Authentication tab on the most recent SigninLog |
+| 5 | **Platform / browser doesn't support the chosen path** | iOS 16, Android 13, old Authenticator app, browser missing CTAP support | Compatibility matrix vs the device |
+| 6 | **Hardware doesn't satisfy security requirements** | Android device without hardware-backed Keystore; old FIDO2 key without resident-key support | Device hardware spec + AAGUID lookup |
+| 7 | **Local platform passkey provider conflict** | iOS / Android offering the wrong passkey provider (iCloud Keychain vs Authenticator, Google Passwords vs Authenticator) | User chose the wrong entry in the platform's passkey chooser |
 
-## How the registration path actually works
+These map cleanly to four owners. Layers 1, 2, and 3 are **policy design** — the identity team owns the fix. Layer 4 is **session state** — usually self-resolves with a re-sign-in. Layers 5, 6, and 7 are **endpoint** — the user / endpoint engineering owns the fix. Knowing which layer broke is the same as knowing which queue the ticket belongs in.
 
-As documented in [Register a passkey (FIDO2)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-register-passkey), browser-based registration starts in **Security info**. The user selects **Add sign-in method**, chooses **Passkey**, and must satisfy MFA before registration continues. Microsoft explicitly states there that if the user does not already have at least one MFA method, they must add one first, or an admin can issue a [Temporary Access Pass](https://learn.microsoft.com/en-us/entra/identity/authentication/howto-authentication-temporary-access-pass) to bootstrap strong authentication.
+> [!IMPORTANT]
+> Don't open the FIDO2 policy first. Open the user's recent sign-in log and `Get-MgUserAuthenticationMethod` output first. Half the time, the answer is at layer 3 or 4 and the policy is fine.
 
-That sequence matters because it tells you where the control-plane checks happen:
+## A diagnostic script the help desk can run
 
-1. Entra determines whether the user is allowed to configure passkeys.
-2. Entra checks whether the user can strongly authenticate.
-3. The browser and operating system decide which passkey storage options to show.
-4. The selected authenticator path succeeds or fails based on platform support and policy.
+This script walks layers 1, 2, 3, and 4 for a given user and prints a verdict. The help desk runs it, reads the output, and either resolves the ticket on the spot or escalates with the right context already gathered.
 
-If any one of those stages fails, the user experiences the same vague symptom: "I don’t see passkey."
+```powershell
+<#
+.SYNOPSIS
+  Diagnoses why a Microsoft Entra user can't see / register a passkey.
 
-![Passkey registration dependency map](/assets/blog/passkey-not-showing/cover.svg)
+.PARAMETER UserPrincipalName
+  The UPN of the user reporting the problem.
 
-## Root cause 1: the user is not enabled for Passkey (FIDO2)
+.REQUIRED
+  Microsoft.Graph and Microsoft.Graph.Identity.SignIns modules.
+  Calling identity needs: User.Read.All, UserAuthenticationMethod.Read.All,
+                          Policy.Read.All, AuditLog.Read.All
+#>
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory)] [string] $UserPrincipalName
+)
 
-The first check should be the [Authentication Methods policy](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-authentication-methods-manage), not the mobile device.
+Connect-MgGraph -Scopes @(
+    "User.Read.All",
+    "UserAuthenticationMethod.Read.All",
+    "Policy.Read.All",
+    "AuditLog.Read.All"
+) -NoWelcome
 
-As Microsoft describes in the Authentication Methods management documentation, each method is enabled and targeted independently. If **Passkey (FIDO2)** is disabled for the user or group, Security info does not have to present the method at all.
+$user = Get-MgUser -UserId $UserPrincipalName -ErrorAction Stop
+$verdict = [System.Collections.Generic.List[string]]::new()
 
-### What to verify
+# --- LAYER 1: Authentication Methods policy ---
+$authPolicy = Get-MgPolicyAuthenticationMethodPolicy
+$fido2 = $authPolicy.AuthenticationMethodConfigurations |
+    Where-Object Id -eq "Fido2"
 
-1. Open **Entra admin center > Protection > Authentication methods > Policies**.
-2. Open **Passkey (FIDO2)**.
-3. Confirm the user is in scope through direct or group targeting.
-4. If passkey profiles are in use, confirm the effective profile still allows the intended authenticator.
+if ($fido2.State -ne "enabled") {
+    $verdict.Add("LAYER 1: FAIL — FIDO2 method is '$($fido2.State)' tenant-wide. Enable it in Authentication methods policy.")
+} else {
+    $included = $fido2.AdditionalProperties.includeTargets
+    $excluded = $fido2.AdditionalProperties.excludeTargets
+    $allUsers = $included | Where-Object { $_.id -eq "all_users" }
+    if (-not $allUsers) {
+        # Check group memberships
+        $userGroups = (Get-MgUserMemberOf -UserId $user.Id).Id
+        $inScope = $included | Where-Object { $_.id -in $userGroups }
+        if (-not $inScope) {
+            $verdict.Add("LAYER 1: FAIL — FIDO2 enabled but user not in any included target group.")
+        }
+    }
+    $exclScope = $excluded | Where-Object { $_.id -in (Get-MgUserMemberOf -UserId $user.Id).Id }
+    if ($exclScope) {
+        $verdict.Add("LAYER 1: FAIL — user is in an excluded group for FIDO2.")
+    }
+}
 
-### Why this breaks registration
+# --- LAYER 3: MFA bootstrap ---
+$methods = Get-MgUserAuthenticationMethod -UserId $user.Id
+$mfaCapable = $methods | Where-Object {
+    $_.AdditionalProperties.'@odata.type' -in @(
+        "#microsoft.graph.microsoftAuthenticatorAuthenticationMethod",
+        "#microsoft.graph.phoneAuthenticationMethod",
+        "#microsoft.graph.fido2AuthenticationMethod",
+        "#microsoft.graph.softwareOathAuthenticationMethod",
+        "#microsoft.graph.windowsHelloForBusinessAuthenticationMethod"
+    )
+}
+if (-not $mfaCapable) {
+    $verdict.Add("LAYER 3: FAIL — user has no MFA-capable method. Issue a Temporary Access Pass to bootstrap.")
+}
 
-This is a control-plane denial, not a device failure. The user never reaches a valid passkey enrollment path because Entra does not consider the method available for that identity. The frontend symptom is "the option is missing," but the backend reality is that the tenant never exposed the capability to that principal.
+# --- LAYER 4: Recent MFA freshness ---
+$recentSignIn = Get-MgAuditLogSignIn -Filter "userPrincipalName eq '$($user.UserPrincipalName)'" `
+    -Top 1 -Sort "createdDateTime desc"
+if ($recentSignIn) {
+    $mfaAge = (Get-Date) - $recentSignIn.CreatedDateTime
+    if ($mfaAge.TotalMinutes -gt 10) {
+        $verdict.Add("LAYER 4: WARN — most recent sign-in was $([math]::Round($mfaAge.TotalMinutes,1)) min ago; user may need to re-auth before registration.")
+    }
+} else {
+    $verdict.Add("LAYER 4: WARN — no recent sign-in found in audit log; user may not have signed in recently enough.")
+}
 
-## Root cause 2: the user cannot satisfy the MFA prerequisite
+# --- Output ---
+Write-Host "`n=== Passkey diagnostic for $($user.UserPrincipalName) ===" -ForegroundColor Cyan
+Write-Host "Display name: $($user.DisplayName)"
+Write-Host "User ID:      $($user.Id)"
+Write-Host "MFA methods:  $($methods.Count) registered`n"
 
-Microsoft states in [Register a passkey (FIDO2)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-register-passkey) that the user must sign in with MFA before adding a passkey. Microsoft also documents in [Configure Temporary Access Pass to register passwordless authentication methods](https://learn.microsoft.com/en-us/entra/identity/authentication/howto-authentication-temporary-access-pass) that TAP is specifically intended to bootstrap passwordless methods such as passkeys.
+if ($verdict.Count -eq 0) {
+    Write-Host "All layer-1-to-4 checks passed." -ForegroundColor Green
+    Write-Host "If the user still can't see passkey in Security info, the cause is likely:"
+    Write-Host "  - LAYER 2: a passkey profile narrowing AAGUIDs the user's authenticator doesn't match"
+    Write-Host "  - LAYER 5: platform / OS / browser doesn't support the chosen path (check compatibility matrix)"
+    Write-Host "  - LAYER 6: hardware-backed Keystore absent (Android) or FIDO2 firmware too old (security key)"
+    Write-Host "  - LAYER 7: user chose the wrong passkey provider on iOS/Android"
+} else {
+    foreach ($v in $verdict) {
+        if ($v -like '*FAIL*') { Write-Host $v -ForegroundColor Red }
+        else                   { Write-Host $v -ForegroundColor Yellow }
+    }
+}
+```
 
-### What to verify
+Save it as `Test-EntraPasskey.ps1`. Run it as `.\Test-EntraPasskey.ps1 -UserPrincipalName alice@contoso.com`. The output tells you which layer to look at next.
 
-1. Confirm the user already has at least one usable MFA method.
-2. If not, issue and test a Temporary Access Pass.
-3. Re-run registration through Security info after the user can strongly authenticate.
+> [!TIP]
+> If your tenant uses delegated admin or Graph App-only auth, replace `Connect-MgGraph -Scopes` with the App-only auth call. The query logic doesn't change.
 
-### Why this breaks registration
+## Layer-by-layer fixes
 
-Passkeys are not universally the first method in the lifecycle. In many tenants, the failure is simply that the rollout design skipped the bootstrap requirement documented by Microsoft.
+### Layer 1: Authentication Methods policy
 
-## Root cause 3: the browser or operating system does not expose the expected storage options
+The most common failure: FIDO2 is enabled for `All users` *minus* an `Excluded` group, and the user landed in the excluded group by way of an Intune dynamic-group rule the identity team didn't know about. Walk the user's group memberships, find the offending group, decide whether the exclusion was intentional, and either remove the user from the group or remove the group from the policy's exclusions.
 
-Microsoft notes in [Register a passkey (FIDO2)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-register-passkey) that the options shown during registration vary by device and operating system. The [passkey compatibility matrix](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-fido2-compatibility) is therefore not a side note. It is part of the registration control path.
+### Layer 2: Passkey profile (AAGUID narrowing)
 
-### What to verify
+If you've enabled a [passkey profile](https://learn.microsoft.com/entra/identity/authentication/how-to-enable-passkey-fido2) that allowlists specific AAGUIDs, and the user is trying to register a device whose AAGUID isn't on the list, the registration ceremony will complete locally and Entra will reject the credential storage with a generic error. The user sees "We weren't able to add this method," which is the least helpful possible error.
 
-1. Identify whether the user is attempting:
-   - a same-device passkey
-   - cross-device registration
-   - registration on a physical FIDO2 key
-2. Compare the exact browser, operating system, and authenticator combination against the [Microsoft matrix](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-fido2-compatibility).
-3. If the matrix does not support the exact combination, stop troubleshooting policy and switch to a supported path.
+Look up the AAGUID of the authenticator the user is attempting (vendor docs, [public AAGUID lists](https://github.com/passkeydeveloper/passkey-authenticator-aaguids)) and confirm whether it's in your tenant's allowlist. Either add it or steer the user to an allowed authenticator.
 
-### Why this breaks registration
+### Layer 3: MFA bootstrap
 
-The registration UX is built on platform capabilities. If the local platform does not expose a supported passkey path, Entra cannot force the missing option to appear.
+If `Get-MgUserAuthenticationMethod` shows no MFA-capable method, the user can't satisfy the recent-MFA prerequisite that passkey registration requires. Issue a Temporary Access Pass:
 
-## Root cause 4: Microsoft Authenticator passkeys are being attempted on an unsupported mobile path
+```powershell
+Connect-MgGraph -Scopes "UserAuthenticationMethod.ReadWrite.All"
+$tap = New-MgUserAuthenticationTemporaryAccessPassMethod `
+    -UserId "alice@contoso.com" `
+    -LifetimeInMinutes 60 `
+    -IsUsableOnce:$true
+Write-Host "TAP value: $($tap.TemporaryAccessPass)"
+```
 
-Microsoft’s [Enable passkeys in Authenticator](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-enable-authenticator-passkey) and [Authenticator passkey FAQ](https://learn.microsoft.com/en-us/entra/identity/authentication/passkey-authenticator-faq) are explicit about platform expectations.
+Deliver the TAP value via your trusted out-of-band channel. The user uses it once to sign in, immediately registers the passkey in Security info, and the TAP expires.
 
-Two details matter operationally:
+### Layer 4: Session staleness
 
-- Microsoft documents **iOS 17+** and **Android 14+** for supported Authenticator passkey scenarios.
-- Microsoft documents that on Android, Authenticator stores the private key only if the device has secure hardware available through Android Keystore, specifically a **Secure Element (SE)** or **Trusted Execution Environment (TEE)**.
+The user has MFA configured but the most recent sign-in is more than 10 minutes old. Have them sign out of Security info, sign back in (satisfying MFA in the process), and immediately retry registration. The clock is on the session, not the device.
 
-### What to verify
+### Layers 5, 6, 7: endpoint and user
 
-1. Check the device OS version against the current Microsoft documentation.
-2. If Android is involved, confirm the problem is not tied to device hardware capability.
-3. If you need a fast isolation test, attempt the same user registration with a supported FIDO2 security key.
+For the endpoint-side layers, the [FIDO2 compatibility matrix](https://learn.microsoft.com/entra/identity/authentication/concept-fido2-compatibility) is the canonical reference. The common offenders:
 
-### Why this breaks registration
+- **iOS < 17 with Authenticator passkey** — the OS predates the API the app uses. Upgrade iOS or use a hardware key instead.
+- **Android without hardware Keystore** — many older / budget devices. The fix is a different device or a hardware FIDO2 key.
+- **Chrome without USB / NFC permissions** on macOS or Linux — system-level dialog that the user has to grant.
+- **iOS user accidentally choosing iCloud Keychain** instead of Microsoft Authenticator in the platform's passkey-provider chooser — the resulting passkey is registered with Apple, not Entra. Walk the user through the registration again and pay attention to the platform's provider chooser dialog.
 
-This is not an Entra policy problem. It is a local authenticator capability problem. The registration path reaches the authenticator, but the authenticator cannot create or store the credential in the manner Microsoft requires. Once you are in that failure mode, changing directory policy is usually noise; the real decision is whether to change device, browser path, or authenticator type.
+## The prevention design
 
-## Root cause 5: attestation or passkey profile policy rejects the authenticator
+Most "passkey not appearing" tickets are preventable at policy-design time. The pattern that works:
 
-If the tenant uses [passkey profiles](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkey-profiles) or attestation-related restrictions, the failure may be intentional. Microsoft documents there that profiles can control the target passkey type and authenticator characteristics.
+### 1. Enable FIDO2 for the broadest group you intend, with a single named exclusion group
 
-### What to verify
+Don't sprinkle individual user exclusions and don't compound exclusions across multiple groups. One exclusion group, named something like `auth-fido2-excluded`, that you can audit in a single query. When a user is excluded, the group membership is the documentation.
 
-1. Review whether the pilot group is scoped to a passkey profile.
-2. Review whether attestation or AAGUID restrictions narrow the allowed authenticators.
-3. Compare the user’s attempted authenticator against the profile design.
+### 2. Decide attestation up-front, document the call
 
-### Why this breaks registration
+Attestation enforcement is the trap that breaks more passkey rollouts than any other single choice. The decision is:
 
-The user is not failing because registration is generically unavailable. The user is failing because the selected authenticator does not satisfy the tenant’s allowed authenticator model.
+| Attestation | Pros | Cons |
+|---|---|---|
+| Required + AAGUID allowlist | Tightest control over which authenticators sign | Locks out Windows Hello passkey (currently not attested); requires AAGUID maintenance for every new authenticator model |
+| Required, no AAGUID restriction | Some control without the maintenance overhead | Still locks out non-attesting authenticators |
+| Not required | Maximum compatibility | Tenant accepts software-backed and unknown-AAGUID credentials; weaker assurance |
 
-## Root cause 6: the admin is mixing sign-in support with registration support
+For most enterprises the right initial position is **not required, with a passkey profile allowlist of known good AAGUIDs**. Move to required attestation only after a pilot has confirmed every population can satisfy it.
 
-This is a frequent design error. A browser or device can be usable for some Entra sign-in scenarios and still be the wrong path for the specific passkey registration flow being attempted.
+### 3. Pre-register at onboarding, not at policy-enforcement time
 
-Microsoft states in [Register a passkey (FIDO2)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-register-passkey) that the save-location options vary by platform. Microsoft separately documents exact support combinations in the [compatibility matrix](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-fido2-compatibility). Those two sources together imply an important troubleshooting rule:
+The reliable rollout sequence is:
 
-**do not infer registration support from generic sign-in success**
+- Add the user to the tenant.
+- Issue a Temporary Access Pass with the user's onboarding email.
+- User signs in via TAP, registers a passkey, and any backup method (a recovery hardware key, for example).
+- TAP expires.
+- *Then* the user is moved into the group whose Conditional Access policy requires phishing-resistant MFA.
 
-## Recommended diagnostic sequence
+That sequence guarantees the user has a registered method before policy starts enforcing one. The alternative — enforce first, hope users register — produces a lockout queue every Monday morning.
 
-Use this order:
+### 4. Monitor registration outcomes with a weekly report
 
-1. Confirm the user is targeted for **Passkey (FIDO2)** in [Authentication Methods policy](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-authentication-methods-manage).
-2. Confirm the user can meet the MFA prerequisite or has a valid [Temporary Access Pass](https://learn.microsoft.com/en-us/entra/identity/authentication/howto-authentication-temporary-access-pass).
-3. Confirm whether the intended path is Authenticator, hardware key, same-device, or cross-device registration.
-4. Validate the exact browser and OS combination against the [passkey compatibility matrix](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-fido2-compatibility).
-5. If Authenticator on Android is involved, validate OS version and secure-hardware support using the [Authenticator FAQ](https://learn.microsoft.com/en-us/entra/identity/authentication/passkey-authenticator-faq).
-6. If profiles or stricter authenticator controls are in use, validate the selected authenticator against the [passkey profiles documentation](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkey-profiles).
+A weekly KQL query against `AuditLogs` for "Register security info" failures, broken out by user and reason, surfaces the layer-2 / layer-5 / layer-6 failures that don't generate help-desk tickets because users just give up.
 
-That diagnostic order follows Microsoft’s documented control flow instead of guessing at symptoms.
+```kql
+AuditLogs
+| where TimeGenerated > ago(7d)
+| where OperationName == "Register security info"
+| where Result == "failure"
+| extend Method = tostring(TargetResources[0].modifiedProperties[0].newValue)
+| where Method has_any ("Passkey", "FIDO2", "Authenticator")
+| project TimeGenerated, User = tostring(TargetResources[0].userPrincipalName),
+          Method, FailureReason = tostring(ResultReason)
+| summarize Attempts = count() by User, FailureReason
+| order by Attempts desc
+```
 
-## Final takeaway
+Anything appearing more than twice for the same user is a candidate for proactive outreach.
 
-When the passkey option is missing, the failure is usually one of four documented causes:
+## Common questions
 
-- the method is not enabled for the user
-- the user cannot satisfy the MFA bootstrap requirement
-- the platform path is unsupported
-- the selected authenticator does not satisfy the tenant’s passkey policy
+### Why does the option appear in the iOS Authenticator app but not on the desktop?
 
-Treat it as a registration pipeline problem, not as a generic "passkeys are broken" problem.
+The two surfaces use different registration paths. The Authenticator app on iOS uses the iOS platform passkey provider directly; the desktop browser uses CTAP-over-caBLE (Bluetooth) to talk to the phone. If Bluetooth is off, or the desktop browser doesn't support CTAP, the cross-device path fails. Confirm with the user that they see the option *on Security info from a desktop browser*, not just in the Authenticator app.
 
-## Microsoft References
+### My tenant has Security Defaults turned on. Why doesn't FIDO2 work?
 
-- [Manage authentication methods for Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-authentication-methods-manage)
-- [Register a passkey (FIDO2)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-register-passkey)
-- [Configure Temporary Access Pass to register passwordless authentication methods](https://learn.microsoft.com/en-us/entra/identity/authentication/howto-authentication-temporary-access-pass)
-- [Enable passkeys in Authenticator](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-enable-authenticator-passkey)
-- [Passkeys in Microsoft Authenticator FAQ](https://learn.microsoft.com/en-us/entra/identity/authentication/passkey-authenticator-faq)
-- [Passkey authentication matrix with Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-fido2-compatibility)
-- [Enable passkey (FIDO2) profiles in Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkey-profiles)
+Security Defaults and Authentication Methods policy are mutually exclusive in how they manage methods. With Security Defaults enabled, you cannot turn FIDO2 on or off independently — the bundle decides. Disable Security Defaults and migrate to Conditional Access + Authentication Methods policy as the long-term control surface.
+
+### A user registered a passkey successfully but can't sign in with it. What's wrong?
+
+Sign-in is a separate path from registration. Walk the [token lifetimes and CAE](https://sentinelidentity.ca/posts/microsoft-entra-token-lifetime-revocation-continuous-access-evaluation) flow first; then check whether an Authentication Strength policy is requiring something stricter than the registered passkey can satisfy (attestation, specific AAGUID, hardware-backed credential).
+
+### Can a single user have multiple passkeys registered?
+
+Yes — and they should. Best practice is at least two: a primary (Windows Hello, Authenticator, or platform passkey) and a backup (hardware FIDO2 key kept somewhere secure). The recovery story for a single-passkey user who loses their device is a TAP-based re-bootstrap, which works but creates a help-desk dependency.
+
+### How do I remove a passkey from a user account?
+
+```powershell
+$methods = Get-MgUserAuthenticationFido2Method -UserId "alice@contoso.com"
+Remove-MgUserAuthenticationFido2Method -UserId "alice@contoso.com" -Fido2AuthenticationMethodId $methods[0].Id
+```
+
+This is also the path for revoking a lost hardware key. Combine with a session revocation if the loss is suspected to be a compromise.
+
+## What to take away
+
+The "passkey won't appear" symptom is seven different problems wearing the same coat. The layered diagnostic and the bundled PowerShell script give the help desk a way to identify which layer broke in under two minutes. The prevention design — one exclusion group, AAGUID allowlist before attestation requirement, TAP-based onboarding, weekly failure monitoring — moves the problem from reactive ticket-closing to a small, finite, design-time decision set. Most of the tickets you'd otherwise see don't get raised because the user is set up before they ever notice they need to be.
+
+## References
+
+- [Authentication methods policy — Microsoft Learn](https://learn.microsoft.com/entra/identity/authentication/concept-authentication-methods-manage)
+- [Enable passkeys (FIDO2) in Microsoft Entra ID — Microsoft Learn](https://learn.microsoft.com/entra/identity/authentication/how-to-enable-passkey-fido2)
+- [Register a passkey (FIDO2) — Microsoft Learn](https://learn.microsoft.com/entra/identity/authentication/how-to-register-passkey)
+- [Temporary Access Pass — Microsoft Learn](https://learn.microsoft.com/entra/identity/authentication/howto-authentication-temporary-access-pass)
+- [FIDO2 compatibility matrix — Microsoft Learn](https://learn.microsoft.com/entra/identity/authentication/concept-fido2-compatibility)
+- [Authentication strengths — Microsoft Learn](https://learn.microsoft.com/entra/identity/authentication/concept-authentication-strengths)
+- [`Get-MgUserAuthenticationMethod` — Microsoft Graph PowerShell SDK](https://learn.microsoft.com/powershell/module/microsoft.graph.identity.signins/get-mguserauthenticationmethod)
+- [Public AAGUID lookup list](https://github.com/passkeydeveloper/passkey-authenticator-aaguids)

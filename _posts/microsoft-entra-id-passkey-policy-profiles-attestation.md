@@ -77,17 +77,6 @@ A strong tenant design usually separates passkey policy by operational intent. S
 
 This is not just cleaner configuration. It is better support design. When each profile has a defined purpose, it becomes much easier to explain why registration was accepted, why it was blocked, and what a user is expected to do next.
 
-## Example policy screens
-
-![Microsoft Entra passkey settings](/assets/blog/passkey-policy/ms-passkey-settings.png)
-*Source: Microsoft Learn, [How to enable passkeys (FIDO2) in Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkeys-fido2).*
-
-![Default passkey profile in Microsoft Entra](/assets/blog/passkey-policy/ms-default-passkey-profile.png)
-*Source: Microsoft Learn, [How to enable passkeys (FIDO2) in Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkeys-fido2).*
-
-![Windows Hello passkey profile configuration](/assets/blog/passkey-policy/ms-windows-passkey-profile.png)
-*Source: Microsoft Learn, [Enable Microsoft Entra passkey on Windows devices (preview)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-entra-passkeys-on-windows).*
-
 ## Key implementation points
 
 1. Passkeys in Microsoft Entra are governed through policy profiles, not just a tenant-wide enablement switch.

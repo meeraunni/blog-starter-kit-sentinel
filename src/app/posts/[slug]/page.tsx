@@ -23,6 +23,8 @@ import ShareMenu from "@/app/_components/share-menu";
 import PrevNextNav from "@/app/_components/prev-next-nav";
 import ArticleFeedback from "@/app/_components/article-feedback";
 import CopyCodeButtons from "@/app/_components/copy-code";
+import AuthorBio from "@/app/_components/author-bio";
+import { personSchema, resolveAuthor } from "@/lib/authors";
 
 type Params = {
   params: Promise<{
@@ -49,6 +51,7 @@ export default async function Post(props: Params) {
   const primaryTopicLabel = postTopics[0] ?? "Microsoft Entra";
   const primaryTopic = getTopicByLabel(primaryTopicLabel);
   const postUrl = getBaseUrl(`/posts/${post.slug}`);
+  const author = resolveAuthor(post.author?.name);
 
   const articleSchema = {
     "@context": "https://schema.org",
@@ -57,15 +60,15 @@ export default async function Post(props: Params) {
     description: post.excerpt,
     datePublished: post.date,
     dateModified: post.date,
-    author: {
-      "@type": "Organization",
-      name: "Sentinel Identity Editorial Team",
-      url: getBaseUrl("/about"),
-    },
+    author: personSchema(author),
     publisher: {
       "@type": "Organization",
       name: "Sentinel Identity",
       url: "https://sentinelidentity.ca",
+      logo: {
+        "@type": "ImageObject",
+        url: getBaseUrl("/favicon/apple-touch-icon.png"),
+      },
     },
     mainEntityOfPage: postUrl,
     image: getBaseUrl(post.ogImage.url),
@@ -124,6 +127,7 @@ export default async function Post(props: Params) {
             <div>
               <PostBody content={content} />
               <CopyCodeButtons />
+              <AuthorBio author={author} />
               <ArticleFeedback slug={post.slug} />
               <PrevNextNav previous={previous} next={next} />
             </div>

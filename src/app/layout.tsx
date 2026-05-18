@@ -69,6 +69,12 @@ export default function RootLayout({
     url: "https://sentinelidentity.ca",
     email: "info@sentinelidentity.ca",
     sameAs: ["https://sentinelidentity.ca"],
+    founder: {
+      "@type": "Person",
+      name: "M.U",
+      jobTitle: "Microsoft 365 / Entra Engineer",
+      url: "https://sentinelidentity.ca/author/m-u",
+    },
   };
 
   const websiteSchema = {

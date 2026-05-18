@@ -67,11 +67,6 @@ The best rollout pattern is to treat passkey sign-in as a matrix of supported sc
 
 That approach mirrors how the platform actually behaves. It also gives the support desk better escalation paths and gives users clearer expectations about which sign-in journeys are meant to work.
 
-## Example sign-in screen
-
-![Microsoft sign-in welcome screen for passkey flow](/assets/blog/passkey-signin/ms-signin-welcome.png)
-*Source: Microsoft Learn, [Sign in with a passkey (FIDO2) for your work or school account](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-sign-in-passkey).*
-
 ## Key implementation points
 
 1. Registration success does not prove that production sign-in is ready across the browser and device combinations your users actually use.

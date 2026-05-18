@@ -1,5 +1,5 @@
 ---
-title: "Federation and Token Protocols"
+title: "Federation and Token Protocols Explained: SAML, WS-Fed, OAuth 2.0, and OpenID Connect for Microsoft Entra"
 excerpt: "A technical guide to SAML, WS-Federation, OAuth 2.0, and OpenID Connect, focused on trust transfer, actor roles, and what the backend is validating."
 coverImage: "/assets/blog/federation-token-protocols/cover.svg"
 date: "2026-03-29T09:10:00.000Z"

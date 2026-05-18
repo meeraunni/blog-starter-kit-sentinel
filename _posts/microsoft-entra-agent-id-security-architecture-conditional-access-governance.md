@@ -1,5 +1,5 @@
 ---
-title: "Agent ID Security Architecture"
+title: "Microsoft Entra Agent ID: Security Architecture, Conditional Access, and Governance for AI Agents"
 excerpt: "A technical guide to Microsoft Entra Agent ID, including the agent identity model, Conditional Access enforcement, identity governance, risk detection, and network-level controls for AI agents."
 coverImage: "/assets/blog/agent-id-security/cover.svg"
 date: "2026-03-28T22:30:00.000Z"
@@ -174,6 +174,32 @@ Agent IDs should be treated with at least the same rigor as privileged workload 
 3. Identity Governance for agents is centered on sponsors, access packages, expirations, and accountable lifecycle control.
 4. ID Protection for agents provides anomaly-based risk signals that can feed directly into risk-based Conditional Access.
 5. Global Secure Access extends the model from identity control into filtered and inspectable agent network traffic.
+
+## Common questions
+
+### Is an Agent ID the same as a service principal?
+
+No, but they're related. A traditional service principal represents an app's identity in a tenant for delegated and application-only OAuth flows. An Agent ID represents an autonomous agent (often AI-driven) that may act on behalf of users and may invoke other agents. The object model exposes additional governance hooks (sponsors, lifecycle, conditional access scoping) that don't exist for plain service principals.
+
+### What if the Agent ID object model changes before GA?
+
+This is a real risk. Agent ID is preview-state at the time of writing; Microsoft has historically refactored object models during preview-to-GA transitions. The safe operational pattern is to (a) avoid baking Agent ID-specific automation into production change-management workflows until GA, (b) keep agent inventories in a normalized internal store so a Microsoft-side refactor doesn't break your reporting, and (c) subscribe to the Microsoft Entra release notes feed so renames don't surprise you.
+
+### Can a Conditional Access policy that targets agents accidentally block human users?
+
+Yes — if the policy's target conditions match both agent identities and user identities in some flows. Always scope agent-specific policies to the agent identity types explicitly (and exclude `user` from the target where the policy is agent-only). The [Conditional Access troubleshooting post](/posts/microsoft-entra-conditional-access-troubleshooting-sign-in-logs) covers the diagnostic for unexpected policy hits.
+
+### How does ID Protection compute risk for an agent that has no human sign-in?
+
+Risk signals for agents come from behavioral baselines: API call patterns, geographic distribution of requests, time-of-day patterns, and known-bad combinations. A first-week agent has a thin baseline and may produce false-positive risk classifications. Allow time for the baseline to mature before tying agent risk to enforcement.
+
+### Where do agent token requests appear in audit and sign-in logs?
+
+In `SigninLogs` under non-interactive sign-ins, and in `MicrosoftGraphActivityLogs` when the agent calls Graph. The `appId` and `servicePrincipalId` fields identify the agent. Agent sign-in volume is typically much higher than human volume, so set up scoped queries rather than ad-hoc filters.
+
+### Is there an equivalent of "revoke sessions" for an agent?
+
+Rotating the agent's credentials (secret or certificate) and removing its role assignments together effectively revokes active access. The [token lifetimes and CAE post](/posts/microsoft-entra-token-lifetime-revocation-continuous-access-evaluation) covers how revocation propagates; CAE for workload identities is not at parity with user CAE today, so plan for a longer effective revocation window.
 
 ## References
 

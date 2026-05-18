@@ -1,5 +1,5 @@
 ---
-title: "Authentication Protocols Explained"
+title: "Microsoft Authentication Protocols and Sign-In Models: From Kerberos to OpenID Connect on Microsoft Entra"
 excerpt: "A technical guide to the major authentication protocols and sign-in models used in Microsoft environments, including Kerberos, NTLM, LDAP bind, SAML, WS-Federation, OAuth 2.0, OpenID Connect, passkeys, certificate-based authentication, AD FS, and Microsoft Entra sign-in models."
 coverImage: "/assets/blog/auth-protocols/cover.svg"
 date: "2026-03-28T23:20:00.000Z"

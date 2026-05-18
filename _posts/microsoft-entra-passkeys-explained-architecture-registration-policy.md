@@ -1,5 +1,5 @@
 ---
-title: "How Passkeys Work in Entra"
+title: "How Microsoft Entra Passkeys Work: Architecture, Registration, and Policy Controls"
 excerpt: "A technical guide to Microsoft Entra passkeys for administrators, including passkey types, registration flows, Authentication Methods policy, Conditional Access, and deployment design."
 coverImage: "/assets/blog/passkeys-explained/cover.svg"
 date: "2026-03-27T20:10:00.000Z"
@@ -270,6 +270,32 @@ The best mental model for Microsoft Entra passkeys is this:
 passkeys are not a cosmetic sign-in enhancement. They are a control plane that spans authenticator hardware, registration policy, Conditional Access strategy, compatibility constraints, and recovery design.
 
 If you understand those layers, you can roll out passkeys confidently. If you ignore them, the first wave of failures will look random even though they are usually completely explainable.
+
+## Common questions
+
+### What happens when two passkey profiles target the same user with conflicting rules?
+
+Profile overlap is one of the most consequential design traps. If a user is targeted by both a permissive workforce profile and a restrictive admin profile, the runtime accepts a credential that satisfies *either* — the broader policy effectively overrides the narrower intent. Avoid overlap entirely: each profile should target a disjoint user population. The [passkey policy in practice post](/posts/microsoft-entra-id-passkey-policy-profiles-attestation) covers profile-design gotchas in depth.
+
+### Is the attestation requirement worth the operational cost?
+
+Trade-off analysis: attestation enforcement gives you cryptographic proof of which authenticator model produced a credential, but locks out any authenticator that doesn't sign attestation statements (including, as of writing, the Windows Hello passkey provider). For most enterprises, the right initial position is *not required* with an AAGUID allowlist, moving to *required* only after the pilot confirms every population can satisfy it. Concrete decision matrix is in the [registration playbook](/posts/microsoft-entra-id-passkey-registration-windows-mobile).
+
+### What's the recovery story when a user loses their only registered passkey?
+
+This is the most common operational gap. Without a backup credential, recovery means a Temporary Access Pass issued by an admin — which moves the failure mode from "user can't sign in" to "user is dependent on the help desk's response time." The mature pattern is to require every user to register at least two phishing-resistant credentials (a primary and a backup, e.g. Microsoft Authenticator on phone + a hardware key kept securely). Enforce this via Authentication Methods policy and an onboarding runbook.
+
+### Apple, Google, and Microsoft all sync passkeys differently. Does this matter for an enterprise rollout?
+
+Yes. Apple syncs via iCloud Keychain (end-to-end encrypted, per-Apple-ID), Google syncs via Google Password Manager (per-Google-account), Microsoft Authenticator currently stores work-account passkeys per-device (no cross-device sync via Microsoft today). The implication: a user with three devices on three ecosystems has different passkey availability on each. Standardise the user-facing recommendation per population (e.g., "register Authenticator on your work phone AND a hardware key").
+
+### Does the WebAuthn `userVerification` flag matter for tenant policy?
+
+It does. `userVerification: required` means the authenticator must verify the user (PIN, biometric) at every assertion. `preferred` lets the authenticator skip if unavailable. Microsoft Entra's passkey path requests `required` for Authentication Strength enforcement, but older clients may downgrade to `preferred`. If users report not being prompted for biometric, check the client SDK version.
+
+### What's the long-term roadmap — should I wait for cross-provider passkey portability before rolling out?
+
+No — wait-and-see is the wrong move. The FIDO Alliance's Credential Exchange Protocol (CXP) is in progress but not generally available, and enterprises that delay rollout pay an ongoing security cost (continued reliance on phishable MFA methods). The current passkey ecosystem is solid enough for production rollout; CXP-style portability is a future enhancement, not a prerequisite.
 
 ## Microsoft References
 

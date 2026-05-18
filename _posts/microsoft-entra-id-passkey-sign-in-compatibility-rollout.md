@@ -1,5 +1,5 @@
 ---
-title: "Passkey Sign-In and Rollout"
+title: "Microsoft Entra Passkey Sign-In Compatibility: Browser, OS, and Cross-Device Matrix for Rollout Planning"
 excerpt: "A technical guide to Microsoft Entra passkey sign-in, including same-device and cross-device flows, compatibility dependencies, and rollout design."
 coverImage: "/assets/blog/passkey-signin/cover.svg"
 date: "2026-03-28T21:30:00.000Z"
@@ -73,6 +73,28 @@ That approach mirrors how the platform actually behaves. It also gives the suppo
 2. Same-device and cross-device sign-in are different engineering scenarios and should be tested separately.
 3. The compatibility matrix should shape rollout scope before broad enforcement decisions are made.
 4. Orphaned credentials, unsupported client combinations, and cross-device handoff issues should all be expected and documented as first-class support cases.
+
+## Common questions
+
+### Why does cross-device sign-in fail with "Couldn't sign you in"?
+
+Three common causes: (a) Bluetooth disabled on the phone holding the passkey, (b) the desktop browser doesn't have OS-level Bluetooth access, or (c) the phone's Microsoft Authenticator app is signed out of the work account. The [passkey-not-showing-up post](/posts/microsoft-entra-passkey-not-showing-up-fixes-security-info-authenticator-fido2) walks the layered diagnostic that covers most of these.
+
+### A native app (mobile or desktop SDK) rejects a passkey that works in the browser. What's the cause?
+
+Most often, the app's MSAL or platform SDK version doesn't yet support the WebAuthn ceremony in the way the OS broker expects. Upgrade the SDK to the current GA version. Older MSAL.NET releases shipped before passkey CTAP2 support landed; the same is true for MSAL on Android and iOS — check the SDK release notes for the minimum version that announces passkey support.
+
+### The passkey shows in Security Info on Entra but the user can't sign in with it. Why?
+
+The local credential (in Windows Hello, Authenticator, or the security key) may have been removed or corrupted while Entra still has the public-key registration. Have the user remove the orphaned method from Security Info and re-register, or unblock the path by deleting the cached client-side state (`%LocalAppData%\Packages\Microsoft.AAD.BrokerPlugin_*\` on Windows) and rebooting.
+
+### Does sign-in compatibility differ between consumer and work passkeys?
+
+Yes. Apple's iCloud Keychain–synced passkey and a Microsoft Authenticator–stored passkey for a work account are different credentials with different ceremonies. A user can have both and the picker on the device decides which is offered first. Train users to pick the Microsoft Authenticator entry from the platform's passkey-provider dialog.
+
+### Where do I see the SDK-level error when sign-in fails in a native app?
+
+For MSAL clients, enable verbose logging and inspect the `AcquireToken` exception detail — the `WAM` or `ExternalAuthorizationFailed` codes name the underlying cause. For SDKs that don't expose this, capture a network trace and inspect the response from `/oauth2/v2.0/token` or `/oauth2/v2.0/authorize` for the `error` field. The [token lifetimes and CAE post](/posts/microsoft-entra-token-lifetime-revocation-continuous-access-evaluation) covers the related token-issuance flow that surfaces these errors.
 
 ## References
 

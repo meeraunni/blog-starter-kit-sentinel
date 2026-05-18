@@ -1,5 +1,5 @@
 ---
-title: "Passkey Policy and Attestation"
+title: "Microsoft Entra Passkey Policy in Practice: Profiles, AAGUID Allowlists, and Attestation Trade-offs"
 excerpt: "A technical guide to Microsoft Entra passkey profiles, AAGUID restrictions, attestation behavior, and the control-plane logic behind passkey governance."
 coverImage: "/assets/blog/passkey-policy/cover.svg"
 date: "2026-03-28T21:10:00.000Z"

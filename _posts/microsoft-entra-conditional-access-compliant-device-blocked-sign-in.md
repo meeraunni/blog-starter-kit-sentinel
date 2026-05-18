@@ -1,5 +1,5 @@
 ---
-title: "Why Compliant Devices Still Get Blocked"
+title: "Why a Compliant Device Still Gets Blocked by Microsoft Entra Conditional Access — and How to Diagnose It"
 excerpt: "A detailed technical guide to why Microsoft Entra can block a sign-in from an Intune-compliant device, including device identity proof, browser support, client certificate behavior, and Conditional Access evaluation."
 coverImage: "/assets/blog/compliant-device-blocked/cover.svg"
 date: "2026-03-27T21:20:00.000Z"
@@ -136,6 +136,32 @@ The common anti-pattern is to keep troubleshooting Intune compliance when the si
 2. Browser and platform support determine whether web-based device checks can work at all.
 3. Client certificate and device-identification paths are part of the evaluation, not background details.
 4. Sign-in logs are the most reliable evidence source for distinguishing real noncompliance from missing device proof.
+
+## Common questions
+
+### The device shows compliant in Intune but the sign-in log says non-compliant. Why the disagreement?
+
+Intune compliance state propagates to Entra on a schedule (typically within an hour but occasionally longer). Run a manual sync from the device (Settings → Accounts → Access work or school → Info → Sync) and re-check after 30 minutes. If the disagreement persists, the device record in Entra may be stale or duplicated; check `Get-MgDevice -Filter "deviceId eq '<id>'"`.
+
+### The user is on a brand-new compliant Windows 11 laptop. Why does Conditional Access still block?
+
+Most often, the device is Entra registered but not yet Entra joined or hybrid joined. `dsregcmd /status` will tell you: `AzureAdJoined : YES` is what you want. If it shows `WorkplaceJoined : YES` instead, the device only has user-level registration, not full device identity. Re-join via Settings → Accounts → Access work or school → Connect → Join this device to Microsoft Entra.
+
+### Private browsing strips the PRT cookie. Are there other browser states that do the same?
+
+Yes — third-party-cookie blocking (some Safari and Firefox configurations), enterprise content filters that strip cookies in transit, and some VPN clients that re-inject HTTPS sessions. The full browser-evidence walkthrough is in the [Conditional Access browser support post](/posts/microsoft-entra-conditional-access-browser-support-edge-chrome-safari).
+
+### What's the specific AADSTS code for "compliant device required" failures?
+
+`AADSTS530002` for device-not-compliant and `AADSTS530003` for device-state missing entirely. `AADSTS50097` indicates device authentication is required but the request didn't initiate a device-bound flow. The full reference is in the [AADSTS error code documentation](https://learn.microsoft.com/azure/active-directory/develop/reference-error-codes).
+
+### Can I troubleshoot this from the user side without an admin?
+
+Partially. The user can run `dsregcmd /status` on Windows (no admin rights needed) and look for `AzureAdJoined`, `DeviceAuthStatus`, `KeySignTest`, and `PRTUpdate` lines. Anything not `YES` or `SUCCESS` is a candidate cause. The [PRT failures post](/posts/microsoft-entra-primary-refresh-token-prt-failures-windows) is the deeper walkthrough.
+
+### Does this affect macOS the same way?
+
+Yes, with macOS substituting the Apple SSO plug-in and Keychain certificate for the Windows WAM + PRT model. Symptoms and causes map closely. The Apple SSO extension status can be inspected in Terminal: `app-sso platform -s`.
 
 ## References
 

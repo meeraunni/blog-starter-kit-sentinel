@@ -1,5 +1,5 @@
 ---
-title: "Hybrid Sign-In Architecture"
+title: "Hybrid Microsoft Sign-In Architectures Compared: PHS, PTA, Federation, and AD FS"
 excerpt: "A technical guide to Password Hash Synchronization, Pass-Through Authentication, and federation with AD FS or PingFederate, centered on where validation really happens."
 coverImage: "/assets/blog/hybrid-signin-architectures/cover.svg"
 date: "2026-03-29T09:20:00.000Z"

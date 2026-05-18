@@ -1,5 +1,5 @@
 ---
-title: "PRT Failures on Windows"
+title: "Microsoft Entra Primary Refresh Token (PRT) Failures on Windows: Reading dsregcmd Output and Fixing the Common Causes"
 excerpt: "A detailed technical guide to Microsoft Entra Primary Refresh Token failures on Windows, including dsregcmd analysis, device trust, broker behavior, network dependencies, and remediation design."
 coverImage: "/assets/blog/prt-failures/cover.svg"
 date: "2026-03-28T09:10:00.000Z"

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Send As permission failing">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b1220"/><stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <radialGradient id="g" cx="0.78" cy="-0.1" r="0.7">
+      <stop offset="0%" stop-color="rgba(8,145,178,0.32)"/><stop offset="100%" stop-color="rgba(8,145,178,0)"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/><rect width="1200" height="630" fill="url(#g)"/>
+  <text x="72" y="92" font-family="system-ui, sans-serif" font-size="18" letter-spacing="6" fill="#67e8f9">MICROSOFT 365 · SEND AS</text>
+  <text x="72" y="200" font-family="system-ui, sans-serif" font-size="68" font-weight="700" letter-spacing="-1.5" fill="#ffffff">Send As</text>
+  <text x="72" y="276" font-family="system-ui, sans-serif" font-size="68" font-weight="700" letter-spacing="-1.5" fill="#ffffff">permission failing</text>
+  <text x="72" y="340" font-family="system-ui, sans-serif" font-size="22" fill="#cbd5e1">Cached recipients, Send As vs Send on Behalf, replication delays.</text>
+  <rect x="72" y="408" width="380" height="6" rx="3" fill="rgba(103,232,249,0.5)"/>
+  <text x="72" y="560" font-family="system-ui, sans-serif" font-size="14" letter-spacing="4" fill="#94a3b8">SENTINELIDENTITY.CA · MICROSOFT 365 REFERENCE</text>
+</svg>

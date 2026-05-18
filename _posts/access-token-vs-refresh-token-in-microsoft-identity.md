@@ -1,5 +1,5 @@
 ---
-title: "Access Tokens and Refresh Tokens in Microsoft Identity"
+title: "Access Tokens vs Refresh Tokens in Microsoft Entra: Lifetime, Storage, and Trust Boundaries"
 excerpt: "An engineering-level explanation of access tokens and refresh tokens in Microsoft Entra ID, including token ownership, lifetime, renewal, revocation, and common troubleshooting patterns."
 coverImage: "/assets/blog/access-tokens/diagram.svg"
 date: "2026-03-13"

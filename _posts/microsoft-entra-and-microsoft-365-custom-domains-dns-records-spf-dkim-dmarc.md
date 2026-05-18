@@ -1,382 +1,227 @@
 ---
-title: "Custom Domains and DNS for Microsoft 365"
-excerpt: "A detailed technical guide to buying a domain, understanding DNS, adding a custom domain to Microsoft Entra and Microsoft 365, and configuring DNS records such as MX, TXT, CNAME, SPF, DKIM, and DMARC."
+title: "Microsoft 365 Custom Domains and Email Authentication: SPF, DKIM, DMARC Done Right"
+excerpt: "An operator's guide to onboarding a custom domain to Microsoft 365 and configuring SPF, DKIM, and DMARC — including the seven anti-patterns that break enterprise mail, a verification command toolkit, and the cutover sequence that prevents delivery incidents."
 coverImage: "/assets/blog/custom-domains-dns/cover.svg"
-date: "2026-03-29T10:30:00.000Z"
+date: "2026-05-13T09:00:00.000Z"
 author:
-  name: "Sentinel Identity"
+  name: "M.U"
 ogImage:
   url: "/assets/blog/custom-domains-dns/cover.svg"
 ---
 
-## Overview
+## The promise and the trap
 
-Adding a domain to Microsoft Entra or Microsoft 365 looks simple in the admin portal, but the real work is happening in the domain and DNS layers underneath it. If those layers are misunderstood, the portal wizard starts to feel random: Microsoft asks you to add a TXT record, then later an MX record, then CNAME records for DKIM, and sometimes SRV or Autodiscover records, and it is not obvious why any of those records matter.
+Adding a custom domain to Microsoft 365 looks like a checklist. The portal generates the records, you paste them at your DNS host, click Verify, and you're done. The trap is everything that happens after: the SPF record that quietly fails because a marketing tool was added without updating it, the DKIM rotation that locks out a partner, the DMARC `p=reject` that bounces the executive newsletter the morning after enforcement. Almost every email-authentication incident in a Microsoft 365 tenant is caused by something the original onboarding got *almost* right.
 
-This article explains the full chain from basic domain ownership to advanced DNS-based mail authentication:
+This article is the field version of the onboarding playbook: the records you actually need, the seven anti-patterns that produce 90% of the incidents, a verification command toolkit you can keep open in a terminal during a cutover, and a staged enforcement plan that gets you to `DMARC p=reject` without breaking production. References to Microsoft Learn are inline; this article assumes you've read the basics and want the parts the basics skip.
 
-1. what a domain is and how you get one
-2. what DNS is and how DNS hosting works
-3. the common record types and what they do
-4. how Microsoft Entra verifies a custom domain
-5. how Microsoft 365 uses DNS to route mail and client traffic
-6. what SPF, DKIM, and DMARC actually do in the backend
+## What you're actually configuring (in one paragraph)
 
-The main Microsoft references used here are [Add and verify custom domain names - Microsoft Entra ID](https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/domains-manage), [Add your custom domain name to your tenant](https://learn.microsoft.com/en-us/azure/active-directory/fundamentals/add-custom-domain?context=azure%2Factive-directory%2Fusers-groups-roles%2Fcontext%2Fugr-context), [Connect your domain by adding DNS records](https://learn.microsoft.com/en-us/microsoft-365/admin/get-help-with-domains/create-dns-records-at-any-dns-hosting-provider?view=o365-worldwide), [External DNS records for Microsoft 365](https://learn.microsoft.com/en-us/microsoft-365/enterprise/external-domain-name-system-records?view=o365-worldwide), [DNS Concepts](https://learn.microsoft.com/en-us/windows/win32/dns/dns-concepts), [Set up SPF to identify valid email sources for your custom cloud domains](https://learn.microsoft.com/en-us/defender-office-365/email-authentication-spf-configure), [Set up DKIM to sign mail from your cloud domain](https://learn.microsoft.com/en-us/microsoft-365/security/office-365-security/email-authentication-dkim-configure?view=o365-worldwide), and [Set up DMARC to validate the From address domain for cloud senders](https://learn.microsoft.com/en-us/defender-office-365/email-authentication-dmarc-configure).
+Email authentication for a Microsoft 365 tenant has three layers stacked on each other. **SPF** publishes which servers are allowed to send mail using your domain in the SMTP envelope. **DKIM** signs outbound mail so receivers can verify it came from you and wasn't tampered with. **DMARC** ties SPF and DKIM to the visible `From:` address and tells receivers what to do when alignment fails. None of the three alone is sufficient. Receivers that matter (Gmail, Outlook.com, Yahoo, every large enterprise) increasingly *require* a DMARC pass for inbox placement, and they reach that conclusion by checking SPF and DKIM alignment with the `From:` domain. The records you publish at your DNS host are what makes that whole chain work. Microsoft's authoritative pages — [SPF](https://learn.microsoft.com/defender-office-365/email-authentication-spf-configure), [DKIM](https://learn.microsoft.com/microsoft-365/security/office-365-security/email-authentication-dkim-configure), [DMARC](https://learn.microsoft.com/defender-office-365/email-authentication-dmarc-configure) — describe each in isolation. Getting them right together is the operator's job.
 
-![Custom domains and DNS in Microsoft 365](/assets/blog/custom-domains-dns/cover.svg)
+## The records you'll actually publish for a Microsoft 365 domain
 
-## Start with the basics: what is a domain?
+For a standard Microsoft 365 tenant where Exchange Online is the only outbound mail path and you're not using a third-party mail gateway, this is the minimal set:
 
-A domain name is the human-readable namespace you own on the internet, such as `contoso.com` or `sentinelidentity.ca`. It is not the same thing as a website, a DNS record, or a Microsoft tenant. It is the namespace under which those things can later exist.
+| Type | Name | Value | Purpose |
+|---|---|---|---|
+| TXT | `@` (apex) | `MS=ms12345678` (Microsoft generates the value) | One-time tenant ownership proof |
+| MX | `@` | `0 contoso-com.mail.protection.outlook.com` | Route inbound mail to EXO |
+| TXT | `@` | `v=spf1 include:spf.protection.outlook.com -all` | SPF policy |
+| CNAME | `selector1._domainkey` | `selector1-contoso-com._domainkey.contoso.onmicrosoft.com` | DKIM selector 1 |
+| CNAME | `selector2._domainkey` | `selector2-contoso-com._domainkey.contoso.onmicrosoft.com` | DKIM selector 2 (rotation) |
+| TXT | `_dmarc` | `v=DMARC1; p=none; rua=mailto:dmarc@contoso.com; ruf=mailto:dmarc-forensic@contoso.com; fo=1` | DMARC policy + reporting |
+| CNAME | `autodiscover` | `autodiscover.outlook.com` | Outlook Autodiscover |
+| CNAME | `enterpriseregistration` | `enterpriseregistration.windows.net` | Entra device registration |
+| CNAME | `enterpriseenrollment` | `enterpriseenrollment.manage.microsoft.com` | Intune enrollment |
+| SRV | `_sip._tls` and `_sipfederationtls._tcp` | Legacy Skype/Teams | Only if Skype federation still in scope |
 
-When you buy a domain, you are not buying a physical server and you are not buying Microsoft 365 mail by default. You are registering the right to control that name through a domain registrar. Microsoft calls this out in [Add your custom domain name to your tenant](https://learn.microsoft.com/en-us/azure/active-directory/fundamentals/add-custom-domain?context=azure%2Factive-directory%2Fusers-groups-roles%2Fcontext%2Fugr-context): before you add a custom domain to Microsoft Entra, you first obtain it from a domain registrar.
+The CNAMEs for `autodiscover`, `enterpriseregistration`, and `enterpriseenrollment` are easy to forget because the M365 admin centre wizard only surfaces some of them depending on which services you've enabled. The full list lives in [External DNS records for Microsoft 365](https://learn.microsoft.com/microsoft-365/enterprise/external-domain-name-system-records).
 
-In practice, the process looks like this:
+> [!IMPORTANT]
+> Exchange Online's MX target is tenant-specific (`<tenant>-mail.protection.outlook.com` becomes `contoso-com.mail.protection.outlook.com`). Don't copy a target from another tenant's documentation — generate yours from the Microsoft 365 admin centre under Settings → Domains.
 
-1. you choose a domain name
-2. you register it through a registrar such as GoDaddy, Namecheap, Cloudflare Registrar, Tucows, or another provider
-3. that registrar records your ownership and usually gives you access to DNS management
+## The seven anti-patterns that cause real incidents
 
-Once you own the domain, you can use it for:
+After enough rollouts, the same seven mistakes account for most production issues. The remediation for each is the rest of the article.
 
-1. user principal names such as `alice@contoso.com`
-2. email addresses such as `info@contoso.com`
-3. websites such as `www.contoso.com`
-4. application names such as `vpn.contoso.com` or `autodiscover.contoso.com`
+### Anti-pattern 1: Multiple SPF records on the same domain
 
-The key point is that the domain is the namespace. DNS is the mechanism that tells the internet what services exist inside that namespace.
+SPF is defined in [RFC 7208](https://datatracker.ietf.org/doc/html/rfc7208) and the spec is unambiguous: a domain MUST have at most one SPF record. Two records is an immediate `PermError`. Receivers that hit `PermError` typically treat the message as if SPF failed entirely.
 
-## What DNS is
+Why this keeps happening: marketing adds Mailchimp, sales adds HubSpot, IT adds Sendgrid, security adds Proofpoint. Each vendor's docs say "add this TXT record." None of the docs say "if you already have an SPF record, edit it instead of adding a new one."
 
-**DNS** stands for **Domain Name System**. As Microsoft explains in [DNS Concepts](https://learn.microsoft.com/en-us/windows/win32/dns/dns-concepts), DNS is the distributed naming system that maps human-readable names to technical data such as IP addresses, mail destinations, and service locations.
+**Detection:**
+```bash
+dig +short TXT contoso.com | grep -i 'v=spf1'
+```
+If you see more than one line starting with `v=spf1`, you have the bug.
 
-From a very basic perspective, DNS is the directory that answers questions like:
-
-1. what IP address belongs to `www.contoso.com`?
-2. which mail servers receive email for `contoso.com`?
-3. what TXT records prove I own `contoso.com`?
-4. where are the public DKIM keys for `selector1._domainkey.contoso.com`?
-
-Without DNS, users and systems would need to know raw technical addresses for everything. DNS is what makes a domain name usable.
-
-## Registrar, DNS host, zone, and nameservers
-
-These terms are often mixed together, but they are not the same thing.
-
-The **registrar** is the company through which you registered the domain. It manages the registration and renewal of the name.
-
-The **DNS host** is the provider actually serving the DNS zone for the domain. Often the registrar and DNS host are the same company, but they do not have to be. You can buy a domain at one provider and host DNS elsewhere.
-
-The **DNS zone** is the collection of records for that domain.
-
-The **nameservers** are the DNS servers the internet is told to query for that zone.
-
-A common real-world pattern looks like this:
-
-1. the domain is purchased at Namecheap
-2. the nameservers are changed to Cloudflare
-3. the DNS records are then managed in Cloudflare
-
-In that case, Namecheap is still the registrar, but Cloudflare is the active DNS host.
-
-## What a DNS record actually is
-
-A DNS record is a typed entry in the DNS zone. Each record type answers a different question.
-
-The most common record types you will see in Microsoft Entra and Microsoft 365 work are:
-
-1. **A** record: maps a name to an IPv4 address
-2. **AAAA** record: maps a name to an IPv6 address
-3. **CNAME** record: makes one name an alias of another name
-4. **MX** record: says where mail for the domain should be delivered
-5. **TXT** record: stores free-form text data used for verification and policy
-6. **SRV** record: advertises service locations for some protocols
-7. **NS** record: identifies the nameservers for the zone
-
-For Microsoft 365 onboarding, the most important record types are usually TXT, MX, CNAME, and sometimes SRV.
-
-## TTL and propagation
-
-**TTL** stands for **Time To Live**. It tells DNS resolvers how long they can cache a record before they should ask again.
-
-This is why DNS changes are not always visible immediately. When you change a record, some resolvers may still be using a cached answer until the TTL expires. That is usually what people mean when they say "DNS propagation," even though the zone change itself is often immediate at the authoritative provider.
-
-Operationally, this matters during domain onboarding because:
-
-1. you add a verification TXT record
-2. Microsoft checks for it
-3. some DNS resolvers may not see it yet due to caching
-
-The same applies when changing MX records during a mail migration. TTL determines how long older resolvers may continue to send mail using the previous answer.
-
-## The common record types explained
-
-### A and AAAA records
-
-These records map hostnames to IP addresses. If `www.contoso.com` points to a web server, the web browser ultimately reaches it because DNS returned an address from an A or AAAA record.
-
-Example:
-
-1. user browses to `portal.contoso.com`
-2. resolver asks DNS for the A or AAAA record
-3. DNS returns the IP address
-4. browser connects to that IP
-
-These are important for websites, VPN portals, on-prem services published externally, and any service directly reached by IP.
-
-### CNAME records
-
-A **canonical name (CNAME)** record makes one DNS name an alias of another. Instead of pointing directly to an IP, it points to another hostname.
-
-This is heavily used in Microsoft 365 because many Microsoft-owned endpoints are better represented as aliases to Microsoft-managed hostnames.
-
-Example:
-
-1. `autodiscover.contoso.com` is created as a CNAME
-2. it points to the Microsoft-managed autodiscover hostname
-3. the mail client asks for `autodiscover.contoso.com`
-4. DNS returns the alias target
-5. the client continues resolution against the target name
-
-DKIM in Microsoft 365 also relies on CNAME records, which is why understanding aliases is essential.
-
-### MX records
-
-**MX** stands for **Mail Exchanger**. This record tells other mail systems where to deliver email for a domain.
-
-Example:
-
-1. someone sends mail to `user@contoso.com`
-2. the sending mail server queries DNS for MX records of `contoso.com`
-3. DNS returns the target mail server name and priority
-4. the sending server connects to that mail destination
-
-If your MX record still points to the old provider, mail will continue going there even if Microsoft 365 accounts and mailboxes already exist.
-
-### TXT records
-
-TXT records are widely used because they can carry arbitrary text values. In Microsoft and email scenarios, TXT records are used for:
-
-1. domain ownership verification
-2. SPF policies
-3. DMARC policies
-4. various vendor-specific validation workflows
-
-TXT records often look unimportant because they are just strings, but many critical security and verification workflows depend on them.
-
-### SRV records
-
-**SRV** stands for **service locator**. SRV records advertise where a specific service can be found.
-
-They are less central than MX, TXT, and CNAME in typical Microsoft 365 mail onboarding, but they appear in some client discovery and legacy service scenarios.
-
-## Adding a custom domain to Microsoft Entra
-
-Microsoft Entra tenants begin with a Microsoft-owned domain such as `contoso.onmicrosoft.com`. As Microsoft explains in [Add your custom domain name to your tenant](https://learn.microsoft.com/en-us/azure/active-directory/fundamentals/add-custom-domain?context=azure%2Factive-directory%2Fusers-groups-roles%2Fcontext%2Fugr-context) and [Managing custom domain names in Microsoft Entra ID](https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/domains-manage), you add your own domain so users and resources can use familiar names such as `user@contoso.com`.
-
-### What Microsoft Entra is trying to prove
-
-Before Microsoft Entra accepts your custom domain, it must verify that you control the namespace. Otherwise, anyone could claim someone else's domain in their tenant.
-
-That is why Microsoft asks for a **TXT** or sometimes **MX** verification record. The platform is not using DNS for branding here. It is using DNS as proof of domain ownership.
-
-### What happens in the backend
-
-The admin adds the custom domain in Microsoft Entra. Microsoft Entra generates a DNS verification value. The admin adds that TXT record at the DNS host for the domain. Microsoft then queries public DNS to confirm the record exists with the expected value. If the record is present, Microsoft Entra marks the domain as verified and allows it to be used for user names and other supported resources.
-
-Microsoft documents in [Managing custom domain names in Microsoft Entra ID](https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/domains-manage) that once a root domain is verified, subdomains can often be handled differently depending on context, and that domains can later be made primary if needed.
-
-### Example
-
-If you add `contoso.com` to Entra, Microsoft might ask you to create a TXT record similar to:
-
-```txt
-Host: @
-Value: MS=ms12345678
+**Fix:** Consolidate into one SPF record. For a tenant that uses EXO + Mailchimp + Sendgrid:
+```
+v=spf1 include:spf.protection.outlook.com include:_spf.mailchimp.com include:sendgrid.net -all
 ```
 
-Microsoft then checks public DNS. If it sees the exact TXT value, it concludes that you control DNS for `contoso.com` and therefore control the domain.
+### Anti-pattern 2: SPF record over the 10 DNS-lookup limit
 
-## Adding a custom domain to Microsoft 365
+The same RFC caps SPF processing at 10 DNS lookups during evaluation. Each `include:`, `a`, `mx`, `ptr`, and `exists:` counts. Tenants that have grown to "everyone we ever integrated with" routinely cross the limit and produce `PermError` on every receive — meaning no one passes SPF, regardless of sender.
 
-Adding the domain to Microsoft 365 builds on the same idea, but now the goal is broader. Microsoft 365 needs not only to verify ownership, but also to know which Microsoft services should receive mail, client discovery, and other traffic for that domain.
+**Detection:** Use any SPF flattening / lookup-count checker, or count manually. A practical rule of thumb: more than 4-5 `include:` mechanisms is a yellow flag.
 
-Microsoft documents this in [Connect your domain by adding DNS records](https://learn.microsoft.com/en-us/microsoft-365/admin/get-help-with-domains/create-dns-records-at-any-dns-hosting-provider?view=o365-worldwide) and [External DNS records for Microsoft 365](https://learn.microsoft.com/en-us/microsoft-365/enterprise/external-domain-name-system-records?view=o365-worldwide).
+**Fix:** Audit which senders are still actually used (most have a couple of zombie integrations). Remove the unused ones. For surviving senders, prefer providers that publish stable IP ranges you can flatten into `ip4:` / `ip6:` mechanisms directly, which don't count against the limit.
 
-### What changes after verification
+> [!WARNING]
+> SPF flatteners that auto-generate records by resolving `include:` chains at flatten-time can break silently when an upstream provider changes IPs. If you use one, set up alerting on its drift detection.
 
-Once the domain is verified, Microsoft 365 can use it for:
+### Anti-pattern 3: `~all` (softfail) instead of `-all` (fail)
 
-1. user email addresses
-2. Exchange Online mail routing
-3. autodiscover and client experience records
-4. Teams, Skype, and other service integrations depending on workload
-5. DKIM signing and related email authentication configuration
+`~all` says "treat unauthorized senders as suspicious but don't reject." It was the right call in 2010 when DMARC didn't exist. Today, with DMARC providing the override mechanism, `~all` mostly gives spoofers a fighting chance. Modern guidance is to publish `-all` and let DMARC arbitrate alignment.
 
-Verification proves ownership. The later DNS records make the services actually work.
+**Fix:** Once your legitimate senders are confirmed in SPF, tighten to `-all`. Run with `~all` only during the initial inventory phase.
 
-## The Microsoft 365 DNS records most people add
+### Anti-pattern 4: DKIM signing not enabled in EXO even though CNAMEs are published
 
-### MX for Exchange Online
+Publishing the two DKIM CNAMEs is a prerequisite for DKIM, but it does **not** enable signing. You have to additionally turn DKIM on for the domain inside Exchange Online. Many onboardings publish the records, see the green check on the domain page, and assume done.
 
-The MX record is what moves inbound mail to Exchange Online.
+**Detection:**
+```powershell
+Connect-ExchangeOnline
+Get-DkimSigningConfig -Identity contoso.com | Format-List Identity, Enabled, Selector1CNAME, Selector2CNAME, Status
+```
+If `Enabled` is `False`, you have published CNAMEs but no signed outbound mail.
 
-When you change the MX record to Microsoft 365, you are telling the rest of the internet: "send mail for this domain to Microsoft's Exchange Online service."
-
-This is why Microsoft recommends creating users and mailboxes before switching the MX record. If the MX points to Microsoft 365 before the mailboxes exist, mail routing can break.
-
-### Autodiscover CNAME
-
-Autodiscover helps Outlook and other clients find Exchange settings automatically. Microsoft 365 often uses a CNAME such as:
-
-```txt
-autodiscover.contoso.com -> autodiscover.outlook.com
+**Fix:**
+```powershell
+Set-DkimSigningConfig -Identity contoso.com -Enabled $true
 ```
 
-The client asks for `autodiscover.contoso.com`, DNS returns the alias target, and the client continues the Exchange discovery process from there.
+### Anti-pattern 5: Custom DKIM not configured for a custom domain, only `onmicrosoft.com`
 
-### TXT verification record
+By default, EXO signs outbound mail with the tenant's `onmicrosoft.com` DKIM identity, not the custom domain. That sounds fine until you check DMARC alignment: the signing domain is `contoso.onmicrosoft.com` but the visible `From:` is `alice@contoso.com`. Alignment fails. DMARC fails. Mail lands in spam.
 
-The initial TXT record is often temporary from an operational perspective, but technically it remains an important ownership proof. It is usually created first because Microsoft must verify the domain before the rest of the Microsoft 365 service records are meaningful.
+**Fix:** Publish the two custom-domain CNAMEs and enable DKIM for the custom domain — that's the difference between "DKIM technically signs" and "DKIM signs in a way DMARC accepts."
 
-## SPF: Sender Policy Framework
+### Anti-pattern 6: DMARC enforcement before reporting
 
-**SPF** stands for **Sender Policy Framework**. Microsoft documents it in [Set up SPF to identify valid email sources for your custom cloud domains](https://learn.microsoft.com/en-us/defender-office-365/email-authentication-spf-configure).
+The recommended progression is `p=none` → `p=quarantine` → `p=reject`. Skipping straight to `p=reject` and waiting to see what breaks is a popular but extremely bad idea: by the time you find out the payroll system was sending from an unauthorized IP, two weeks of payslips have been rejected.
 
-### What SPF means
+The progression should be driven by **DMARC aggregate reports** (the `rua=` mailbox), parsed for two weeks at each stage, with explicit sign-off before each tightening.
 
-SPF is an email authentication control that tells receiving systems which servers are allowed to send mail for your domain. It is published as a TXT record in DNS.
+**Aggregate report parsing:** Either build a parser, use a free reporting service such as [Postmark DMARC monitoring](https://dmarc.postmarkapp.com/) or [dmarcian](https://dmarcian.com/), or run an internal tool. The reports are XML; the schema is documented in [RFC 7489](https://datatracker.ietf.org/doc/html/rfc7489).
 
-It does not encrypt mail and it does not prove the message body is unchanged. Its main job is to validate whether the sending infrastructure is an authorized source for the domain used in the SMTP envelope sender, also called the `5321.MailFrom` address.
+### Anti-pattern 7: Forwarders that break SPF, ignored
 
-### Example
+When mail.example.org forwards to your-user@contoso.com, the forwarder's IP is what the next-hop receiver sees as the sending source. That IP is not in *their* SPF record. SPF fails. DKIM survives (because it signs the message body, which forwarders typically don't rewrite), so DMARC can still pass on DKIM alignment — *if* DKIM is configured correctly. This is one of the strongest arguments for getting DKIM right before tightening DMARC.
 
-If Microsoft 365 is the only mail sender for `contoso.com`, Microsoft documents the common SPF record as:
+## A verification toolkit
 
-```txt
-v=spf1 include:spf.protection.outlook.com -all
+Keep this in a snippet manager. These commands are what you run during cutover and during incident response.
+
+```bash
+# 1. Resolve the tenant ownership TXT
+dig +short TXT contoso.com | grep -i '^"MS='
+
+# 2. Resolve the MX
+dig +short MX contoso.com
+
+# 3. Resolve and inspect SPF
+dig +short TXT contoso.com | grep -i 'v=spf1'
+
+# 4. Verify the two DKIM CNAMEs return the EXO target
+dig +short CNAME selector1._domainkey.contoso.com
+dig +short CNAME selector2._domainkey.contoso.com
+
+# 5. Resolve DMARC
+dig +short TXT _dmarc.contoso.com
+
+# 6. Test SPF end-to-end against a sending IP
+nslookup -type=TXT contoso.com 8.8.8.8
+
+# 7. Inspect a received message header to see SPF/DKIM/DMARC results
+# (Search "Authentication-Results:" in the header — it's the receiver's verdict)
 ```
 
-That tells receiving systems to allow the sources defined by `spf.protection.outlook.com` and reject everything else.
+```powershell
+# 8. From within EXO PowerShell, confirm DKIM signing state per domain
+Get-DkimSigningConfig | Format-Table Identity, Enabled, Status, KeySize, RotateOnDate
 
-### What happens in the backend
-
-When a receiving mail server gets a message claiming to be from your domain, it looks at the envelope sender domain and queries DNS for the SPF TXT record. It then compares the IP address or sending path of the server that actually delivered the message with the sources allowed by the SPF policy. If the sending source is authorized, SPF passes. If it is not authorized, SPF fails.
-
-### Important operational rule
-
-Microsoft stresses in both the SPF article and the domain-record articles that you should have **one SPF TXT record**, not multiple separate SPF records for the same domain. If multiple systems send mail on behalf of your domain, their sources need to be combined into one SPF policy.
-
-## DKIM: DomainKeys Identified Mail
-
-**DKIM** stands for **DomainKeys Identified Mail**. Microsoft documents it in [Set up DKIM to sign mail from your cloud domain](https://learn.microsoft.com/en-us/microsoft-365/security/office-365-security/email-authentication-dkim-configure?view=o365-worldwide).
-
-### What DKIM means
-
-DKIM is about cryptographic message signing. Instead of only checking whether the sending server is allowed, DKIM lets the sending system sign parts of the message using a private key. The receiving system can then validate that signature using the public key published in DNS.
-
-This helps answer a different question from SPF: not only "was the sender allowed?" but also "was the message signed by the expected domain, and do the signed parts still validate?"
-
-### Example
-
-In Microsoft 365, DKIM for a custom domain typically uses two CNAME selectors such as:
-
-```txt
-selector1._domainkey.contoso.com -> selector1-contoso-com._domainkey.<tenant>.onmicrosoft.com
-selector2._domainkey.contoso.com -> selector2-contoso-com._domainkey.<tenant>.onmicrosoft.com
+# 9. List all accepted domains and their authentication status
+Get-AcceptedDomain | Format-Table Name, DomainName, DomainType, AuthenticationType
 ```
 
-Microsoft 365 holds the private key and signs outbound mail. The public key is exposed indirectly through DNS so receiving servers can validate the signature.
+> [!TIP]
+> Run commands 1-5 from a network outside your corporate egress (e.g., your phone's mobile data, a cloud VM in another region) to confirm public DNS sees what you think it sees. Internal DNS resolvers sometimes serve different answers via split-horizon.
 
-### What happens in the backend
+## A safe cutover sequence
 
-When Microsoft 365 sends a message for your domain, it signs selected headers and the body using the domain's DKIM private key. The resulting signature is inserted into the `DKIM-Signature` header. The receiving system reads the `d=` signing domain and the `s=` selector value, queries DNS for the corresponding public key, and validates the signature. If the signature validates, the receiver knows that the signed content still matches what the signer produced.
+The mistake that produces the worst outages is changing the MX record before mailboxes are ready. The order below is the one that doesn't break things.
 
-### Why Microsoft 365 uses CNAMEs here
+1. **Add the domain in Microsoft 365** and publish only the ownership TXT.
+2. **Wait for verification to succeed** — Microsoft typically picks up the record within minutes, but allow up to an hour.
+3. **Create the user accounts and mailboxes** with the new domain UPN suffix. *Do not* set the new domain as the user's primary SMTP address yet.
+4. **Publish SPF in monitoring form first** — `v=spf1 include:spf.protection.outlook.com -all`. Even though you haven't cut over MX, having SPF live before MX prevents a brief gap where EXO accepts inbound but doesn't yet have authorized outbound.
+5. **Publish the two DKIM CNAMEs and enable signing** in EXO PowerShell. Confirm with `Get-DkimSigningConfig`.
+6. **Publish DMARC at `p=none`** with both `rua=` and `ruf=` reporting addresses. Set up parsing.
+7. **Test outbound from a pilot mailbox** to an external receiver that exposes Authentication-Results (Gmail does this in the message headers). Confirm `spf=pass`, `dkim=pass`, `dmarc=pass`.
+8. **Now change the MX record** to point at EXO. Lower TTL to 300 (5 minutes) 24 hours before the change so cutover is fast; raise it back to 3600 after.
+9. **Set the new domain as the primary SMTP address** on the users.
+10. **Watch DMARC reports for 14 days** before tightening to `p=quarantine`. Watch another 14 days before `p=reject`.
 
-Microsoft uses CNAME records for DKIM because Microsoft wants to manage the actual signing keys and key rotation infrastructure, while you still prove domain consent by publishing DNS records under your namespace.
+> [!NOTE]
+> Step 7 is the verification step the wizard skips. If you can't confirm `spf=pass; dkim=pass; dmarc=pass` *before* MX cutover, do not cut over.
 
-## DMARC: Domain-based Message Authentication, Reporting, and Conformance
+## DMARC enforcement: when to tighten
 
-**DMARC** stands for **Domain-based Message Authentication, Reporting, and Conformance**. Microsoft documents it in [Set up DMARC to validate the From address domain for cloud senders](https://learn.microsoft.com/en-us/defender-office-365/email-authentication-dmarc-configure).
+The right tightening criteria, in order:
 
-### What DMARC means
+- **`p=none` → `p=quarantine`:** Aggregate reports show ≥98% of legitimate volume passing alignment for at least 14 consecutive days. All known third-party senders inventoried and either added to SPF or have ARC-signed forwarding.
+- **`p=quarantine` → `p=reject`:** Quarantine has been live for ≥14 days. No business-critical mail flows have been quarantined. Forensic reports (`ruf=`) reviewed for any remaining edge cases.
+- **`pct=`:** Use the `pct=` tag to roll out enforcement incrementally. `pct=10` enforces on 10% of failing mail; double it weekly. This is rarely needed if the prior steps are followed but is the right escape hatch if you skip them.
 
-DMARC sits above SPF and DKIM. It tells receiving systems how to evaluate failures and, crucially, whether the visible **From** domain aligns with the domain validated by SPF or DKIM.
-
-This matters because a message can pass SPF for one domain and still display a different visible From address. DMARC is the policy layer that says whether that mismatch is acceptable.
-
-### Example
-
-A typical DMARC TXT record looks like:
-
-```txt
-v=DMARC1; p=reject; rua=mailto:dmarc-reports@contoso.com
+```
+v=DMARC1; p=quarantine; pct=25; rua=mailto:dmarc@contoso.com; ruf=mailto:dmarc-forensic@contoso.com; fo=1; aspf=r; adkim=r
 ```
 
-This says the domain is using DMARC version 1, failed messages should be rejected, and aggregate reports should be sent to the specified mailbox.
+The `aspf=r` and `adkim=r` tags request *relaxed* alignment (subdomain alignment is acceptable). That is the safer default for organisations with multiple mail-sending subdomains. Use `s` (strict) only when you've explicitly designed for it.
 
-### What happens in the backend
+## Common questions
 
-When a receiving server evaluates a message, it checks SPF and DKIM results. DMARC then asks whether at least one of those passed **and** whether the validated domain aligns with the domain in the visible `From` header. If alignment exists and one mechanism passes, DMARC passes. If not, DMARC fails, and the receiver can apply the policy you published such as `none`, `quarantine`, or `reject`.
+### My SPF record passes the syntax check but mail still lands in spam. What's missing?
 
-This is why DMARC is not a replacement for SPF or DKIM. It depends on them and adds policy and alignment on top.
+Almost certainly DKIM alignment. Run a test message to Gmail and inspect the `Authentication-Results:` header. If you see `dkim=fail` or `dkim=neutral`, you have DKIM CNAMEs but signing isn't enabled for the custom domain — or it's enabled for `contoso.onmicrosoft.com` only. Re-run `Get-DkimSigningConfig` and confirm the custom domain is signed.
 
-## How SPF, DKIM, and DMARC relate
+### Can I publish multiple DMARC records?
 
-The cleanest way to think about them is:
+No — same rule as SPF, one record per domain. If you need different policies for subdomains, use the `sp=` tag on the parent or publish a separate `_dmarc.<subdomain>` record.
 
-1. **SPF** validates whether the sending infrastructure is authorized
-2. **DKIM** validates whether the message was signed by the expected domain and remained intact for the signed parts
-3. **DMARC** validates domain alignment and tells receivers what policy to apply if SPF and DKIM do not satisfy the requirements
+### Why does my SPF check pass locally but fail at the recipient?
 
-Microsoft's documentation explicitly recommends configuring all three together because SPF alone cannot stop all spoofing scenarios.
+Three common causes: (a) the recipient is checking the envelope `MailFrom` domain, not the `From:` header domain, and they don't match; (b) split-horizon DNS at your egress is resolving differently than the public; (c) the recipient is hitting a different SPF record because of CNAME chaining at your DNS provider. Command 6 in the toolkit above (`nslookup` against `8.8.8.8`) sidesteps split-horizon and is usually the first diagnostic.
 
-## A realistic onboarding sequence
+### How long does DKIM key rotation take in EXO?
 
-If you are moving a real domain into Microsoft 365, a practical sequence looks like this:
+The two-selector model is specifically there to allow rotation without downtime. EXO will rotate to selector 2 on a schedule (default ~90 days), and inbound receivers will validate against whichever selector signed the message. You don't need to coordinate; just don't *delete* the older selector's CNAME until you've waited at least one rotation cycle.
 
-1. register the domain at a registrar
-2. decide where DNS will be hosted
-3. create the Microsoft Entra or Microsoft 365 tenant
-4. add the custom domain in the admin portal
-5. publish the verification TXT record
-6. wait for Microsoft verification to succeed
-7. create users and mailboxes
-8. add Exchange-related DNS records such as MX and Autodiscover
-9. publish SPF
-10. publish DKIM CNAME records and enable DKIM in Microsoft 365
-11. publish DMARC and move the policy from monitoring to enforcement as confidence increases
+### Do I need DMARC if I already have SPF and DKIM?
 
-This sequence matters because the technical dependencies are real. Verification comes before use. Mailboxes should exist before the MX cutover. DKIM and DMARC work best after the basic mail path is already stable.
+Yes, increasingly. Gmail and Yahoo's [2024 bulk-sender requirements](https://support.google.com/mail/answer/81126) require DMARC for any domain sending more than 5,000 messages/day. Microsoft is publishing similar guidance. SPF and DKIM are necessary but no longer sufficient — DMARC is the alignment layer that receivers actually check.
 
-## Common mistakes
+### What happens if I publish `p=reject` and there's a problem?
 
-Several operational mistakes show up repeatedly:
+Mail that fails alignment is bounced at the receiver. You'll see it in your DMARC aggregate reports within 24 hours. Quick mitigation: revert to `p=quarantine` or `p=none`, fix the underlying alignment issue, then re-tighten. This is why staged rollout matters — the diagnostic window is fast but not instant.
 
-1. adding multiple SPF TXT records instead of maintaining one combined SPF policy
-2. changing the MX record before users or mailboxes are ready
-3. assuming domain verification in Entra automatically means Exchange Online mail routing is configured
-4. enabling DMARC enforcement before understanding all legitimate mail sources
-5. forgetting that DNS changes may take time to be visible due to caching and TTL behavior
+## What to take away
 
-These are not theoretical problems. They are common reasons migrations and tenant onboarding feel fragile.
-
-## Key implementation points
-
-1. A domain is the namespace you own; DNS is the distributed system that tells the internet how to use that namespace.
-2. Microsoft Entra domain verification is fundamentally an ownership-proof exercise performed through DNS.
-3. Microsoft 365 service records such as MX, Autodiscover, SPF, DKIM, and DMARC each solve different problems and should not be treated as interchangeable.
-4. SPF authorizes sending sources, DKIM signs outbound mail, and DMARC adds alignment and receiver policy.
+The five-minute version of email authentication is that you publish SPF, publish DKIM, publish DMARC, and hope. The operational version is that you (1) inventory every legitimate sender before tightening SPF, (2) verify DKIM is signed for the custom domain in EXO PowerShell (not just that CNAMEs exist in DNS), (3) start DMARC at `p=none` and progress only after aggregate reports prove alignment, and (4) keep the verification toolkit warm during cutover. The anti-patterns are the failure modes; the toolkit is how you catch them. Get the staged progression right and you'll go from "we have a domain" to "we have phishing-resistant outbound mail" without a single bounced executive newsletter.
 
 ## References
 
-- [Add and verify custom domain names - Microsoft Entra ID](https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/domains-manage)
-- [Add your custom domain name to your tenant](https://learn.microsoft.com/en-us/azure/active-directory/fundamentals/add-custom-domain?context=azure%2Factive-directory%2Fusers-groups-roles%2Fcontext%2Fugr-context)
-- [Connect your domain by adding DNS records](https://learn.microsoft.com/en-us/microsoft-365/admin/get-help-with-domains/create-dns-records-at-any-dns-hosting-provider?view=o365-worldwide)
-- [External DNS records for Microsoft 365](https://learn.microsoft.com/en-us/microsoft-365/enterprise/external-domain-name-system-records?view=o365-worldwide)
-- [DNS Concepts](https://learn.microsoft.com/en-us/windows/win32/dns/dns-concepts)
-- [Set up SPF to identify valid email sources for your custom cloud domains](https://learn.microsoft.com/en-us/defender-office-365/email-authentication-spf-configure)
-- [Set up DKIM to sign mail from your cloud domain](https://learn.microsoft.com/en-us/microsoft-365/security/office-365-security/email-authentication-dkim-configure?view=o365-worldwide)
-- [Set up DMARC to validate the From address domain for cloud senders](https://learn.microsoft.com/en-us/defender-office-365/email-authentication-dmarc-configure)
+- [SPF for Microsoft 365 — Microsoft Learn](https://learn.microsoft.com/defender-office-365/email-authentication-spf-configure)
+- [DKIM for Microsoft 365 — Microsoft Learn](https://learn.microsoft.com/microsoft-365/security/office-365-security/email-authentication-dkim-configure)
+- [DMARC for Microsoft 365 — Microsoft Learn](https://learn.microsoft.com/defender-office-365/email-authentication-dmarc-configure)
+- [External DNS records for Microsoft 365 — Microsoft Learn](https://learn.microsoft.com/microsoft-365/enterprise/external-domain-name-system-records)
+- [Add a custom domain to Microsoft Entra — Microsoft Learn](https://learn.microsoft.com/azure/active-directory/enterprise-users/domains-manage)
+- [RFC 7208 — Sender Policy Framework (SPF)](https://datatracker.ietf.org/doc/html/rfc7208)
+- [RFC 6376 — DomainKeys Identified Mail (DKIM)](https://datatracker.ietf.org/doc/html/rfc6376)
+- [RFC 7489 — DMARC](https://datatracker.ietf.org/doc/html/rfc7489)
+- [Gmail bulk-sender requirements (2024)](https://support.google.com/mail/answer/81126)

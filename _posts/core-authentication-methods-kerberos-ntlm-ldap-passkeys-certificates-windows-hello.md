@@ -1,5 +1,5 @@
 ---
-title: "Core Authentication Methods"
+title: "Core Authentication Methods in Microsoft Identity: Kerberos, NTLM, LDAP, Passkeys, Certificates, and Windows Hello"
 excerpt: "A technical guide to Kerberos, NTLM, LDAP bind, passkeys, certificate-based authentication, and Windows Hello for Business, focused on what each method proves and how the backend validates it."
 coverImage: "/assets/blog/core-auth-methods/cover.svg"
 date: "2026-03-29T09:00:00.000Z"

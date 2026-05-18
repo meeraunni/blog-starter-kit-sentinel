@@ -1,5 +1,5 @@
 ---
-title: "Passkey Troubleshooting Guide"
+title: "Microsoft Entra Passkey Troubleshooting: Common Sign-In Failures and Their Root Causes"
 excerpt: "A technical troubleshooting guide for Microsoft Entra passkeys covering registration failures, Conditional Access loops, Bluetooth issues, orphaned passkeys, compatibility gaps, and Authenticator-specific problems."
 coverImage: "/assets/blog/passkeys-troubleshooting/cover.svg"
 date: "2026-03-27T20:00:00.000Z"
@@ -290,6 +290,32 @@ Most Microsoft Entra passkey incidents are explainable. They usually reduce to o
 - lifecycle cleanup issue
 
 If you sort the issue into the right bucket early, passkey troubleshooting becomes much more deterministic.
+
+## Common questions
+
+### Why does my YubiKey work on one tenant and fail on another?
+
+The most common cause is AAGUID allowlist differences between the two tenants' passkey profiles. The YubiKey's AAGUID is consistent across deployments; the *acceptance* of that AAGUID is decided per tenant. Look up the YubiKey model's AAGUID in Yubico's documentation and check both tenants' passkey profile configuration. The full registration-decision walkthrough is in the [passkey registration playbook](/posts/microsoft-entra-id-passkey-registration-windows-mobile).
+
+### Windows Hello passkey works for sign-in but fails on a specific app. What's happening?
+
+The app's authentication SDK may not yet implement the CTAP2 ceremony Windows Hello uses, or it may be requesting an attestation level Windows Hello can't satisfy. Verify the app's MSAL version is current, and confirm the tenant's Authentication Strength policy isn't requiring attested phishing-resistant credentials (which Windows Hello doesn't yet satisfy).
+
+### The passkey "disappeared" after a Windows update or device reset. Now what?
+
+The local credential is gone but the registration in Entra is still there. The user sees "you have a passkey but we can't find it." Remove the orphaned method via Security Info, then re-register. The [passkey-not-showing post](/posts/microsoft-entra-passkey-not-showing-up-fixes-security-info-authenticator-fido2) covers the diagnostic for orphan registrations.
+
+### Cross-device flow asks for Bluetooth but the laptop has Bluetooth disabled at the BIOS level. Alternative?
+
+Hardware FIDO2 key plugged directly into the laptop is the simplest path. Alternatively, register a Windows Hello passkey on the laptop itself so it doesn't need a cross-device handoff.
+
+### A pilot user can register on iOS but their colleague gets "couldn't add" on the same device model. Why?
+
+Almost always a Microsoft Authenticator app version difference. The colleague's app is older than the documented minimum. Force-update Authenticator from the App Store and retry. Other less common causes: iCloud Keychain conflicts (the device is offering iCloud passkey provider instead of Authenticator) and policy-target differences (the colleague is in an exclusion group).
+
+### How do I see exactly which authenticator the user attempted to register?
+
+Query the audit log for `Register security info` with the user's UPN. The `TargetResources` block usually contains the AAGUID and authenticator type. Combined with a public AAGUID lookup, this tells you exactly which device the user was using.
 
 ## Microsoft References
 

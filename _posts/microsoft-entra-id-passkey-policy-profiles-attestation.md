@@ -1,5 +1,5 @@
 ---
-title: "Passkey Policy and Attestation"
+title: "Microsoft Entra Passkey Policy in Practice: Profiles, AAGUID Allowlists, and Attestation Trade-offs"
 excerpt: "A technical guide to Microsoft Entra passkey profiles, AAGUID restrictions, attestation behavior, and the control-plane logic behind passkey governance."
 coverImage: "/assets/blog/passkey-policy/cover.svg"
 date: "2026-03-28T21:10:00.000Z"
@@ -76,17 +76,6 @@ That immediately tells you this should not be casually mixed into a broad workfo
 A strong tenant design usually separates passkey policy by operational intent. Standard workforce users often fit best into a profile that allows synced passkeys and aims for broad adoption with manageable support cost. Privileged identities often belong in a narrower profile that prefers device-bound authenticators, explicit AAGUID control, and stronger assurance where supported. Preview-specific paths such as Windows Hello should normally live in their own isolated profile.
 
 This is not just cleaner configuration. It is better support design. When each profile has a defined purpose, it becomes much easier to explain why registration was accepted, why it was blocked, and what a user is expected to do next.
-
-## Example policy screens
-
-![Microsoft Entra passkey settings](/assets/blog/passkey-policy/ms-passkey-settings.png)
-*Source: Microsoft Learn, [How to enable passkeys (FIDO2) in Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkeys-fido2).*
-
-![Default passkey profile in Microsoft Entra](/assets/blog/passkey-policy/ms-default-passkey-profile.png)
-*Source: Microsoft Learn, [How to enable passkeys (FIDO2) in Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-passkeys-fido2).*
-
-![Windows Hello passkey profile configuration](/assets/blog/passkey-policy/ms-windows-passkey-profile.png)
-*Source: Microsoft Learn, [Enable Microsoft Entra passkey on Windows devices (preview)](https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-entra-passkeys-on-windows).*
 
 ## Key implementation points
 

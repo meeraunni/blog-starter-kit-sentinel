@@ -1,128 +1,114 @@
 ---
-title: "Rolling Out MFA in Microsoft 365 Without Breaking Production: Conditional Access + Authentication Strengths"
-excerpt: "An engineer-level rollout plan for Microsoft 365 multifactor authentication using Conditional Access, Authentication Strength policies, staged user rings, and exception handling for service accounts and B2B."
+title: "How To Roll Out MFA in Microsoft 365 Without Locking Out the CEO on a Monday Morning"
+excerpt: "MFA in a small tenant is a Saturday evening. In a real one with hybrid identity, legacy clients, service accounts, and a help desk that's already backed up, it's a months-long programme. Here's the ring-based rollout that gets you to phishing-resistant MFA without an inbox full of lockout tickets."
 coverImage: "/assets/blog/microsoft-365-mfa-rollout-strategy-conditional-access-authentication-strength/diagram.svg"
 date: "2026-05-10T09:00:00.000Z"
 author:
-  name: "Sentinel Identity"
+  name: "M.U"
 ogImage:
   url: "/assets/blog/microsoft-365-mfa-rollout-strategy-conditional-access-authentication-strength/diagram.svg"
 ---
 
-## Why this rollout is harder than it looks
+Turning on MFA for fifty users is a Saturday evening. Turning it on for fifteen thousand is a different sport. Somewhere between those two numbers — usually around the point you discover that the finance team has a long-running OAuth grant to a budgeting tool that nobody documented, and that the help desk's own accounts use phone-call MFA, and that there are eighty-three service accounts which can't do MFA at all by definition — the conversation stops being about a configuration toggle and starts being about a delivery programme. Done badly, it produces a Monday morning ticket queue with the CEO at the top. Done well, almost nobody outside the identity team notices it happened.
 
-In a small tenant, switching multifactor authentication on for everyone is a Saturday evening. In a real Microsoft 365 tenant — 5,000 to 50,000 users, hybrid identity, mailboxes still on Exchange Online via legacy clients, a sprawl of service accounts, several B2B partners, a handful of long-lived OAuth grants, and a help desk that already has a backlog — switching MFA on for everyone is a months-long programme. Done badly, it produces a Monday-morning queue of locked-out CEOs and a rollback. Done well, it is invisible to most of the business.
+The control surface for MFA in Microsoft Entra has also been changing under everyone's feet. Per-user MFA, Security Defaults, Conditional Access, Authentication Strengths, and the more recent admin-MFA mandate from Microsoft all coexist in the same tenant. Picking the right surface for each population, and migrating cleanly between them, turns out to be the work. The actual rollout sequence — pilot, power users, all employees, B2B — is the easy bit once the surface is settled.
 
-The Microsoft Entra control surface for MFA has also been changing. Per-user MFA, Security Defaults, baseline policies, Conditional Access, Authentication Strengths, and (most recently) phishing-resistant MFA enforcement via the [Microsoft mandate for admin MFA](https://learn.microsoft.com/azure/active-directory/fundamentals/secure-with-azure-ad-multi-factor-authentication) all coexist in the same tenant. Knowing which control surface to use for which population, and how to migrate cleanly between them, is most of the work.
+This piece is the playbook I'd hand someone running their first large MFA programme. We'll cover which control surface to use, the rings that work, how Authentication Strength fits in, the exception design for service accounts and partners, the telemetry to watch through the change window, and the rollback criteria worth writing down before you start, not after.
 
-> [!NOTE]
-> Microsoft is [deprecating per-user MFA](https://techcommunity.microsoft.com/blog/microsoft-entra-blog/) management in favour of Conditional Access. New deployments should not start with per-user MFA. Existing tenants using per-user MFA should plan a migration to Conditional Access + Authentication Strength before the deprecation date applies.
+## The five things that all claim to enforce MFA
 
-This article is the playbook a Microsoft 365 administrator or identity architect should follow: pick the right control surface, design the rings, plan the strength, manage the exceptions, watch the telemetry, and know which signals trigger a rollback.
+This is the first source of confusion. In a single tenant there are at least five mechanisms that look like they enforce MFA, and they don't combine the way you'd expect.
 
-## The current state of MFA in Microsoft Entra (2026)
+Per-user MFA is the legacy toggle on each user object. Microsoft is [deprecating](https://learn.microsoft.com/azure/active-directory/authentication/howto-mfa-userstates) the per-user state in favour of Conditional Access. New deployments shouldn't start here. Existing tenants that use it need a migration plan.
 
-There are five things in the same tenant that all claim to enforce MFA:
+Security Defaults is a free tenant-wide policy bundle that enforces MFA for everyone, blocks legacy auth, and protects privileged actions. It's fine for very small tenants. It can't be granular, and it's mutually exclusive with Conditional Access, so you can't have both.
 
-1. **Per-user MFA** — the legacy MFA toggle in the Entra admin centre on each user. Being deprecated. Still active in many tenants.
-2. **Security Defaults** — a free, tenant-wide policy bundle that enforces MFA for all users, blocks legacy auth, and protects privileged actions. Cannot be granular.
-3. **Conditional Access (CA) grant controls** — the modern way. A CA policy can require MFA as a grant control across any scope you can express.
-4. **Authentication Strength policies** — added on top of CA, an Authentication Strength specifies *which* methods satisfy MFA (for example, only phishing-resistant methods such as FIDO2, passkeys, or Windows Hello for Business).
-5. **Authentication Methods policy** — controls which methods can be registered and used at all.
+Conditional Access grant controls are the modern path. A CA policy can require MFA across any scope you can express — users, groups, apps, locations, devices, risk. This is where almost all enterprise MFA enforcement lives in 2026.
 
-Microsoft's [Migrate from per-user MFA to Conditional Access](https://learn.microsoft.com/azure/active-directory/authentication/howto-mfa-userstates) page is the definitive migration reference. The short version: never set users to *Enabled* or *Enforced* in per-user MFA going forward; if they are already in that state, you cannot enforce a strength on them via CA until they are returned to *Disabled* and brought under a CA policy.
+Authentication Strength policies stack on top of CA. They specify *which* methods satisfy MFA — for example, only phishing-resistant ones like FIDO2 / passkeys / Windows Hello for Business. The distinction matters because "MFA satisfied with SMS" passes a generic MFA grant but fails a phishing-resistant strength.
+
+Authentication Methods policy controls which methods can be registered and used at all. It's the foundation layer — if you turn off SMS here, no users can register or use it regardless of what your CA policy demands.
+
+The trap that catches everyone: Conditional Access cannot enforce an Authentication Strength on a user who is in per-user MFA Enforced state. The runtime treats the per-user MFA satisfaction as sufficient and never invokes the CA grant. This is the single most common reason a "passkey-only" policy quietly accepts a phone-call MFA. If you're enforcing strengths, the per-user state must be Disabled for every targeted user.
 
 > [!IMPORTANT]
-> Conditional Access cannot enforce a specific Authentication Strength on a user who is in per-user MFA *Enforced* state. The runtime treats the per-user MFA satisfaction as good enough and never invokes the CA grant. This is the single most common reason a "passkey-only" policy quietly accepts a phone-call MFA.
+> Before you write a single Conditional Access policy, audit which users are in per-user MFA Enforced or Enabled state. Move them to Disabled. The migration is documented [here](https://learn.microsoft.com/azure/active-directory/authentication/howto-mfa-userstates). Skipping this step makes every subsequent Authentication Strength policy quietly broken on those users.
 
-## The design decisions, before any policy is written
+## The four decisions worth making before any policy gets written
 
-Before configuring anything, write down four answers:
+Almost every successful rollout I've seen got these four right and almost every messy one got at least one wrong.
 
-**1. Which control surface for the long term?**
-For tenants larger than ~50 users, the answer is *Conditional Access + Authentication Strength*. Security Defaults are fine for very small tenants and not granular enough for larger ones. Per-user MFA is end-of-life.
+The first is control surface. For tenants larger than about fifty users, it's Conditional Access plus Authentication Strengths. Per-user MFA is end of life. Security Defaults are fine for small tenants. There isn't really a fourth option.
 
-**2. Which Authentication Strength is the target?**
-*Multifactor authentication* is the built-in fallback. *Phishing-resistant MFA* is the destination for most regulated environments. Microsoft maintains the [matrix of which method satisfies which strength](https://learn.microsoft.com/azure/active-directory/authentication/concept-authentication-strengths#built-in-authentication-strengths). For most enterprises, the right shape is: Phishing-resistant for admins now; Phishing-resistant for all users on a 12-month roadmap; Multifactor as the immediate-step intermediate.
+The second is the target strength. The built-in Authentication Strength options are Multifactor authentication (the broad bucket — push, SMS, voice, etc) and Phishing-resistant MFA (passkeys, FIDO2 keys, WHfB, certificate-based auth). Most enterprises in 2026 should be aiming at phishing-resistant for admins right now, phishing-resistant for everyone within twelve months, and multifactor as the intermediate state. The matrix of which method satisfies which strength is documented [here](https://learn.microsoft.com/azure/active-directory/authentication/concept-authentication-strengths) and is worth keeping open in a tab while you plan.
 
-**3. How will exceptions be expressed?**
-Every rollout needs three permanent exceptions: **break-glass accounts** (excluded from every MFA policy and protected by other means), **service principals / managed identities** (which don't perform MFA), and **emergency-access B2B guests** for partner support. Decide before rollout whether the exception is a *group* (membership-managed) or a *named exclusion* (policy-managed). Groups scale; named exclusions create policy sprawl. Use groups.
+The third is how exceptions get expressed. Every rollout needs at least three permanent exceptions: break-glass accounts that aren't subject to MFA so you can recover the tenant, service principals that can't do interactive MFA at all, and a handful of emergency-access B2B guests for partner support. The question is whether you express each as a group membership or as named exclusions on each policy. Groups scale, named exclusions create policy sprawl, so the answer is groups. One group per exception class, named so the audit trail is obvious (`mfa-excluded-breakglass`, `mfa-excluded-svcaccts`, `mfa-excluded-b2b-emergency`).
 
-**4. What is the user-communication plan?**
-The dominant cause of a botched MFA rollout is users not knowing the prompt is coming, not knowing what to register, and not knowing how to recover. Communication starts 4 weeks before the first ring, with reminders at 2, 1, and 0 weeks. The help desk should be staffed at 1.5× normal capacity for the first week of each ring.
+The fourth is communication, and it's the one most often skipped. The dominant cause of botched MFA rollouts is users not knowing the prompt is coming, not knowing what to register, and not knowing how to recover. Communication starts four weeks before the first ring, with reminders at two, one, and zero weeks. Help desk needs to be at 1.5× capacity for the first week of each ring.
 
-## The ring strategy
+## The ring shape that works
 
-A safe Microsoft 365 MFA rollout uses ring-based deployment, just like a Windows update ring. The shape that works is four rings:
+The pattern is borrowed from Windows update rings and it works for the same reasons. Four rings is the right number for most tenants.
 
-- **Ring 0: Pilot (IT + Security, ~50 users).** Validate the policy end-to-end. Catch the obvious "the policy targets all users including service accounts" bugs here.
-- **Ring 1: Power users (~5% of workforce, including the help desk).** Validate the help desk workflow. The help desk has to be able to assist with prompts they themselves see.
-- **Ring 2: All employees, regular users.** The bulk of the rollout.
-- **Ring 3: B2B guests and partner accounts.** Last, because partner workflows are the least well understood and the most likely to break in unfun ways.
+Ring 0 is the pilot, around fifty users — the identity and security teams. The purpose is to validate the policy template end-to-end and catch the obvious "this policy targets all users including service accounts" type bugs before they cost you anything.
 
-Each ring is implemented as a CA policy with a different *target* group. The same policy template can be cloned per ring with only the *Include* group changing.
+Ring 1 is power users, around five percent of the workforce, including the help desk. The point of including the help desk specifically is that they have to support prompts they themselves are seeing. If MFA is new to them, every ticket takes twice as long.
 
-> [!TIP]
-> Build the rings as dynamic groups based on a user attribute (for example, `extensionAttribute1` set to `mfa-ring-1`). That way the rollout becomes "move users between attribute values" rather than "edit Conditional Access policies in production."
+Ring 2 is most of the workforce. By the time you reach it, the policy template has been tested, the help desk has muscle memory, and the exception groups are settled. This is the bulk of the rollout.
+
+Ring 3 is B2B guests and partner accounts, last because partner workflows are the least understood and break in the most creative ways. You don't want to discover that one of your partners' identity teams uses an authentication method your strength policy rejects on the same day you're trying to onboard a new B2B integration.
+
+The implementation trick worth knowing: build the rings as dynamic groups keyed on a user attribute (something like `extensionAttribute1` set to `mfa-ring-1`). Then the rollout is "move users between attribute values" rather than "edit Conditional Access policies in production." Editing CA in production is high stakes; moving people between attribute values is low stakes and reversible.
 
 ## A minimum-viable policy template
 
-For each ring, the Conditional Access policy looks like:
+For each ring, the policy looks roughly like this:
 
-- **Users**: Include = `Ring N` group. Exclude = `Break-glass` group, `Service accounts` group, `MFA-exempt B2B` group.
-- **Target resources**: All cloud apps. (You can scope to Office 365 first if you want to leave non-Office apps untouched.)
-- **Conditions**: None initially. Add *Client apps* later if you want to differentiate browser vs mobile.
-- **Grant**: Require multifactor authentication, OR `Require authentication strength = Multifactor authentication` for the first wave; switch to `Require authentication strength = Phishing-resistant MFA` for the second wave.
-- **Session**: Sign-in frequency = *Every time* for privileged actions; default for everything else.
-- **Enable policy**: Report-only first, then On after a week of clean logs.
+- **Users**: include the ring group, exclude break-glass and service accounts and the B2B exception group.
+- **Target resources**: all cloud apps. You can scope to Office 365 only on the first ring if you want to leave non-Office surface untouched.
+- **Conditions**: none initially. Add Client apps later if you want to differentiate browser from mobile.
+- **Grant**: Require multifactor authentication, or `Require authentication strength = Multifactor authentication` for the first wave. Switch to `Require authentication strength = Phishing-resistant MFA` for the second wave.
+- **Session**: Sign-in frequency = "Every time" for privileged actions; defaults elsewhere.
+- **State**: report-only first, then on after a week of clean logs.
 
-The [Common Conditional Access policy: Require MFA for all users](https://learn.microsoft.com/azure/active-directory/conditional-access/howto-conditional-access-policy-all-users-mfa) page is the official reference for this shape.
+Microsoft's [Common policy: Require MFA for all users](https://learn.microsoft.com/azure/active-directory/conditional-access/howto-conditional-access-policy-all-users-mfa) is the canonical reference. Don't deviate from the template unless you have a specific reason.
 
-## Phishing-resistant strength: register, then enforce
+## Phishing-resistant: register, then enforce
 
-Phishing-resistant MFA is the destination, but enforcing it before users have a registered method that satisfies it produces lockouts. The right ordering is:
+This is the order that doesn't lock people out. Enforcing a strength before users have registered a method that satisfies it produces lockouts at scale. Open registration first.
 
-1. **Open registration.** In Authentication Methods policy, enable passkeys (Microsoft Authenticator), FIDO2 security keys, and Windows Hello for Business, in addition to the methods already enabled.
-2. **Drive registration via Security Info self-service.** Send users to `https://aka.ms/mysecurityinfo` with instructions to register at least one phishing-resistant method. Track adoption via the [Authentication Methods registration report](https://learn.microsoft.com/azure/active-directory/authentication/howto-authentication-methods-activity).
-3. **Add a phishing-resistant Conditional Access policy in report-only.** Watch the report-only verdicts for two weeks. Anyone who would have failed has not yet registered.
-4. **Communicate the cutover date.** Set a date for moving the policy from report-only to enforced. Reinforce in three reminders.
-5. **Move to enforced.** On the cutover date, flip the policy. Help desk on standby.
+Start by enabling passkeys (Microsoft Authenticator), FIDO2 security keys, and WHfB in Authentication Methods policy, alongside whatever's already there. Then drive registration via Security Info self-service — point users at `https://aka.ms/mysecurityinfo` with a one-page instruction sheet. Track adoption via the [Authentication Methods registration report](https://learn.microsoft.com/azure/active-directory/authentication/howto-authentication-methods-activity).
+
+When the population's registration coverage looks healthy (I'd want above ninety percent in the target ring before tightening), add a phishing-resistant Conditional Access policy in report-only mode. Watch the report-only verdicts for at least two weeks. Anyone showing up as "would have failed" hasn't registered yet — outreach them individually.
+
+Communicate the cutover date. Three reminders. Then flip the policy from report-only to enforced. Help desk on standby.
+
+Two things worth being firm about. Don't move from report-only to enforced for all users in one step — do it ring by ring. The blast radius matters more than the calendar. And don't combine "first time turning on passkeys" with "first time enforcing phishing-resistant strength" in the same change window. They're separate concerns, register first, enforce second.
 
 > [!WARNING]
-> Do not move a phishing-resistant policy from report-only to enforced for *all users* in one step. Move ring by ring. The blast radius matters more than the calendar.
+> If you're enforcing phishing-resistant MFA and a user has only SMS or voice registered, the next sign-in attempt will fail the policy. They can't recover by re-trying with SMS — the strength doesn't accept it. The only paths back are admin issuance of a Temporary Access Pass, or registration of a phishing-resistant method during a fresh session. Make sure the help desk has the TAP issuance runbook before the cutover date.
 
-## Privileged role enforcement is a separate policy
+## Privileged accounts get their own policy
 
-Admin accounts get their own Conditional Access policy with their own strength, independent of the user rings. The policy:
+Admin accounts aren't on the user rings. They get a separate Conditional Access policy from day one, targeting the [built-in Entra roles](https://learn.microsoft.com/azure/active-directory/roles/permissions-reference) — Global Admin, Privileged Role Admin, Security Admin, CA Admin, Exchange Admin, SharePoint Admin, and so on. The policy requires phishing-resistant strength, sign-in frequency of "every time" for privileged actions, and a compliant device where the role supports it. Only break-glass accounts are excluded. This policy is on from day one because admin accounts need protection from day one, not at the end of the rollout.
 
-- Targets the [Microsoft Entra built-in roles list](https://learn.microsoft.com/azure/active-directory/roles/permissions-reference) — Global Administrator, Privileged Role Administrator, Security Administrator, Conditional Access Administrator, Exchange Administrator, SharePoint Administrator, etc.
-- Requires `Phishing-resistant MFA` strength.
-- Requires sign-in frequency of *Every time* for privileged actions.
-- Requires a compliant device (where supported).
-- Excludes the break-glass accounts only.
+## Service accounts and B2B done right
 
-This policy is independent of the user-ring policies because admin accounts must be protected to the highest standard from day one, not at the end of the rollout.
+Service accounts (the user-object kind) shouldn't be performing interactive MFA, and the question to ask isn't "how do we exclude them from MFA" but "why are these still user accounts?" The right pattern is:
 
-## Service-account and B2B exceptions, done right
+Move every service account to a Service accounts group. Exclude the group from MFA policies. Then *replace* the service account with a workload identity, managed identity, or service principal with certificate auth or federated identity credential, on the next refactor of whatever script uses it. Apply a separate Conditional Access policy for [workload identity sign-ins](https://learn.microsoft.com/azure/active-directory/conditional-access/workload-identity) that restricts to a known IP range and blocks risk-classified workload sign-ins.
 
-Service accounts (the user-object kind) should not be performing interactive MFA. The right pattern is:
+A service account "excluded from MFA" with no compensating control is a credential-theft target. Excluding from MFA has to be paired with location restriction, IP allowlisting, or migration to workload identity. There's no version of "no MFA, no compensating control" that's safe.
 
-- Move every service account to a *Service accounts* group.
-- Exclude the group from MFA policies.
-- Replace the service account with a [workload identity / managed identity / service principal with certificate auth or federated credential](https://learn.microsoft.com/azure/active-directory/workload-identities/workload-identities-overview) on the next refactor of whatever script or app uses it.
-- Apply a separate Conditional Access policy for [workload identity sign-ins](https://learn.microsoft.com/azure/active-directory/conditional-access/workload-identity) that restricts sign-in to a known IP range and blocks risk-classified workload sign-ins.
+B2B guests get their own policy that requires MFA when the guest accesses your resources. The MFA can be performed by the guest's home tenant or by yours via the [cross-tenant access settings](https://learn.microsoft.com/azure/active-directory/external-identities/cross-tenant-access-overview). Whether you trust the partner's MFA is configurable per partner. For partners you trust, accept their MFA satisfaction and avoid re-prompting your guests. For partners you don't, require MFA on your side.
 
-> [!IMPORTANT]
-> A service account "excluded from MFA" with no other compensating control is a credential-theft target. Excluding from MFA must always be paired with named-location restriction, IP allowlisting, or workload-identity migration.
+## Telemetry to watch through each ring
 
-B2B guests get their own policy that requires MFA when the guest accesses your resources, performed by the *guest's home tenant* or by your tenant via the [cross-tenant access settings](https://learn.microsoft.com/azure/active-directory/external-identities/cross-tenant-access-overview). Decide whether you trust the partner's MFA (configurable per partner under cross-tenant access settings); if not, require MFA on your side.
+Every ring should run for at least seven days before moving to the next, and during those seven days the on-call identity engineer is watching two queries.
 
-## Telemetry to watch during a ring
-
-Every ring should run for at least 7 days before moving to the next. During those 7 days, the on-call identity engineer watches:
+The first is daily failure counts attributable to the new policy:
 
 ```kql
-// Daily count of failures attributable to the new MFA policy
 SigninLogs
 | where TimeGenerated > ago(7d)
 | mv-expand policy = ConditionalAccessPolicies
@@ -133,8 +119,9 @@ SigninLogs
 | order by TimeGenerated asc
 ```
 
+The second is users in scope who haven't registered a satisfying method, which is the predictive signal for next week's lockouts:
+
 ```kql
-// Users blocked due to the policy who have not registered a satisfying method
 SigninLogs
 | where TimeGenerated > ago(7d)
 | mv-expand policy = ConditionalAccessPolicies
@@ -152,50 +139,36 @@ SigninLogs
 | where isnull(Registrations) or Registrations == 0
 ```
 
-The first query measures whether enforcement is working. The second tells you who is about to be locked out because they have never registered.
+The first tells you whether enforcement is working. The second tells you who is about to be locked out. The list from the second query is your weekly outreach target.
 
 ## Rollback criteria, written before the change window
 
-A ring should be rolled back if any of the following is true at the end of the first 24 hours:
+A ring should be rolled back if any of the following is true twenty-four hours in:
 
-- More than 2% of in-ring users have raised a help-desk ticket attributable to the policy.
-- A single high-priority application (decided in advance — usually Outlook on mobile, Teams, or the corporate VPN) is producing widespread auth failures.
-- Sign-in failures correlated with the policy display name exceed the agreed threshold (typical: 5% of in-ring sign-in volume).
+- More than two percent of in-ring users have filed help-desk tickets attributable to the policy.
+- A single named high-priority application (decided in advance — usually Outlook mobile, Teams, or the corporate VPN) is producing widespread auth failures.
+- Sign-in failures correlated with the policy display name exceed five percent of in-ring sign-in volume.
 
-Rollback is the policy toggle from On back to Report-only, not the deletion of the policy. Always be able to revert in one click.
+Rollback means toggling the policy from On back to Report-only, not deleting it. You always want to be able to revert in a single click. The criteria need to be written down and agreed on *before* the change window — not negotiated mid-incident with people who have varying degrees of skin in the game.
 
-## Common questions
+## A few questions I keep getting
 
-### Should I keep Security Defaults on while rolling out CA?
+*Should Security Defaults stay on while we roll out CA?* No. They're mutually exclusive. Turning off Security Defaults is the prerequisite for any CA-based MFA enforcement. The toggle is documented [here](https://learn.microsoft.com/azure/active-directory/fundamentals/security-defaults).
 
-No. Security Defaults and Conditional Access are mutually exclusive — turning Security Defaults off is a prerequisite to enabling Conditional Access policies that target MFA. Microsoft's [Security defaults](https://learn.microsoft.com/azure/active-directory/fundamentals/security-defaults) page documents the toggle.
+*Does Microsoft Authenticator push satisfy phishing-resistant MFA?* No. Neither do SMS, voice, or OATH tokens. The methods that do satisfy phishing-resistant are passkeys (in Authenticator), FIDO2 keys, WHfB, and certificate-based authentication.
 
-### Can a user satisfy "Phishing-resistant MFA" with the Microsoft Authenticator app push?
+*What strength should I require for the help desk?* Phishing-resistant. The help desk is the highest-leverage social-engineering target in any organisation. Phone-call MFA on a help desk account is a known attack pattern. They should be on the first ring with phishing-resistant enforced.
 
-No. Push notifications, SMS, voice call, and OATH tokens do not satisfy the Phishing-resistant MFA built-in strength. Passkeys (in Microsoft Authenticator), FIDO2 security keys, Windows Hello for Business, and certificate-based authentication do.
+*A user genuinely can't use any phishing-resistant method — accessibility case. What now?* Document the exception, move them to a named exception group, exclude the group from the phishing-resistant policy, and pair the exception with a compensating control. Tighter Conditional Access restricting them to a managed device on a corporate network, plus enhanced sign-in monitoring. Exceptions are fine. Unmonitored exceptions aren't.
 
-### What is the minimum strength I should require for the help desk?
+*When can I disable legacy authentication?* Before Ring 1 finishes. Blocking legacy auth is a foundational policy. Put it on in report-only from week one and enforce it before MFA is enforced. Legacy clients bypass modern auth and therefore bypass MFA, so leaving them enabled defeats the whole programme.
 
-Phishing-resistant MFA. The help desk is the highest-leverage social-engineering target in any organisation: a phone-call MFA on a help desk account is a known attack pattern. Make the help desk the first ring on phishing-resistant.
+## Where to read further
 
-### How do I handle a user who genuinely cannot use any phishing-resistant method (an accessibility case, for example)?
-
-Document the exception, move the user into a named exception group, exclude the group from the phishing-resistant policy, and apply a compensating control (a tighter Conditional Access policy that restricts the user to a managed device on a corporate network, plus enhanced sign-in monitoring). Exceptions are fine; *unmonitored* exceptions are not.
-
-### When can I disable legacy authentication?
-
-Before you complete Ring 1. [Block legacy authentication with Conditional Access](https://learn.microsoft.com/azure/active-directory/conditional-access/block-legacy-authentication) is a foundational policy. It should be on in report-only from week 1 and enforced before MFA is enforced. Legacy clients bypass modern auth and therefore bypass MFA — leaving them enabled defeats the whole programme.
-
-## What to take away
-
-A Microsoft 365 MFA rollout is a deployment programme, not a configuration change. The control surface (CA + Authentication Strengths), the staged rings, the explicit exceptions for service accounts and B2B, the telemetry, the rollback criteria, and the user communication plan are all parts of the same delivery. Skip any one of them and you ship lockouts to production. Treat each piece as code-reviewable, version it, and rehearse the rollback before the rollout — the goal is for nobody outside the identity team to notice anything happened.
-
-## References
-
-- [Microsoft Entra Authentication Strengths — Microsoft Learn](https://learn.microsoft.com/azure/active-directory/authentication/concept-authentication-strengths)
+- [Authentication strengths — Microsoft Learn](https://learn.microsoft.com/azure/active-directory/authentication/concept-authentication-strengths)
 - [Migrate from per-user MFA to Conditional Access — Microsoft Learn](https://learn.microsoft.com/azure/active-directory/authentication/howto-mfa-userstates)
-- [Common CA policy: Require MFA for all users — Microsoft Learn](https://learn.microsoft.com/azure/active-directory/conditional-access/howto-conditional-access-policy-all-users-mfa)
+- [Common policy: Require MFA for all users — Microsoft Learn](https://learn.microsoft.com/azure/active-directory/conditional-access/howto-conditional-access-policy-all-users-mfa)
 - [Block legacy authentication — Microsoft Learn](https://learn.microsoft.com/azure/active-directory/conditional-access/block-legacy-authentication)
 - [Cross-tenant access settings — Microsoft Learn](https://learn.microsoft.com/azure/active-directory/external-identities/cross-tenant-access-overview)
 - [Workload identity Conditional Access — Microsoft Learn](https://learn.microsoft.com/azure/active-directory/conditional-access/workload-identity)
-- [Authentication Methods activity — Microsoft Learn](https://learn.microsoft.com/azure/active-directory/authentication/howto-authentication-methods-activity)
+- [Authentication Methods activity report — Microsoft Learn](https://learn.microsoft.com/azure/active-directory/authentication/howto-authentication-methods-activity)

@@ -4,7 +4,7 @@ excerpt: "The VPN concentrator is end of life, the renewal quote is unreasonable
 coverImage: "/assets/blog/microsoft-entra-private-access-vpn-replacement/diagram.svg"
 date: "2026-06-12T09:00:00.000Z"
 author:
-  name: "M.U"
+  name: "MU.A"
 ogImage:
   url: "/assets/blog/microsoft-entra-private-access-vpn-replacement/diagram.svg"
 ---

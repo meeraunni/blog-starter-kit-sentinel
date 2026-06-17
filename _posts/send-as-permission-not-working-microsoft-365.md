@@ -4,7 +4,7 @@ excerpt: "The permission shows up in the admin centre. Propagation has long sinc
 coverImage: "/assets/blog/send-as-permission-not-working-microsoft-365/diagram.svg"
 date: "2026-05-16T09:00:00.000Z"
 author:
-  name: "M.U"
+  name: "MU.A"
 ogImage:
   url: "/assets/blog/send-as-permission-not-working-microsoft-365/diagram.svg"
 ---

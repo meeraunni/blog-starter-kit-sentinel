@@ -4,7 +4,7 @@ excerpt: "Access denied after a sharing change, broken inheritance, external sha
 coverImage: "/assets/blog/microsoft-365-onedrive-sharepoint-access-denied-permissions/diagram.svg"
 date: "2026-05-12T09:00:00.000Z"
 author:
-  name: "M.U"
+  name: "MU.A"
 ogImage:
   url: "/assets/blog/microsoft-365-onedrive-sharepoint-access-denied-permissions/diagram.svg"
 ---

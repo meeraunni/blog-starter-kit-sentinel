@@ -4,7 +4,7 @@ excerpt: "Passkey registration in Microsoft Entra looks like four taps in the de
 coverImage: "/assets/blog/passkey-registration/cover.svg"
 date: "2026-05-12T09:00:00.000Z"
 author:
-  name: "M.U"
+  name: "MU.A"
 ogImage:
   url: "/assets/blog/passkey-registration/cover.svg"
 ---

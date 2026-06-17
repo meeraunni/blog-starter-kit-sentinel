@@ -144,19 +144,19 @@ export default function AboutPage() {
           <h2 className="text-2xl font-semibold tracking-[-0.03em] text-slate-950">About the editor</h2>
           <div className="mt-6 grid gap-6 lg:grid-cols-[120px_minmax(0,1fr)] lg:items-start">
             <div className="flex h-28 w-28 items-center justify-center rounded-3xl border border-slate-800 bg-slate-950 text-xl font-semibold tracking-[0.22em] text-white shadow-[0_18px_45px_rgba(15,23,42,0.18)]">
-              MU
+              MUA
             </div>
             <div>
               <p className="text-lg font-semibold text-slate-950">
                 <Link href="/author/m-u" className="hover:text-cyan-900">
-                  M.U
+                  MU.A
                 </Link>{" "}
                 <span className="ml-2 text-xs font-medium uppercase tracking-[0.18em] text-cyan-800">
                   Microsoft 365 / Entra Engineer
                 </span>
               </p>
               <p className="mt-3 text-base leading-8 text-slate-600">
-                M.U is a hands-on Microsoft 365 and Microsoft Entra engineer and the editor of Sentinel Identity.
+                MU.A is a hands-on Microsoft 365 and Microsoft Entra engineer and the editor of Sentinel Identity.
                 Every article published on this site is drafted, reviewed, and updated by the editor against
                 Microsoft Learn and the underlying RFCs. See the full bio on the{" "}
                 <Link href="/author/m-u" className="text-cyan-800 hover:text-slate-950">

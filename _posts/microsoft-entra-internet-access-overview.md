@@ -4,7 +4,7 @@ excerpt: "An operator's guide to Microsoft Entra Internet Access — the identit
 coverImage: "/assets/blog/microsoft-entra-internet-access-overview/diagram.svg"
 date: "2026-06-13T09:00:00.000Z"
 author:
-  name: "M.U"
+  name: "MU.A"
 ogImage:
   url: "/assets/blog/microsoft-entra-internet-access-overview/diagram.svg"
 ---

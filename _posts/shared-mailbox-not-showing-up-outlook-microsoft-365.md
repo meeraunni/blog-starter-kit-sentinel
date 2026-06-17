@@ -4,7 +4,7 @@ excerpt: "Full Access was granted three days ago, other people see the mailbox, 
 coverImage: "/assets/blog/shared-mailbox-not-showing-up-outlook-microsoft-365/diagram.svg"
 date: "2026-05-18T09:00:00.000Z"
 author:
-  name: "M.U"
+  name: "MU.A"
 ogImage:
   url: "/assets/blog/shared-mailbox-not-showing-up-outlook-microsoft-365/diagram.svg"
 ---

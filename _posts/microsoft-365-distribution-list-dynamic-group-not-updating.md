@@ -4,7 +4,7 @@ excerpt: "Members were added but mail isn't reaching them. Dynamic group filter 
 coverImage: "/assets/blog/microsoft-365-distribution-list-dynamic-group-not-updating/diagram.svg"
 date: "2026-05-15T09:00:00.000Z"
 author:
-  name: "M.U"
+  name: "MU.A"
 ogImage:
   url: "/assets/blog/microsoft-365-distribution-list-dynamic-group-not-updating/diagram.svg"
 ---

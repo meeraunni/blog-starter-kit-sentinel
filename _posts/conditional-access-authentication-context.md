@@ -4,7 +4,7 @@ excerpt: "You don't actually want to require phishing-resistant MFA for every si
 coverImage: "/assets/blog/conditional-access-authentication-context/diagram.svg"
 date: "2026-06-15T09:00:00.000Z"
 author:
-  name: "M.U"
+  name: "MU.A"
 ogImage:
   url: "/assets/blog/conditional-access-authentication-context/diagram.svg"
 ---

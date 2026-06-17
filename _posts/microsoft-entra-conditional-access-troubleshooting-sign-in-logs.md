@@ -4,7 +4,7 @@ excerpt: "Someone can't get into Outlook. Conditional Access blocked them. Most 
 coverImage: "/assets/blog/microsoft-entra-conditional-access-troubleshooting-sign-in-logs/diagram.svg"
 date: "2026-05-12T09:00:00.000Z"
 author:
-  name: "M.U"
+  name: "MU.A"
 ogImage:
   url: "/assets/blog/microsoft-entra-conditional-access-troubleshooting-sign-in-logs/diagram.svg"
 ---

@@ -4,7 +4,7 @@ excerpt: "Cross-Tenant Synchronization (CTS) replaces the manual B2B invite-and-
 coverImage: "/assets/blog/microsoft-entra-cross-tenant-synchronization/diagram.svg"
 date: "2026-06-11T09:00:00.000Z"
 author:
-  name: "M.U"
+  name: "MU.A"
 ogImage:
   url: "/assets/blog/microsoft-entra-cross-tenant-synchronization/diagram.svg"
 ---

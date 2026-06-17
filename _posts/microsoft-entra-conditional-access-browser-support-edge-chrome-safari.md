@@ -4,7 +4,7 @@ excerpt: "The same user signs in fine from one browser and gets blocked from ano
 coverImage: "/assets/blog/browser-policy/cover.svg"
 date: "2026-05-14T09:00:00.000Z"
 author:
-  name: "M.U"
+  name: "MU.A"
 ogImage:
   url: "/assets/blog/browser-policy/cover.svg"
 ---

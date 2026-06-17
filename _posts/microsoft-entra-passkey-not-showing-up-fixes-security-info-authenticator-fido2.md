@@ -4,7 +4,7 @@ excerpt: "The passkey option isn't in Security info. Or it's there but the regis
 coverImage: "/assets/blog/passkey-not-showing/cover.svg"
 date: "2026-05-11T09:00:00.000Z"
 author:
-  name: "M.U"
+  name: "MU.A"
 ogImage:
   url: "/assets/blog/passkey-not-showing/cover.svg"
 ---

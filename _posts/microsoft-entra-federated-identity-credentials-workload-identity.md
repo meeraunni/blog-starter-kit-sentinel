@@ -4,7 +4,7 @@ excerpt: "The pattern of generating a client secret, pasting it into GitHub Acti
 coverImage: "/assets/blog/microsoft-entra-federated-identity-credentials-workload-identity/diagram.svg"
 date: "2026-06-10T09:00:00.000Z"
 author:
-  name: "M.U"
+  name: "MU.A"
 ogImage:
   url: "/assets/blog/microsoft-entra-federated-identity-credentials-workload-identity/diagram.svg"
 ---

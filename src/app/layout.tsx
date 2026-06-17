@@ -8,7 +8,6 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Manrope, Sora, JetBrains_Mono } from "next/font/google";
 import cn from "classnames";
-import { ThemeSwitcher } from "./_components/theme-switcher";
 
 import "./globals.css";
 
@@ -135,8 +134,15 @@ export default function RootLayout({
           name="msapplication-config"
           content="/favicon/browserconfig.xml"
         />
-        <meta name="theme-color" content="#020617" />
+        <meta name="theme-color" content="#fbfaf7" />
         <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
+        {/* Force-clear any legacy theme preference from prior visits, so a
+            user who had "system" or "dark" stored doesn't get auto-dark. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{document.documentElement.classList.remove('dark');localStorage.removeItem('nextjs-blog-starter-theme');}catch(e){}`,
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
@@ -156,7 +162,6 @@ export default function RootLayout({
       >
         <NewsletterSync />
         <VisitorTracker />
-        <ThemeSwitcher />
         <CommandPaletteWrapper />
         <div className="min-h-screen">{children}</div>
         <Footer />

@@ -38,7 +38,10 @@ export const NoFOUCScript = (storageKey: string) => {
   /** function to add remove dark class */
   window.updateDOM = () => {
     const restoreTransitions = modifyTransition();
-    const mode = localStorage.getItem(storageKey) ?? SYSTEM;
+    // Default to LIGHT when no preference is stored. Users who actively
+    // want dark can toggle via the Switch; we don't auto-follow system
+    // until every component has been polished for dark mode.
+    const mode = localStorage.getItem(storageKey) ?? LIGHT;
     const systemMode = media.matches ? DARK : LIGHT;
     const resolvedMode = mode === SYSTEM ? systemMode : mode;
     const classList = document.documentElement.classList;
@@ -61,7 +64,7 @@ const Switch = () => {
     () =>
       ((typeof localStorage !== "undefined" &&
         localStorage.getItem(STORAGE_KEY)) ??
-        "system") as ColorSchemePreference,
+        "light") as ColorSchemePreference,
   );
 
   useEffect(() => {

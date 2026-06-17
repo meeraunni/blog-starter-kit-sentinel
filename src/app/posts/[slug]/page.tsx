@@ -24,6 +24,8 @@ import PrevNextNav from "@/app/_components/prev-next-nav";
 import ArticleFeedback from "@/app/_components/article-feedback";
 import CopyCodeButtons from "@/app/_components/copy-code";
 import AuthorBio from "@/app/_components/author-bio";
+import ReadingProgress from "@/app/_components/reading-progress";
+import BackToTop from "@/app/_components/back-to-top";
 import { personSchema, resolveAuthor } from "@/lib/authors";
 
 type Params = {
@@ -78,8 +80,10 @@ export default async function Post(props: Params) {
 
   return (
     <main>
+      <ReadingProgress />
       <Alert preview={post.preview} />
       <Header />
+      <BackToTop />
       <Container>
         <script
           type="application/ld+json"

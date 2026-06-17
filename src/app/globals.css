@@ -8,6 +8,28 @@
     --page-ink: 15 23 42;
     --page-accent: 8 145 178;
     --page-surface: 248 250 252;
+    --page-bg: #fbfaf7;
+    --page-bg-elev: #ffffff;
+    --page-text: #334155;
+    --page-text-strong: #0f172a;
+    --page-text-muted: #64748b;
+    --page-border: #e7e5e0;
+    --page-border-strong: #d6d3cd;
+    --accent-1: #0e7490;
+    --accent-2: #155e75;
+  }
+
+  html.dark {
+    color-scheme: dark;
+    --page-bg: #0b1220;
+    --page-bg-elev: #111827;
+    --page-text: #cbd5e1;
+    --page-text-strong: #f8fafc;
+    --page-text-muted: #94a3b8;
+    --page-border: #1f2937;
+    --page-border-strong: #334155;
+    --accent-1: #67e8f9;
+    --accent-2: #22d3ee;
   }
 
   html {
@@ -15,12 +37,17 @@
   }
 
   body {
-    font-family: var(--font-sans), sans-serif;
-    @apply bg-[#fbfaf7] text-slate-700;
+    font-family: var(--font-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+    background-color: var(--page-bg);
+    color: var(--page-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   ::selection {
-    @apply bg-blue-200 text-slate-950;
+    background-color: rgba(165, 243, 252, 0.7);
+    color: #020617;
   }
 
   a {
@@ -33,12 +60,21 @@
   h4,
   h5,
   h6 {
-    font-family: var(--font-display), var(--font-sans), sans-serif;
+    font-family: var(--font-display), var(--font-sans), system-ui, sans-serif;
+    color: var(--page-text-strong);
+    letter-spacing: -0.025em;
+  }
+
+  /* Smooth scroll offset for sticky header anchor jumps */
+  :target {
+    scroll-margin-top: 6rem;
   }
 }
 
 @layer components {
-  /* MS Learn–style callouts produced by markdownToHtml */
+  /* ─────────────────────────────────────────────────────────
+     MS Learn–style callouts
+     ───────────────────────────────────────────────────────── */
   .callout {
     @apply my-8 rounded-2xl border-l-4 px-6 py-5 not-italic;
   }
@@ -52,36 +88,315 @@
     @apply mb-0;
   }
   .callout-note {
-    @apply border-cyan-700 bg-cyan-50/60 text-slate-700;
+    @apply border-cyan-700 bg-cyan-50/70 text-slate-700;
   }
   .callout-note .callout-label {
     @apply text-cyan-800;
   }
   .callout-tip {
-    @apply border-emerald-600 bg-emerald-50/60 text-slate-700;
+    @apply border-emerald-600 bg-emerald-50/70 text-slate-700;
   }
   .callout-tip .callout-label {
     @apply text-emerald-800;
   }
   .callout-important {
-    @apply border-violet-700 bg-violet-50/60 text-slate-700;
+    @apply border-violet-700 bg-violet-50/70 text-slate-700;
   }
   .callout-important .callout-label {
     @apply text-violet-800;
   }
   .callout-warning,
   .callout-caution {
-    @apply border-amber-600 bg-amber-50/60 text-slate-700;
+    @apply border-amber-600 bg-amber-50/70 text-slate-700;
   }
   .callout-warning .callout-label,
   .callout-caution .callout-label {
     @apply text-amber-800;
   }
 
-  /* Anchor affordance on hover */
-  .markdown-content h2:hover::before,
-  .markdown-content h3:hover::before {
+  /* Dark-mode tints for callouts (raw CSS to avoid tailwind palette overrides) */
+  html.dark .callout-note {
+    border-color: #22d3ee;
+    background-color: rgba(8, 51, 68, 0.3);
+    color: #cbd5e1;
+  }
+  html.dark .callout-note .callout-label { color: #67e8f9; }
+  html.dark .callout-tip {
+    border-color: #34d399;
+    background-color: rgba(6, 78, 59, 0.3);
+    color: #cbd5e1;
+  }
+  html.dark .callout-tip .callout-label { color: #6ee7b7; }
+  html.dark .callout-important {
+    border-color: #a78bfa;
+    background-color: rgba(46, 16, 101, 0.3);
+    color: #cbd5e1;
+  }
+  html.dark .callout-important .callout-label { color: #c4b5fd; }
+  html.dark .callout-warning,
+  html.dark .callout-caution {
+    border-color: #fbbf24;
+    background-color: rgba(120, 53, 15, 0.3);
+    color: #cbd5e1;
+  }
+  html.dark .callout-warning .callout-label,
+  html.dark .callout-caution .callout-label { color: #fcd34d; }
+
+  /* ─────────────────────────────────────────────────────────
+     Shiki dual-theme code blocks (class-based dark mode)
+     ───────────────────────────────────────────────────────── */
+  .shiki {
+    background-color: var(--shiki-light-bg) !important;
+    color: var(--shiki-light) !important;
+    border: 1px solid var(--page-border);
+    border-radius: 0.875rem;
+    padding: 1.25rem 1.25rem 1.25rem 1.5rem;
+    overflow-x: auto;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    tab-size: 2;
+    position: relative;
+  }
+  .shiki code {
+    background: transparent !important;
+    padding: 0 !important;
+    border-radius: 0;
+    font-size: inherit;
+    color: inherit;
+    font-weight: inherit;
+  }
+  .shiki span {
+    color: var(--shiki-light) !important;
+    font-style: var(--shiki-light-font-style) !important;
+    font-weight: var(--shiki-light-font-weight) !important;
+    text-decoration: var(--shiki-light-text-decoration) !important;
+  }
+
+  html.dark .shiki {
+    background-color: #0d1117 !important;
+    color: var(--shiki-dark) !important;
+    border-color: #1f2937;
+  }
+  html.dark .shiki span {
+    color: var(--shiki-dark) !important;
+    font-style: var(--shiki-dark-font-style) !important;
+    font-weight: var(--shiki-dark-font-weight) !important;
+    text-decoration: var(--shiki-dark-text-decoration) !important;
+  }
+
+  /* Language label and copy button overlay (positioned inside the wrapping div) */
+  .code-block-wrapper {
+    position: relative;
+    margin: 1.75rem 0;
+  }
+  .code-block-wrapper > pre {
+    margin: 0;
+  }
+  .code-block-wrapper .code-block-label {
+    position: absolute;
+    top: 0.6rem;
+    left: 0.9rem;
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    pointer-events: none;
+    user-select: none;
+  }
+  html.dark .code-block-wrapper .code-block-label {
+    color: #64748b;
+    background: rgba(15, 23, 42, 0.65);
+  }
+  .code-block-wrapper .code-copy-btn {
+    position: absolute;
+    top: 0.55rem;
+    right: 0.6rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid var(--page-border);
+    color: #475569;
+    font-size: 0.7rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    backdrop-filter: blur(4px);
+  }
+  .code-block-wrapper .code-copy-btn:hover {
+    background: var(--page-text-strong);
+    color: var(--page-bg);
+    border-color: var(--page-text-strong);
+  }
+  html.dark .code-block-wrapper .code-copy-btn {
+    background: rgba(30, 41, 59, 0.8);
+    color: #94a3b8;
+    border-color: #334155;
+  }
+  html.dark .code-block-wrapper .code-copy-btn:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+    border-color: #f1f5f9;
+  }
+
+  /* Inline code styling */
+  .markdown-content :where(p, li, td) code:not(.shiki code) {
+    background: #f1f5f9;
+    color: #0f172a;
+    padding: 0.1rem 0.4rem;
+    border-radius: 0.35rem;
+    font-size: 0.875em;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    font-weight: 500;
+    border: 1px solid #e2e8f0;
+  }
+  html.dark .markdown-content :where(p, li, td) code:not(.shiki code) {
+    background: #1e293b;
+    color: #e2e8f0;
+    border-color: #334155;
+  }
+
+  /* ─────────────────────────────────────────────────────────
+     Anchor links on headings (¶ on hover)
+     ───────────────────────────────────────────────────────── */
+  .markdown-content h2,
+  .markdown-content h3 {
+    position: relative;
+  }
+  .markdown-content h2[id]::before,
+  .markdown-content h3[id]::before {
     content: "#";
-    @apply mr-2 text-slate-300;
+    position: absolute;
+    left: -1.5rem;
+    color: #cbd5e1;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    font-weight: 400;
+    text-decoration: none;
+  }
+  .markdown-content h2[id]:hover::before,
+  .markdown-content h3[id]:hover::before {
+    opacity: 1;
+  }
+
+  /* ─────────────────────────────────────────────────────────
+     Reading progress bar
+     ───────────────────────────────────────────────────────── */
+  .reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: transparent;
+    z-index: 60;
+    pointer-events: none;
+  }
+  .reading-progress > div {
+    height: 100%;
+    background: linear-gradient(90deg, #06b6d4, #0891b2, #155e75);
+    width: 0%;
+    transition: width 0.08s linear;
+  }
+
+  /* ─────────────────────────────────────────────────────────
+     Cmd+K search palette
+     ───────────────────────────────────────────────────────── */
+  .palette-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.55);
+    backdrop-filter: blur(4px);
+    z-index: 70;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 12vh;
+  }
+  .palette-panel {
+    width: 100%;
+    max-width: 640px;
+    background: var(--page-bg-elev);
+    border: 1px solid var(--page-border-strong);
+    border-radius: 1rem;
+    box-shadow: 0 30px 80px rgba(2, 6, 23, 0.35);
+    overflow: hidden;
+  }
+
+  /* ─────────────────────────────────────────────────────────
+     Back-to-top
+     ───────────────────────────────────────────────────────── */
+  .back-to-top {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 50;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 999px;
+    background: var(--page-text-strong);
+    color: var(--page-bg);
+    border: 1px solid var(--page-text-strong);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.2);
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+    transition: all 0.2s ease;
+  }
+  .back-to-top.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+  .back-to-top:hover {
+    background: var(--accent-2);
+    border-color: var(--accent-2);
+  }
+
+  /* ─────────────────────────────────────────────────────────
+     Print stylesheet — admins really do print these
+     ───────────────────────────────────────────────────────── */
+  @media print {
+    header,
+    footer,
+    .reading-progress,
+    .back-to-top,
+    .palette-overlay,
+    aside[aria-label],
+    [aria-label="Article feedback"],
+    .code-copy-btn {
+      display: none !important;
+    }
+    body {
+      background: white !important;
+      color: black !important;
+    }
+    article {
+      max-width: 100% !important;
+    }
+    .shiki {
+      border: 1px solid #cbd5e1 !important;
+      background: white !important;
+      color: black !important;
+    }
+    .shiki span {
+      color: black !important;
+    }
+    .callout {
+      border-left-width: 3px !important;
+      background: #f9fafb !important;
+      page-break-inside: avoid;
+    }
   }
 }

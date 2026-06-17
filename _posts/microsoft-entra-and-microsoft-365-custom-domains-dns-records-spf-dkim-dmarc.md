@@ -1,6 +1,6 @@
 ---
-title: "Microsoft 365 Custom Domains and Email Authentication: SPF, DKIM, DMARC Done Right"
-excerpt: "An operator's guide to onboarding a custom domain to Microsoft 365 and configuring SPF, DKIM, and DMARC — including the seven anti-patterns that break enterprise mail, a verification command toolkit, and the cutover sequence that prevents delivery incidents."
+title: "SPF, DKIM, and DMARC for Microsoft 365: A Working Guide to Getting Email Authentication Right"
+excerpt: "The wizard makes adding a domain to Microsoft 365 look like a checklist. Then six months later marketing wonders why their broadcasts are landing in spam. Here's the order to configure SPF, DKIM, and DMARC for an EXO tenant, the seven mistakes I see most often, and the staged DMARC enforcement that doesn't break payroll."
 coverImage: "/assets/blog/custom-domains-dns/cover.svg"
 date: "2026-05-13T09:00:00.000Z"
 author:
@@ -9,219 +9,178 @@ ogImage:
   url: "/assets/blog/custom-domains-dns/cover.svg"
 ---
 
-## The promise and the trap
+The wizard for adding a domain to Microsoft 365 makes it look easy. Paste in the records the portal generated, hit Verify, watch the green check appear. Six months later marketing wonders why their newsletter is landing in Gmail spam, sales discovers their sequence tool is being silently rejected by Outlook.com, and someone in finance asks why payroll messages stopped arriving at half the company. The records were configured correctly the first time. They just weren't *complete*.
 
-Adding a custom domain to Microsoft 365 looks like a checklist. The portal generates the records, you paste them at your DNS host, click Verify, and you're done. The trap is everything that happens after: the SPF record that quietly fails because a marketing tool was added without updating it, the DKIM rotation that locks out a partner, the DMARC `p=reject` that bounces the executive newsletter the morning after enforcement. Almost every email-authentication incident in a Microsoft 365 tenant is caused by something the original onboarding got *almost* right.
+Almost every email-authentication incident I've worked in a Microsoft 365 tenant traces back to something the initial onboarding got nearly right. SPF was set up but one sender got added later without an update. DKIM was published but never enabled for the custom domain, only for `onmicrosoft.com`. DMARC was set to `p=reject` on someone's recommendation without the two weeks of monitoring that should have come first. The mechanics aren't hard. The trap is in the operational details that the wizard doesn't surface and that most documentation describes only in isolation.
 
-This article is the field version of the onboarding playbook: the records you actually need, the seven anti-patterns that produce 90% of the incidents, a verification command toolkit you can keep open in a terminal during a cutover, and a staged enforcement plan that gets you to `DMARC p=reject` without breaking production. References to Microsoft Learn are inline; this article assumes you've read the basics and want the parts the basics skip.
+This piece walks through the records you actually publish for an EXO tenant, the failure modes I keep running into, the commands worth keeping in a terminal during a cutover, and the staged enforcement pattern that gets you to `p=reject` without making an enemy of every department head. It assumes you've read the basics and want what the basics skip.
 
-## What you're actually configuring (in one paragraph)
+## What you're actually setting up
 
-Email authentication for a Microsoft 365 tenant has three layers stacked on each other. **SPF** publishes which servers are allowed to send mail using your domain in the SMTP envelope. **DKIM** signs outbound mail so receivers can verify it came from you and wasn't tampered with. **DMARC** ties SPF and DKIM to the visible `From:` address and tells receivers what to do when alignment fails. None of the three alone is sufficient. Receivers that matter (Gmail, Outlook.com, Yahoo, every large enterprise) increasingly *require* a DMARC pass for inbox placement, and they reach that conclusion by checking SPF and DKIM alignment with the `From:` domain. The records you publish at your DNS host are what makes that whole chain work. Microsoft's authoritative pages — [SPF](https://learn.microsoft.com/defender-office-365/email-authentication-spf-configure), [DKIM](https://learn.microsoft.com/microsoft-365/security/office-365-security/email-authentication-dkim-configure), [DMARC](https://learn.microsoft.com/defender-office-365/email-authentication-dmarc-configure) — describe each in isolation. Getting them right together is the operator's job.
+There are three records that decide whether your outbound mail is trusted. SPF publishes the list of servers allowed to send mail using your domain in the SMTP envelope from. DKIM signs outbound mail with a private key so receivers can verify the message came from you and wasn't tampered with along the way. DMARC stitches the two together against the visible `From:` address in the message and tells receivers what to do when something fails alignment.
 
-## The records you'll actually publish for a Microsoft 365 domain
+None of the three is sufficient on its own. Gmail, Outlook.com, Yahoo, and most large enterprise gateways increasingly require a DMARC pass for reliable inbox placement, and they reach that conclusion by checking whether SPF or DKIM passed and whether the passing domain aligns with the visible `From:` header. Get DKIM wrong (signed but with the wrong domain) and DMARC fails even though everything *looks* right at first glance. That's the kind of detail you only catch if you've been bitten by it.
 
-For a standard Microsoft 365 tenant where Exchange Online is the only outbound mail path and you're not using a third-party mail gateway, this is the minimal set:
+Microsoft's reference pages cover each of the three in isolation — [SPF](https://learn.microsoft.com/defender-office-365/email-authentication-spf-configure), [DKIM](https://learn.microsoft.com/microsoft-365/security/office-365-security/email-authentication-dkim-configure), [DMARC](https://learn.microsoft.com/defender-office-365/email-authentication-dmarc-configure). What follows is the version that has them working together.
 
-| Type | Name | Value | Purpose |
+## The records I actually publish for an EXO tenant
+
+For a tenant where Exchange Online is the only outbound mail path and there's no third-party mail gateway in front of it, the working set looks like this:
+
+| Type | Name | Value | What it does |
 |---|---|---|---|
-| TXT | `@` (apex) | `MS=ms12345678` (Microsoft generates the value) | One-time tenant ownership proof |
+| TXT | `@` | `MS=ms12345678` (Microsoft generates) | One-time tenant ownership proof |
 | MX | `@` | `0 contoso-com.mail.protection.outlook.com` | Route inbound mail to EXO |
 | TXT | `@` | `v=spf1 include:spf.protection.outlook.com -all` | SPF policy |
 | CNAME | `selector1._domainkey` | `selector1-contoso-com._domainkey.contoso.onmicrosoft.com` | DKIM selector 1 |
 | CNAME | `selector2._domainkey` | `selector2-contoso-com._domainkey.contoso.onmicrosoft.com` | DKIM selector 2 (rotation) |
-| TXT | `_dmarc` | `v=DMARC1; p=none; rua=mailto:dmarc@contoso.com; ruf=mailto:dmarc-forensic@contoso.com; fo=1` | DMARC policy + reporting |
-| CNAME | `autodiscover` | `autodiscover.outlook.com` | Outlook Autodiscover |
+| TXT | `_dmarc` | `v=DMARC1; p=none; rua=mailto:dmarc@contoso.com; fo=1` | DMARC policy + reporting |
+| CNAME | `autodiscover` | `autodiscover.outlook.com` | Outlook autodiscover |
 | CNAME | `enterpriseregistration` | `enterpriseregistration.windows.net` | Entra device registration |
 | CNAME | `enterpriseenrollment` | `enterpriseenrollment.manage.microsoft.com` | Intune enrollment |
-| SRV | `_sip._tls` and `_sipfederationtls._tcp` | Legacy Skype/Teams | Only if Skype federation still in scope |
 
-The CNAMEs for `autodiscover`, `enterpriseregistration`, and `enterpriseenrollment` are easy to forget because the M365 admin centre wizard only surfaces some of them depending on which services you've enabled. The full list lives in [External DNS records for Microsoft 365](https://learn.microsoft.com/microsoft-365/enterprise/external-domain-name-system-records).
+The autodiscover, enterpriseregistration, and enterpriseenrollment CNAMEs are the easy ones to miss because the admin centre wizard only surfaces them depending on which services are enabled. The complete list lives in [External DNS records for Microsoft 365](https://learn.microsoft.com/microsoft-365/enterprise/external-domain-name-system-records), and I'd publish it alongside any new domain even if you're not using all the services yet — the records don't cost anything and they save a future ticket the day someone turns on Intune enrollment for the first time.
 
 > [!IMPORTANT]
-> Exchange Online's MX target is tenant-specific (`<tenant>-mail.protection.outlook.com` becomes `contoso-com.mail.protection.outlook.com`). Don't copy a target from another tenant's documentation — generate yours from the Microsoft 365 admin centre under Settings → Domains.
+> The MX target for Exchange Online is tenant-specific. The pattern is `<tenant>-mail.protection.outlook.com`, where `<tenant>` is your tenant name with dashes (so `contoso.com` becomes `contoso-com.mail.protection.outlook.com`). Don't copy a target from somebody else's documentation — generate yours from the M365 admin centre under Settings → Domains.
 
-## The seven anti-patterns that cause real incidents
+## The seven things that go wrong
 
-After enough rollouts, the same seven mistakes account for most production issues. The remediation for each is the rest of the article.
+These are the mistakes I see most often. Some are configuration. Some are process. All of them are avoidable if you know they exist.
 
-### Anti-pattern 1: Multiple SPF records on the same domain
+**Multiple SPF records on the same domain.** SPF is defined in [RFC 7208](https://datatracker.ietf.org/doc/html/rfc7208) and the spec is unambiguous on this — at most one record per domain. Two records produce `PermError`, and most receivers treat `PermError` as outright SPF failure. The way this happens in practice is depressingly common: marketing adds Mailchimp, sales adds HubSpot, IT adds SendGrid, security adds Proofpoint, and each vendor's documentation says "add this TXT record" without ever mentioning the existing one. Catch it with:
 
-SPF is defined in [RFC 7208](https://datatracker.ietf.org/doc/html/rfc7208) and the spec is unambiguous: a domain MUST have at most one SPF record. Two records is an immediate `PermError`. Receivers that hit `PermError` typically treat the message as if SPF failed entirely.
-
-Why this keeps happening: marketing adds Mailchimp, sales adds HubSpot, IT adds Sendgrid, security adds Proofpoint. Each vendor's docs say "add this TXT record." None of the docs say "if you already have an SPF record, edit it instead of adding a new one."
-
-**Detection:**
 ```bash
 dig +short TXT contoso.com | grep -i 'v=spf1'
 ```
-If you see more than one line starting with `v=spf1`, you have the bug.
 
-**Fix:** Consolidate into one SPF record. For a tenant that uses EXO + Mailchimp + Sendgrid:
+If you see more than one line, consolidate. For a tenant running EXO plus Mailchimp plus SendGrid the unified record looks something like:
+
 ```
 v=spf1 include:spf.protection.outlook.com include:_spf.mailchimp.com include:sendgrid.net -all
 ```
 
-### Anti-pattern 2: SPF record over the 10 DNS-lookup limit
+**SPF over the 10-lookup limit.** Same RFC says SPF processing caps at ten DNS lookups. Each `include:`, `a`, `mx`, `ptr`, and `exists:` mechanism counts. Tenants that have integrated with every marketing and sales tool on earth routinely cross this limit and produce `PermError` on every receive, which means *no one* passes SPF regardless of the sender. Rule of thumb: more than four or five `include:` mechanisms is a yellow flag. Audit what's actually still in use (most tenants have a few zombie integrations from products they don't pay for any more), remove the dead ones, and for the survivors prefer providers that publish stable IP ranges you can flatten directly into `ip4:` or `ip6:` mechanisms.
 
-The same RFC caps SPF processing at 10 DNS lookups during evaluation. Each `include:`, `a`, `mx`, `ptr`, and `exists:` counts. Tenants that have grown to "everyone we ever integrated with" routinely cross the limit and produce `PermError` on every receive — meaning no one passes SPF, regardless of sender.
+**`~all` instead of `-all`.** `~all` is "softfail" and made sense in 2010 when DMARC didn't exist yet. Today, with DMARC providing the override mechanism, `~all` mostly leaves the door cracked open for spoofers. Once your legitimate senders are confirmed in SPF, tighten to `-all` and let DMARC arbitrate alignment.
 
-**Detection:** Use any SPF flattening / lookup-count checker, or count manually. A practical rule of thumb: more than 4-5 `include:` mechanisms is a yellow flag.
+**DKIM CNAMEs published but signing never enabled.** Publishing the two CNAMEs is a prerequisite for DKIM. It does not *enable* signing. You have to additionally turn DKIM on for the domain inside Exchange Online, and this is the step that gets skipped most often. The portal shows a green check on the domain page and people assume done. The check is:
 
-**Fix:** Audit which senders are still actually used (most have a couple of zombie integrations). Remove the unused ones. For surviving senders, prefer providers that publish stable IP ranges you can flatten into `ip4:` / `ip6:` mechanisms directly, which don't count against the limit.
-
-> [!WARNING]
-> SPF flatteners that auto-generate records by resolving `include:` chains at flatten-time can break silently when an upstream provider changes IPs. If you use one, set up alerting on its drift detection.
-
-### Anti-pattern 3: `~all` (softfail) instead of `-all` (fail)
-
-`~all` says "treat unauthorized senders as suspicious but don't reject." It was the right call in 2010 when DMARC didn't exist. Today, with DMARC providing the override mechanism, `~all` mostly gives spoofers a fighting chance. Modern guidance is to publish `-all` and let DMARC arbitrate alignment.
-
-**Fix:** Once your legitimate senders are confirmed in SPF, tighten to `-all`. Run with `~all` only during the initial inventory phase.
-
-### Anti-pattern 4: DKIM signing not enabled in EXO even though CNAMEs are published
-
-Publishing the two DKIM CNAMEs is a prerequisite for DKIM, but it does **not** enable signing. You have to additionally turn DKIM on for the domain inside Exchange Online. Many onboardings publish the records, see the green check on the domain page, and assume done.
-
-**Detection:**
 ```powershell
 Connect-ExchangeOnline
-Get-DkimSigningConfig -Identity contoso.com | Format-List Identity, Enabled, Selector1CNAME, Selector2CNAME, Status
+Get-DkimSigningConfig -Identity contoso.com |
+    Format-List Identity, Enabled, Selector1CNAME, Selector2CNAME, Status
 ```
-If `Enabled` is `False`, you have published CNAMEs but no signed outbound mail.
 
-**Fix:**
+If `Enabled` is `False`, the CNAMEs are sitting in DNS doing nothing useful. Turn signing on:
+
 ```powershell
 Set-DkimSigningConfig -Identity contoso.com -Enabled $true
 ```
 
-### Anti-pattern 5: Custom DKIM not configured for a custom domain, only `onmicrosoft.com`
+**DKIM signing for `onmicrosoft.com` instead of the custom domain.** This one looks like working DKIM right up until you check DMARC alignment. By default EXO signs outbound mail with the tenant's `onmicrosoft.com` DKIM identity. The signature is real, the signing is happening, but the signing domain is `contoso.onmicrosoft.com` while the visible `From:` is `alice@contoso.com`. Alignment fails. DMARC fails. Mail lands in spam. The fix is to publish the custom domain's two CNAMEs and enable DKIM signing for the custom domain explicitly, which is the difference between "DKIM technically signs" and "DKIM signs in a way DMARC accepts."
 
-By default, EXO signs outbound mail with the tenant's `onmicrosoft.com` DKIM identity, not the custom domain. That sounds fine until you check DMARC alignment: the signing domain is `contoso.onmicrosoft.com` but the visible `From:` is `alice@contoso.com`. Alignment fails. DMARC fails. Mail lands in spam.
+**DMARC enforcement before reporting.** The recommended progression is `p=none` to `p=quarantine` to `p=reject`, with at least two weeks of aggregate-report monitoring at each stage. Skipping straight to `p=reject` and waiting to see what breaks is a popular but genuinely bad idea, because by the time you realise the payroll system was sending from an unauthorized IP, two weeks of payslips have already bounced. The aggregate reports go to the address you publish in the `rua=` tag. You either build a parser, use a free monitoring service ([Postmark](https://dmarc.postmarkapp.com/) and [dmarcian](https://dmarcian.com/) both have free tiers), or run something in-house. Don't move from `p=none` until two consecutive weeks of reports show ≥98% of legitimate volume passing alignment.
 
-**Fix:** Publish the two custom-domain CNAMEs and enable DKIM for the custom domain — that's the difference between "DKIM technically signs" and "DKIM signs in a way DMARC accepts."
+**Forwarders quietly breaking SPF, ignored.** When `mail.example.org` forwards a message to `alice@contoso.com`, the receiver after the forwarder sees the forwarder's IP as the source. That IP isn't in your SPF record. SPF fails. DKIM usually survives (the signature is on the body, which forwarders typically don't rewrite), so DMARC can still pass on DKIM alignment — *if* your DKIM is configured correctly. This is one of the strongest arguments for getting DKIM right before tightening DMARC, because without working DKIM the forwarder path silently fails alignment and you get DMARC failures that look mysterious.
 
-### Anti-pattern 6: DMARC enforcement before reporting
+## The toolkit to keep open during a cutover
 
-The recommended progression is `p=none` → `p=quarantine` → `p=reject`. Skipping straight to `p=reject` and waiting to see what breaks is a popular but extremely bad idea: by the time you find out the payroll system was sending from an unauthorized IP, two weeks of payslips have been rejected.
-
-The progression should be driven by **DMARC aggregate reports** (the `rua=` mailbox), parsed for two weeks at each stage, with explicit sign-off before each tightening.
-
-**Aggregate report parsing:** Either build a parser, use a free reporting service such as [Postmark DMARC monitoring](https://dmarc.postmarkapp.com/) or [dmarcian](https://dmarcian.com/), or run an internal tool. The reports are XML; the schema is documented in [RFC 7489](https://datatracker.ietf.org/doc/html/rfc7489).
-
-### Anti-pattern 7: Forwarders that break SPF, ignored
-
-When mail.example.org forwards to your-user@contoso.com, the forwarder's IP is what the next-hop receiver sees as the sending source. That IP is not in *their* SPF record. SPF fails. DKIM survives (because it signs the message body, which forwarders typically don't rewrite), so DMARC can still pass on DKIM alignment — *if* DKIM is configured correctly. This is one of the strongest arguments for getting DKIM right before tightening DMARC.
-
-## A verification toolkit
-
-Keep this in a snippet manager. These commands are what you run during cutover and during incident response.
+Save this somewhere you can paste from quickly. These are the commands I run before, during, and after any domain cutover, and the day someone asks "is mail still flowing?" they're how I answer.
 
 ```bash
-# 1. Resolve the tenant ownership TXT
+# Tenant ownership proof
 dig +short TXT contoso.com | grep -i '^"MS='
 
-# 2. Resolve the MX
+# MX
 dig +short MX contoso.com
 
-# 3. Resolve and inspect SPF
+# SPF
 dig +short TXT contoso.com | grep -i 'v=spf1'
 
-# 4. Verify the two DKIM CNAMEs return the EXO target
+# DKIM CNAMEs
 dig +short CNAME selector1._domainkey.contoso.com
 dig +short CNAME selector2._domainkey.contoso.com
 
-# 5. Resolve DMARC
+# DMARC
 dig +short TXT _dmarc.contoso.com
 
-# 6. Test SPF end-to-end against a sending IP
+# Test against a public resolver (sidesteps split-horizon DNS at your egress)
 nslookup -type=TXT contoso.com 8.8.8.8
-
-# 7. Inspect a received message header to see SPF/DKIM/DMARC results
-# (Search "Authentication-Results:" in the header — it's the receiver's verdict)
 ```
 
 ```powershell
-# 8. From within EXO PowerShell, confirm DKIM signing state per domain
+# DKIM signing state per domain
 Get-DkimSigningConfig | Format-Table Identity, Enabled, Status, KeySize, RotateOnDate
 
-# 9. List all accepted domains and their authentication status
+# All accepted domains plus their authentication mode
 Get-AcceptedDomain | Format-Table Name, DomainName, DomainType, AuthenticationType
 ```
 
 > [!TIP]
-> Run commands 1-5 from a network outside your corporate egress (e.g., your phone's mobile data, a cloud VM in another region) to confirm public DNS sees what you think it sees. Internal DNS resolvers sometimes serve different answers via split-horizon.
+> Run the dig commands from somewhere outside your corporate egress — your phone on mobile data, a cloud VM in another region, anything that isn't on your network. Internal DNS resolvers sometimes serve different answers because of split-horizon, and you want to see what the public sees.
 
-## A safe cutover sequence
+The most useful verification step the wizard doesn't surface is reading a received message header at the destination. Send a test message from a pilot mailbox to a Gmail address and inspect the `Authentication-Results:` header. If you see `spf=pass; dkim=pass; dmarc=pass`, your setup is doing what it should. If any one of those isn't pass, you have your next thing to investigate before you flip the MX.
 
-The mistake that produces the worst outages is changing the MX record before mailboxes are ready. The order below is the one that doesn't break things.
+## A cutover sequence that doesn't break things
 
-1. **Add the domain in Microsoft 365** and publish only the ownership TXT.
-2. **Wait for verification to succeed** — Microsoft typically picks up the record within minutes, but allow up to an hour.
-3. **Create the user accounts and mailboxes** with the new domain UPN suffix. *Do not* set the new domain as the user's primary SMTP address yet.
-4. **Publish SPF in monitoring form first** — `v=spf1 include:spf.protection.outlook.com -all`. Even though you haven't cut over MX, having SPF live before MX prevents a brief gap where EXO accepts inbound but doesn't yet have authorized outbound.
-5. **Publish the two DKIM CNAMEs and enable signing** in EXO PowerShell. Confirm with `Get-DkimSigningConfig`.
-6. **Publish DMARC at `p=none`** with both `rua=` and `ruf=` reporting addresses. Set up parsing.
-7. **Test outbound from a pilot mailbox** to an external receiver that exposes Authentication-Results (Gmail does this in the message headers). Confirm `spf=pass`, `dkim=pass`, `dmarc=pass`.
-8. **Now change the MX record** to point at EXO. Lower TTL to 300 (5 minutes) 24 hours before the change so cutover is fast; raise it back to 3600 after.
-9. **Set the new domain as the primary SMTP address** on the users.
-10. **Watch DMARC reports for 14 days** before tightening to `p=quarantine`. Watch another 14 days before `p=reject`.
+The biggest single mistake I see is changing the MX record before mailboxes are ready, which produces inbound mail going to a tenant that doesn't have the recipient accounts yet and bouncing the senders. The order that avoids this:
+
+1. Add the domain to Microsoft 365 and publish only the ownership TXT record.
+2. Wait for verification to succeed (usually minutes, but allow up to an hour).
+3. Create the user accounts and mailboxes with the new domain UPN suffix. Don't yet set the new domain as anyone's primary SMTP — you're staging it.
+4. Publish SPF before the MX cutover. This means your authorized outbound senders are declared before any inbound starts coming in.
+5. Publish the DKIM CNAMEs and enable signing for the custom domain in EXO PowerShell. Confirm with `Get-DkimSigningConfig`.
+6. Publish DMARC at `p=none` with `rua=` reporting addresses set. Get the parser running.
+7. Send a test outbound message to a Gmail mailbox and confirm `spf=pass; dkim=pass; dmarc=pass` in the headers. If anything's not pass, don't proceed.
+8. Lower the existing MX TTL to 300 (five minutes) at least 24 hours before the cutover, so the change propagates fast.
+9. Change the MX record to point at EXO.
+10. Set the new domain as the primary SMTP for users.
+11. Watch DMARC aggregate reports for at least 14 days before tightening to `p=quarantine`. Another 14 days before `p=reject`.
 
 > [!NOTE]
-> Step 7 is the verification step the wizard skips. If you can't confirm `spf=pass; dkim=pass; dmarc=pass` *before* MX cutover, do not cut over.
+> Step 7 is the verification step. If you can't see `spf=pass; dkim=pass; dmarc=pass` in a real received header before the MX cutover, do not cut over. Find out why first.
 
-## DMARC enforcement: when to tighten
+## Tightening DMARC without bouncing payroll
 
-The right tightening criteria, in order:
+The progression that has the best survival rate:
 
-- **`p=none` → `p=quarantine`:** Aggregate reports show ≥98% of legitimate volume passing alignment for at least 14 consecutive days. All known third-party senders inventoried and either added to SPF or have ARC-signed forwarding.
-- **`p=quarantine` → `p=reject`:** Quarantine has been live for ≥14 days. No business-critical mail flows have been quarantined. Forensic reports (`ruf=`) reviewed for any remaining edge cases.
-- **`pct=`:** Use the `pct=` tag to roll out enforcement incrementally. `pct=10` enforces on 10% of failing mail; double it weekly. This is rarely needed if the prior steps are followed but is the right escape hatch if you skip them.
+From `p=none` to `p=quarantine`: when aggregate reports show ≥98% of legitimate volume passing alignment for fourteen consecutive days. All known third-party senders inventoried and either added to SPF or ARC-signed by a forwarder you trust.
+
+From `p=quarantine` to `p=reject`: when the quarantine policy has been live for at least fourteen days, no business-critical mail flows have been quarantined, and forensic reports from the `ruf=` mailbox don't show edge cases you haven't addressed.
+
+The `pct=` tag is the escape hatch if the prior steps got skipped. `pct=10` enforces on ten percent of failing mail; double it weekly. You shouldn't need it if you ran the staged progression, but it's good to know it exists.
+
+A reasonable production record once you're at quarantine looks like:
 
 ```
 v=DMARC1; p=quarantine; pct=25; rua=mailto:dmarc@contoso.com; ruf=mailto:dmarc-forensic@contoso.com; fo=1; aspf=r; adkim=r
 ```
 
-The `aspf=r` and `adkim=r` tags request *relaxed* alignment (subdomain alignment is acceptable). That is the safer default for organisations with multiple mail-sending subdomains. Use `s` (strict) only when you've explicitly designed for it.
+The `aspf=r` and `adkim=r` tags request *relaxed* alignment, which means subdomain alignment counts as alignment. For organisations with multiple mail-sending subdomains that's the safer default. Use `s` (strict) only when you've explicitly designed for it.
 
-## Common questions
+## Things I get asked
 
-### My SPF record passes the syntax check but mail still lands in spam. What's missing?
+*SPF passes syntax but mail still lands in spam, what's missing?* Almost certainly DKIM alignment. Send a test message to Gmail and read the `Authentication-Results:` header. If `dkim=fail` or `dkim=neutral`, you've published CNAMEs but signing isn't enabled for the custom domain — only for `onmicrosoft.com`. Re-run `Get-DkimSigningConfig` and confirm.
 
-Almost certainly DKIM alignment. Run a test message to Gmail and inspect the `Authentication-Results:` header. If you see `dkim=fail` or `dkim=neutral`, you have DKIM CNAMEs but signing isn't enabled for the custom domain — or it's enabled for `contoso.onmicrosoft.com` only. Re-run `Get-DkimSigningConfig` and confirm the custom domain is signed.
+*Can I publish two DMARC records?* Same answer as SPF: one per domain. For different subdomain policies, use the `sp=` tag on the parent or publish a separate `_dmarc.<subdomain>` record.
 
-### Can I publish multiple DMARC records?
+*Why does SPF pass locally but fail at the recipient?* Three things, usually. The receiver might be checking the envelope `MailFrom` domain when you think they're checking the `From:` header (or the reverse, and they don't match). Your egress might have split-horizon DNS that resolves differently than the public — the `nslookup ... 8.8.8.8` trick catches this. Or your DNS provider is chaining CNAMEs and the receiver is hitting a different SPF record than the one you think you published.
 
-No — same rule as SPF, one record per domain. If you need different policies for subdomains, use the `sp=` tag on the parent or publish a separate `_dmarc.<subdomain>` record.
+*How long does DKIM key rotation take in EXO?* The two-selector model exists specifically to allow rotation without downtime. EXO rotates to selector 2 on its own schedule (default around 90 days). Receivers validate against whichever selector signed the message, so you don't need to coordinate. Just don't *delete* the older selector's CNAME until you've waited at least one rotation cycle.
 
-### Why does my SPF check pass locally but fail at the recipient?
+*Do I need DMARC if SPF and DKIM are already set up?* Yes, increasingly. Gmail and Yahoo's 2024 bulk-sender requirements require DMARC for any domain sending more than 5,000 messages a day, and Microsoft has been publishing similar guidance. SPF and DKIM are necessary but no longer sufficient. DMARC is the alignment layer that modern receivers actually check.
 
-Three common causes: (a) the recipient is checking the envelope `MailFrom` domain, not the `From:` header domain, and they don't match; (b) split-horizon DNS at your egress is resolving differently than the public; (c) the recipient is hitting a different SPF record because of CNAME chaining at your DNS provider. Command 6 in the toolkit above (`nslookup` against `8.8.8.8`) sidesteps split-horizon and is usually the first diagnostic.
+*What happens if I publish `p=reject` and something goes wrong?* Mail that fails alignment gets bounced at the receiver. You'll see it in your aggregate reports within 24 hours. Quick mitigation is to drop back to `p=quarantine` or `p=none`, fix the underlying alignment issue, then re-tighten. This is exactly why the staged rollout matters — the recovery window is fast but not instant.
 
-### How long does DKIM key rotation take in EXO?
-
-The two-selector model is specifically there to allow rotation without downtime. EXO will rotate to selector 2 on a schedule (default ~90 days), and inbound receivers will validate against whichever selector signed the message. You don't need to coordinate; just don't *delete* the older selector's CNAME until you've waited at least one rotation cycle.
-
-### Do I need DMARC if I already have SPF and DKIM?
-
-Yes, increasingly. Gmail and Yahoo's [2024 bulk-sender requirements](https://support.google.com/mail/answer/81126) require DMARC for any domain sending more than 5,000 messages/day. Microsoft is publishing similar guidance. SPF and DKIM are necessary but no longer sufficient — DMARC is the alignment layer that receivers actually check.
-
-### What happens if I publish `p=reject` and there's a problem?
-
-Mail that fails alignment is bounced at the receiver. You'll see it in your DMARC aggregate reports within 24 hours. Quick mitigation: revert to `p=quarantine` or `p=none`, fix the underlying alignment issue, then re-tighten. This is why staged rollout matters — the diagnostic window is fast but not instant.
-
-## What to take away
-
-The five-minute version of email authentication is that you publish SPF, publish DKIM, publish DMARC, and hope. The operational version is that you (1) inventory every legitimate sender before tightening SPF, (2) verify DKIM is signed for the custom domain in EXO PowerShell (not just that CNAMEs exist in DNS), (3) start DMARC at `p=none` and progress only after aggregate reports prove alignment, and (4) keep the verification toolkit warm during cutover. The anti-patterns are the failure modes; the toolkit is how you catch them. Get the staged progression right and you'll go from "we have a domain" to "we have phishing-resistant outbound mail" without a single bounced executive newsletter.
-
-## References
+## Where to read further
 
 - [SPF for Microsoft 365 — Microsoft Learn](https://learn.microsoft.com/defender-office-365/email-authentication-spf-configure)
 - [DKIM for Microsoft 365 — Microsoft Learn](https://learn.microsoft.com/microsoft-365/security/office-365-security/email-authentication-dkim-configure)
 - [DMARC for Microsoft 365 — Microsoft Learn](https://learn.microsoft.com/defender-office-365/email-authentication-dmarc-configure)
 - [External DNS records for Microsoft 365 — Microsoft Learn](https://learn.microsoft.com/microsoft-365/enterprise/external-domain-name-system-records)
 - [Add a custom domain to Microsoft Entra — Microsoft Learn](https://learn.microsoft.com/azure/active-directory/enterprise-users/domains-manage)
-- [RFC 7208 — Sender Policy Framework (SPF)](https://datatracker.ietf.org/doc/html/rfc7208)
-- [RFC 6376 — DomainKeys Identified Mail (DKIM)](https://datatracker.ietf.org/doc/html/rfc6376)
+- [RFC 7208 — Sender Policy Framework](https://datatracker.ietf.org/doc/html/rfc7208)
+- [RFC 6376 — DomainKeys Identified Mail](https://datatracker.ietf.org/doc/html/rfc6376)
 - [RFC 7489 — DMARC](https://datatracker.ietf.org/doc/html/rfc7489)
 - [Gmail bulk-sender requirements (2024)](https://support.google.com/mail/answer/81126)

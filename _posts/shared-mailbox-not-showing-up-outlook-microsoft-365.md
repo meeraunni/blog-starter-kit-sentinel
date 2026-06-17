@@ -1,6 +1,6 @@
 ---
-title: "Shared Mailbox Not Showing Up in Outlook (Microsoft 365): Why It Happens and How to Fix It Properly"
-excerpt: "Your user has Full Access to a shared mailbox but it isn't appearing in Outlook. Walk the five-step diagnostic — auto-mapping, replication, profile cache, mailbox type, and manual add — and fix the underlying cause, not the symptom."
+title: "The Shared Mailbox Just Isn't There: Why Outlook Refuses To Show It, and What Actually Fixes It"
+excerpt: "Full Access was granted three days ago, other people see the mailbox, this one user doesn't. Restart didn't help. Patience didn't help. The fix the help-desk article suggests is to rebuild the profile, which works often enough that everyone accepts it as the answer. That isn't the actual answer. Here's what is."
 coverImage: "/assets/blog/shared-mailbox-not-showing-up-outlook-microsoft-365/diagram.svg"
 date: "2026-05-18T09:00:00.000Z"
 author:
@@ -9,39 +9,37 @@ ogImage:
   url: "/assets/blog/shared-mailbox-not-showing-up-outlook-microsoft-365/diagram.svg"
 ---
 
-## The ticket you've definitely seen before
+A manager opens a ticket. "I got added to the shared mailbox three days ago. Other people on the team can see it. I can't. Restarting Outlook doesn't help. A new profile didn't help. Please advise." You've seen this ticket. You've probably closed it with some variant of "give it time, then rebuild the profile," which works often enough to feel right but doesn't address why it happened, which is why the same users keep filing it.
 
-A manager opens a ticket: "I just got added to the shared mailbox three days ago. Other people can see it. I can't. Outlook restart doesn't help. New profile doesn't help. Help."
+The reason most help-desk articles get this one half-right is that the underlying mechanism (auto-mapping) isn't a single thing. It's a behaviour that depends on how the permission was granted, whether a specific PowerShell flag was set when it was granted, what's currently in the user's local profile cache, and a handful of edge cases involving converted mailboxes and group-based access. The standard checklist hits one or two of those and misses the others. Once a tenant has more than a few shared mailboxes, the help desk burns hours on a fix that the original grant could have prevented.
 
-This is one of the highest-volume tickets in any Microsoft 365 tenant, and the reason it recurs is that the resolution most help-desk articles offer — "give it time, then rebuild the profile" — works often enough to feel right but doesn't address *why* it happened. Once a tenant has more than a handful of shared mailboxes, the same users hit the same problem repeatedly, and the help desk burns hours on a fix that the design itself prevents.
+What follows is the diagnostic I run in this order, the actual mechanics of what auto-mapping does, the edge cases the standard checklist misses, and a weekly PowerShell report that turns this from a recurring ticket into a documented onboarding step. Microsoft's references for the underlying behaviour are [shared mailbox permissions](https://learn.microsoft.com/microsoft-365/admin/email/about-shared-mailboxes) and the [auto-mapping](https://learn.microsoft.com/exchange/recipients-in-exchange-online/manage-permissions-for-recipients#auto-mapping) section.
 
-This article walks the actual decision path: what auto-mapping really does, where replication delays come from, which Outlook profile state is involved, and the rare-but-real edge cases (mailbox converted from a user mailbox, group-membership-based access, hidden-from-GAL flag) that the standard checklist misses. Microsoft's authoritative pages used here are [Manage shared mailbox permissions](https://learn.microsoft.com/microsoft-365/admin/email/about-shared-mailboxes) and [Auto-mapping in Outlook for shared mailboxes](https://learn.microsoft.com/exchange/recipients-in-exchange-online/manage-permissions-for-recipients#auto-mapping).
+## What auto-mapping actually does
 
-## How auto-mapping actually works
+When you grant a user Full Access to a shared mailbox via the admin centre or `Add-MailboxPermission`, Exchange Online writes the assignee's identity into a property on the shared mailbox called `msExchDelegateListLink`. The next time Outlook starts and walks its Autodiscover flow, it sees that property, recognises that this user has an additional mailbox to render, and adds it to the navigation pane on its own. No user action required. Happy path.
 
-When you grant a user **Full Access** to a shared mailbox via the Exchange admin centre or `Add-MailboxPermission`, Exchange Online writes the assignee's identity into a property on the shared mailbox called `msExchDelegateListLink`. On the next Outlook restart, the user's Outlook profile (using Autodiscover) reads that property, discovers the additional mailbox, and adds it to the navigation pane automatically. No user action required.
+Where the happy path stops working has a small, finite set of causes:
 
-That's the happy path. Here's where it breaks:
-
-| Failure mode | Why it happens |
+| Failure mode | What's actually wrong |
 |---|---|
-| Outlook doesn't restart | Auto-mapping only re-evaluates at profile boot. A user who keeps Outlook open for days never sees the new mailbox |
-| Permission was granted with `AutoMapping:$false` | The PowerShell flag exists specifically to suppress the property write |
-| The user has the mailbox manually added already | Outlook detects the duplicate and silently does nothing |
-| The mailbox is hidden from the GAL | Autodiscover may not resolve it correctly in some client versions |
-| Profile cache is stale | Newer Outlook (Cached Exchange Mode) holds onto its mailbox list across restarts in ways older Outlook didn't |
-| Permission grant happened via group membership | Auto-mapping is per-user; group-granted permissions don't write to `msExchDelegateListLink` |
+| User never restarted Outlook | Auto-mapping only re-evaluates at profile boot. Someone who keeps Outlook open for days never sees the new mailbox. |
+| Permission was granted with `AutoMapping:$false` | The flag suppresses the property write. Auto-discovery has nothing to discover. |
+| User already added the mailbox manually | Outlook spots the duplicate and silently does nothing. |
+| Mailbox is hidden from the GAL | Autodiscover doesn't always resolve it cleanly on older client versions. |
+| Profile cache is stale | Cached Exchange Mode holds the mailbox list in `.ost` and registry keys across restarts. |
+| Permission was granted via group membership | Auto-mapping is per-user. Group-granted permissions don't trigger the property write at all. |
 
-The last one — **group-based permission grants don't auto-map** — is by far the most common cause that the standard checklist misses. If the security team has built a clean RBAC model where "Sales team → can access Sales shared mailbox", auto-mapping doesn't apply, and every user has to add the mailbox manually. That isn't a bug; it's a documented behavior.
+The last one is by far the most common cause the standard checklist misses. If the security team has built a clean RBAC model where "Sales team → can access Sales shared mailbox," auto-mapping doesn't apply, and every member has to add the mailbox manually. That's documented behaviour, not a bug, but it's not the answer people are expecting.
 
 > [!IMPORTANT]
-> If a tenant has decided to grant shared mailbox access via group membership for governance reasons, the trade-off is that users must manually add the mailbox. Document this in onboarding instead of treating each ticket as new.
+> If your tenant grants shared mailbox access via group membership for governance reasons, accept the trade-off and document it in onboarding. Every new joiner gets a one-liner explaining how to add the mailbox manually. That converts the recurring ticket into a known operational step instead of a mystery.
 
 ## The five-step diagnostic
 
-Run these in order. Each step rules out one cause cleanly.
+The order matters because each step rules out a specific cause and the cheap checks come first.
 
-### Step 1: Verify the permission grant actually exists
+**Step one is confirming the permission grant actually exists.** Standard `Get-MailboxPermission`, looking specifically for the user, looking specifically for `FullAccess`:
 
 ```powershell
 Connect-ExchangeOnline
@@ -49,14 +47,11 @@ Get-MailboxPermission -Identity "sales@contoso.com" |
     Where-Object { $_.User -like "*alice@contoso.com*" }
 ```
 
-Look at the output. You want to see `AccessRights : FullAccess`, `IsInherited : False`, and `Deny : False`. If `Deny : True`, someone explicitly denied access — that always wins. If the user isn't listed at all, the grant was never applied, or was applied to a group the user isn't a direct member of.
+You want `AccessRights : FullAccess`, `IsInherited : False`, and `Deny : False`. If `Deny` is true, someone explicitly denied access — deny wins, find the grant and remove it. If the user isn't in the list at all, the grant was never applied directly. Check whether the user is a member of a group that was granted access — that's the next sub-question.
 
-### Step 2: Check the auto-mapping flag on the permission
-
-The Microsoft Graph and EXO PowerShell expose the `AutoMapping` parameter. Once a permission is granted, you can't *change* the auto-mapping flag retroactively without re-granting:
+**Step two is the auto-mapping flag itself.** Once a permission is granted, you can't toggle auto-mapping retroactively. The fix is to remove and re-grant with the flag set:
 
 ```powershell
-# Remove the permission, then re-add with auto-mapping enabled
 Remove-MailboxPermission -Identity "sales@contoso.com" `
     -User "alice@contoso.com" -AccessRights FullAccess -Confirm:$false
 
@@ -64,62 +59,36 @@ Add-MailboxPermission -Identity "sales@contoso.com" `
     -User "alice@contoso.com" -AccessRights FullAccess -AutoMapping:$true
 ```
 
-If the original grant had `AutoMapping:$false`, the user will never see auto-discovery do its thing. This is a one-line fix that solves a surprisingly high percentage of tickets.
+If the original grant was made with `AutoMapping:$false`, this single sequence closes a surprising fraction of these tickets.
 
-### Step 3: Confirm replication has completed
+**Step three is replication.** EXO doesn't propagate permission changes instantly. Fifteen to sixty minutes is normal, longer on a busy tenant during business hours. If the grant happened within the last hour, the cause might just be timing. You can confirm replication is done from the user's machine via Test E-mail AutoConfiguration (hold Ctrl while right-clicking the Outlook tray icon), which surfaces the Autodiscover XML response — and if the shared mailbox shows up in the XML but not in Outlook's pane, you've isolated the issue to client cache rather than server replication.
 
-Exchange Online doesn't propagate permission changes instantly. The propagation typically completes in **15-60 minutes**, but can take up to several hours on busy tenants. If the grant happened within the last hour and Outlook has been restarted, give it time and check back.
+**Step four is the profile rebuild, which is where the standard help-desk article starts.** The reason this works when it does: Outlook caches the mailbox list both in the `.ost` file and in profile registry keys. A profile rebuild forces re-creation of both. The right scope: close Outlook, Control Panel → Mail → Show Profiles, *add a new profile* (don't edit the existing one — that often reuses the cache), set it as default, open Outlook and sign in. Wait five to fifteen minutes for the full mailbox list to populate, especially for users with many additional mailboxes. Once you've confirmed it works, the old profile can be removed.
 
-You can verify replication is done by looking at the user's Outlook Autodiscover XML:
+Resist the temptation to delete the user's existing `.ost` file as part of this. That forces a re-download of their entire primary mailbox, which can be gigabytes for no benefit. Profile rebuild is the right scope; OST deletion is overkill.
 
-```powershell
-# From the user's machine, in Outlook File menu, hold Ctrl and right-click
-# the Outlook tray icon → Test E-mail AutoConfiguration → enter user's email.
-# The XML response includes <Mailbox> entries for every accessible mailbox.
-```
+**Step five is the manual add as a fallback.** If the permission is correct, replicated, the profile is fresh, and the mailbox still won't appear, add it manually:
 
-If the shared mailbox shows up in the Autodiscover XML but not in the Outlook navigation pane, the issue is local profile cache, not server replication.
+1. File → Account Settings → Account Settings → Email tab → Change → More Settings → Advanced → Add.
+2. Enter the shared mailbox's primary SMTP.
+3. OK, Next.
 
-### Step 4: Rebuild the Outlook profile (the actual fix, when needed)
+The mailbox appears below the user's primary in the navigation pane. This bypasses auto-mapping entirely, which makes it the right answer for the group-membership scenario and the right escape hatch for anything else.
 
-If steps 1-3 show the permission is correct and replicated but Outlook still doesn't show it, the user's profile cache is stale. The reliable fix:
+## The trap nobody mentions
 
-1. Close Outlook.
-2. Control Panel → Mail (Microsoft Outlook) → Show Profiles.
-3. Add a new profile (don't modify the existing one — that often re-uses the cache).
-4. Open Outlook and select the new profile when prompted.
-5. Sign in. Wait for the full mailbox list to populate (can take 5-15 minutes for users with many mailboxes).
-6. Once confirmed working, you can delete the old profile.
-
-The reason "new profile" works where "restart Outlook" doesn't: Outlook caches the mailbox list in the `.ost` file and in profile registry keys. A profile rebuild forces re-creation of both.
-
-> [!TIP]
-> Don't tell the user to delete the existing `.ost` file — that triggers a full re-download of their primary mailbox (potentially gigabytes) for no benefit. Profile rebuild is the right scope.
-
-### Step 5: Add it manually as a last resort
-
-If the permission is correct, replicated, and the profile is fresh — and the mailbox still doesn't appear — add it manually:
-
-1. Outlook → File → Account Settings → Account Settings → Email tab → Change → More Settings → Advanced → Add → enter the shared mailbox's primary SMTP address.
-2. Click OK and Next. The mailbox appears in the navigation pane below the user's primary mailbox.
-
-This bypasses auto-mapping entirely. It works in the group-membership scenario described above, and it works as a fallback for the rare cases where Autodiscover doesn't include the mailbox in its response.
-
-## The mailbox-type trap nobody mentions
-
-There's one specific edge case worth knowing about: a mailbox that was *originally* a user mailbox and later converted to a shared mailbox. The conversion sometimes leaves residual flags that confuse auto-discovery in older Outlook versions. The symptom is that the mailbox shows up for everyone except the user(s) who had access *before* the conversion.
+A specific edge case worth knowing about: a mailbox originally created as a user mailbox and later converted to a shared mailbox. The conversion sometimes leaves residual flags that confuse Outlook's Autodiscover behaviour. The signature is that the mailbox shows up for everyone *except* the users who had access during the user-mailbox era.
 
 ```powershell
-# Check the mailbox type and conversion history
 Get-Mailbox -Identity "sales@contoso.com" |
     Select-Object Identity, RecipientTypeDetails, WhenChanged, WhenCreated
 ```
 
-If `RecipientTypeDetails` shows `SharedMailbox` but the user still has it auto-mapped from the user-mailbox era, the fix is either to manually add it (step 5 above) or, in some cases, to remove and re-grant the permission to refresh the auto-mapping state.
+If `RecipientTypeDetails` shows `SharedMailbox` but the affected users still have the older mapping cached, the fix is either to add the mailbox manually (step five) or to remove and re-grant their permission to refresh the auto-mapping state.
 
 ## A weekly proactive query
 
-Find users who have Full Access to mailboxes but for whom the mailbox almost certainly isn't auto-mapping (group-granted, or `AutoMapping:$false`):
+The most useful thing you can do once the diagnostic is in place is generate a weekly report of who has Full Access on which shared mailboxes, so the onboarding step for group-based access becomes documented operations rather than reactive ticket-closing:
 
 ```powershell
 Connect-ExchangeOnline
@@ -146,42 +115,26 @@ $report = foreach ($mbx in $sharedMailboxes) {
 $report | Export-Csv shared-mailbox-permissions.csv -NoTypeInformation
 ```
 
-Cross-reference against the `msExchDelegateListLink` property on each mailbox to identify users granted via group membership (and therefore not auto-mapped). Use the result to seed a user-onboarding email that tells them how to add the mailbox manually if it doesn't appear.
+Cross-reference the result against the `msExchDelegateListLink` property on each mailbox to identify users granted via group membership and therefore not auto-mapped. Feed that list into the user-onboarding email so they know to expect the manual step before they file a ticket.
 
-## Common questions
+## Things people ask
 
-### How long does auto-mapping actually take?
+*How long does auto-mapping actually take to fire?* Fifteen to sixty minutes for EXO to propagate, plus one Outlook restart. A user who keeps Outlook open through the day won't see the new mailbox until they next restart, no matter how long ago the grant was made.
 
-15-60 minutes after the permission is granted, plus one Outlook restart. If a user keeps Outlook open all day, they won't see the new mailbox until they next restart Outlook regardless of how long ago the permission was granted.
+*Does the user also need Send As to use the shared mailbox?* Full Access lets them read. Send As (a separate grant) lets them send mail with the shared address as From. They're independent. A user with only Full Access can read the mailbox but their replies go from their own address.
 
-### Does the user need Send As permission too?
+*Does OWA auto-map shared mailboxes?* No. OWA doesn't implement auto-mapping at all. In OWA the user adds shared mailboxes manually via the navigation pane → right-click Folders → Add shared folder.
 
-Full Access lets the user *read* the mailbox. Send As (separate permission) lets the user send mail *from* the mailbox's address. They're independent. A user with Full Access but no Send As can read the mailbox but replies will go from their own address.
+*What about Outlook for Mac?* Outlook for Mac supports auto-mapping but the timing and cache behaviour differ. The reliable sequence is: confirm permission, wait an hour, restart Outlook, and if still not visible, close and reopen the Mac account in System Settings → Internet Accounts.
 
-### Does Outlook on the web (OWA) auto-map shared mailboxes?
+*Why does remove-and-re-grant with `AutoMapping:$true` sometimes still not work?* The `msExchDelegateListLink` property write happens, but Outlook's local Autodiscover cache may still hold the stale view. Force a refresh by deleting `%LocalAppData%\Microsoft\Outlook\AutoDiscover.xml` and restarting Outlook.
 
-No. OWA does not implement auto-mapping at all. Users must always add shared mailboxes manually in OWA via the navigation pane → right-click "Folders" → Add shared folder.
+*Can I prepopulate shared mailboxes via Group Policy or Intune?* Yes — Outlook profile prepopulation via the Office Customization Tool and Group Policy ADMX templates supports configuring additional mailboxes at profile creation. This is the right answer for tenants where hundreds of users need access to the same shared mailboxes via group-granted access. It moves the problem from "user must add manually" to "Outlook is provisioned with the mailbox list at first launch."
 
-### What if the user is on Outlook for Mac?
+## Where to read further
 
-Outlook for Mac supports auto-mapping but the timing and cache behaviour differ from Windows. The reliable fix sequence is: confirm permission, wait an hour, restart Outlook, close and reopen the Mac account in System Settings → Internet Accounts if still not visible.
-
-### Why does removing and re-adding the permission with `AutoMapping:$true` sometimes still not work?
-
-The `msExchDelegateListLink` property write does happen, but Outlook's local Autodiscover cache may still hold the stale view. Force a refresh by clearing the Autodiscover cache (`%LocalAppData%\Microsoft\Outlook\AutoDiscover.xml`) and restarting Outlook.
-
-### Can I script the manual-add for users via Group Policy or Intune?
-
-Outlook profile prepopulation via the **Office Customization Tool** and Group Policy ADMX templates supports configuring additional mailboxes at profile creation. This is the right answer for tenants with hundreds of users who all need access to the same set of shared mailboxes via group-granted access. It moves the problem from "user must add manually" to "Outlook is provisioned with the mailbox list when the profile is created."
-
-## What to take away
-
-Shared mailbox not appearing in Outlook is almost always one of three things: the permission was granted with `AutoMapping:$false`, the access was granted via group membership and auto-mapping doesn't apply to that path, or replication hasn't completed yet. The five-step diagnostic resolves nearly every individual ticket; the weekly PowerShell report turns the recurring problem into a documented onboarding step. The fix isn't always "rebuild the profile" — most of the time the underlying grant just needs to be re-issued correctly.
-
-## References
-
-- [Manage shared mailbox permissions — Microsoft Learn](https://learn.microsoft.com/microsoft-365/admin/email/about-shared-mailboxes)
-- [Add-MailboxPermission — Microsoft Learn](https://learn.microsoft.com/powershell/module/exchange/add-mailboxpermission)
+- [Shared mailbox permissions overview — Microsoft Learn](https://learn.microsoft.com/microsoft-365/admin/email/about-shared-mailboxes)
+- [`Add-MailboxPermission` — Microsoft Learn](https://learn.microsoft.com/powershell/module/exchange/add-mailboxpermission)
 - [Auto-mapping in Outlook — Microsoft Learn](https://learn.microsoft.com/exchange/recipients-in-exchange-online/manage-permissions-for-recipients#auto-mapping)
 - [Convert a user mailbox to a shared mailbox — Microsoft Learn](https://learn.microsoft.com/microsoft-365/admin/email/convert-user-mailbox-to-shared-mailbox)
-- [Outlook profile prepopulation — Microsoft Learn](https://learn.microsoft.com/deployoffice/configure-update-channels-for-microsoft-365-apps)
+- [Office deployment configuration — Microsoft Learn](https://learn.microsoft.com/deployoffice/configure-update-channels-for-microsoft-365-apps)

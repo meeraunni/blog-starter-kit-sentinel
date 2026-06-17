@@ -1,11 +1,12 @@
 import Footer from "@/app/_components/footer";
 import NewsletterSync from "@/app/_components/newsletter-sync";
 import VisitorTracker from "@/app/_components/visitor-tracker";
+import CommandPaletteWrapper from "@/app/_components/command-palette-wrapper";
 import { CMS_NAME } from "@/lib/constants";
 import { getSiteUrl } from "@/lib/site";
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Manrope, Sora } from "next/font/google";
+import { Manrope, Sora, JetBrains_Mono } from "next/font/google";
 import cn from "classnames";
 import { ThemeSwitcher } from "./_components/theme-switcher";
 
@@ -19,6 +20,11 @@ const manrope = Manrope({
 const sora = Sora({
   subsets: ["latin"],
   variable: "--font-display",
+});
+
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
 });
 
 export const metadata: Metadata = {
@@ -144,12 +150,14 @@ export default function RootLayout({
         className={cn(
           manrope.variable,
           sora.variable,
-          "min-h-screen bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.08),transparent_30%),linear-gradient(180deg,#f8fbff_0%,#ffffff_22%,#f8fafc_100%)] text-slate-700 antialiased",
+          mono.variable,
+          "min-h-screen antialiased",
         )}
       >
         <NewsletterSync />
         <VisitorTracker />
         <ThemeSwitcher />
+        <CommandPaletteWrapper />
         <div className="min-h-screen">{children}</div>
         <Footer />
       </body>

@@ -143,107 +143,170 @@
   html.dark .callout-caution .callout-label { color: #fcd34d; }
 
   /* ─────────────────────────────────────────────────────────
-     Shiki dual-theme code blocks (class-based dark mode)
+     Code blocks — Windows Terminal–style chrome + Shiki body
      ───────────────────────────────────────────────────────── */
-  .shiki {
-    background-color: var(--shiki-light-bg) !important;
-    color: var(--shiki-light) !important;
-    border: 1px solid var(--page-border);
-    border-radius: 0.875rem;
-    padding: 1.25rem 1.25rem 1.25rem 1.5rem;
-    overflow-x: auto;
-    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    font-size: 0.875rem;
-    line-height: 1.65;
-    tab-size: 2;
-    position: relative;
+  .code-block-wrapper {
+    margin: 2rem 0;
+    border-radius: 0.65rem;
+    overflow: hidden;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.05) inset,
+      0 16px 40px rgba(15, 23, 42, 0.18),
+      0 4px 12px rgba(15, 23, 42, 0.10);
+    border: 1px solid #1a1a1a;
+    background: #0c0c0c;
   }
-  .shiki code {
+
+  /* Window chrome — traffic lights, language tab, copy button */
+  .code-block-chrome {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem 0.85rem;
+    background: linear-gradient(180deg, #2d2d2d 0%, #252526 100%);
+    border-bottom: 1px solid #181818;
+    user-select: none;
+  }
+  .code-block-chrome .traffic-lights {
+    display: inline-flex;
+    gap: 0.4rem;
+  }
+  .code-block-chrome .traffic-lights .light {
+    width: 0.7rem;
+    height: 0.7rem;
+    border-radius: 999px;
+    box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.25);
+  }
+  .code-block-chrome .traffic-lights .red    { background: #ff5f57; }
+  .code-block-chrome .traffic-lights .yellow { background: #ffbd2e; }
+  .code-block-chrome .traffic-lights .green  { background: #28c941; }
+
+  .code-block-chrome .code-block-tab {
+    flex: 1;
+    text-align: center;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: #d4d4d4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .code-block-chrome .code-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.22rem 0.55rem;
+    border-radius: 0.3rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    color: #c8c8c8;
+    font-size: 0.65rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .code-block-chrome .code-copy-btn:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  .code-block-chrome .code-copy-btn.copied {
+    background: rgba(40, 201, 65, 0.18);
+    color: #6bff7d;
+    border-color: rgba(40, 201, 65, 0.35);
+  }
+
+  /* The shiki body */
+  .code-block-wrapper > pre.shiki {
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: #0c0c0c !important;
+    color: #d4d4d4 !important;
+    padding: 1.05rem 1.15rem 1.05rem 1.4rem !important;
+    overflow-x: auto;
+    font-family: var(--font-mono), ui-monospace, SFMono-Regular, "Cascadia Code", "Cascadia Mono", "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    tab-size: 2;
+  }
+  .code-block-wrapper > pre.shiki code {
     background: transparent !important;
     padding: 0 !important;
     border-radius: 0;
     font-size: inherit;
     color: inherit;
     font-weight: inherit;
-  }
-  .shiki span {
-    color: var(--shiki-light) !important;
-    font-style: var(--shiki-light-font-style) !important;
-    font-weight: var(--shiki-light-font-weight) !important;
-    text-decoration: var(--shiki-light-text-decoration) !important;
+    border: 0;
   }
 
-  html.dark .shiki {
-    background-color: #0d1117 !important;
-    color: var(--shiki-dark) !important;
-    border-color: #1f2937;
-  }
-  html.dark .shiki span {
+  /* Force shiki's dark theme colours regardless of light/dark page mode */
+  .code-block-wrapper > pre.shiki span {
     color: var(--shiki-dark) !important;
     font-style: var(--shiki-dark-font-style) !important;
     font-weight: var(--shiki-dark-font-weight) !important;
     text-decoration: var(--shiki-dark-text-decoration) !important;
+    background-color: transparent !important;
   }
 
-  /* Language label and copy button overlay (positioned inside the wrapping div) */
-  .code-block-wrapper {
-    position: relative;
-    margin: 1.75rem 0;
+  /* PowerShell-specific touch — subtle dark blue body, like the legacy ISE */
+  .code-block-wrapper[data-language="powershell"] {
+    background: #012456;
+    border-color: #001a3d;
   }
-  .code-block-wrapper > pre {
-    margin: 0;
+  .code-block-wrapper[data-language="powershell"] > pre.shiki {
+    background: #012456 !important;
   }
-  .code-block-wrapper .code-block-label {
-    position: absolute;
-    top: 0.6rem;
-    left: 0.9rem;
-    font-size: 0.625rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: #94a3b8;
-    background: rgba(255, 255, 255, 0.7);
-    padding: 0.15rem 0.5rem;
-    border-radius: 999px;
-    pointer-events: none;
-    user-select: none;
+  .code-block-wrapper[data-language="powershell"] .code-block-chrome {
+    background: linear-gradient(180deg, #1a3a6b 0%, #122e58 100%);
+    border-bottom-color: #001a3d;
   }
-  html.dark .code-block-wrapper .code-block-label {
-    color: #64748b;
-    background: rgba(15, 23, 42, 0.65);
+  .code-block-wrapper[data-language="powershell"] .code-block-tab::before {
+    content: "PS";
+    display: inline-block;
+    margin-right: 0.45rem;
+    padding: 0.05rem 0.32rem;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 0.2rem;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #ffffff;
   }
-  .code-block-wrapper .code-copy-btn {
-    position: absolute;
-    top: 0.55rem;
-    right: 0.6rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 0.3rem 0.7rem;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid var(--page-border);
-    color: #475569;
-    font-size: 0.7rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    backdrop-filter: blur(4px);
+
+  /* KQL — Log Analytics blue tone */
+  .code-block-wrapper[data-language="kusto"] {
+    background: #0a1929;
+    border-color: #061121;
   }
-  .code-block-wrapper .code-copy-btn:hover {
-    background: var(--page-text-strong);
-    color: var(--page-bg);
-    border-color: var(--page-text-strong);
+  .code-block-wrapper[data-language="kusto"] > pre.shiki {
+    background: #0a1929 !important;
   }
-  html.dark .code-block-wrapper .code-copy-btn {
-    background: rgba(30, 41, 59, 0.8);
-    color: #94a3b8;
-    border-color: #334155;
+  .code-block-wrapper[data-language="kusto"] .code-block-chrome {
+    background: linear-gradient(180deg, #1e3a5f 0%, #142b48 100%);
+    border-bottom-color: #061121;
   }
-  html.dark .code-block-wrapper .code-copy-btn:hover {
-    background: #f1f5f9;
-    color: #0f172a;
-    border-color: #f1f5f9;
+  .code-block-wrapper[data-language="kusto"] .code-block-tab::before {
+    content: "λ";
+    display: inline-block;
+    margin-right: 0.45rem;
+    color: #67e8f9;
+    font-weight: 700;
+  }
+
+  /* YAML / JSON / bash — neutral terminal */
+  .code-block-wrapper[data-language="yaml"] .code-block-tab::before,
+  .code-block-wrapper[data-language="json"] .code-block-tab::before,
+  .code-block-wrapper[data-language="bash"] .code-block-tab::before,
+  .code-block-wrapper[data-language="shellscript"] .code-block-tab::before {
+    content: "$";
+    display: inline-block;
+    margin-right: 0.45rem;
+    color: #6ee7b7;
+    font-weight: 700;
   }
 
   /* Inline code styling */

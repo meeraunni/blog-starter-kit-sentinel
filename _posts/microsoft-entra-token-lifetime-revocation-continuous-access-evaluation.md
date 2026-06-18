@@ -4,7 +4,7 @@ excerpt: "Someone gets disabled in Entra and stays in Teams for forty-five minut
 coverImage: "/assets/blog/microsoft-entra-token-lifetime-revocation-continuous-access-evaluation/diagram.svg"
 date: "2026-05-08T09:00:00.000Z"
 author:
-  name: "M.U"
+  name: "MU.A"
 ogImage:
   url: "/assets/blog/microsoft-entra-token-lifetime-revocation-continuous-access-evaluation/diagram.svg"
 ---

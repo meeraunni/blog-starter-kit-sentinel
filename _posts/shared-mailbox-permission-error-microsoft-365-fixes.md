@@ -4,7 +4,7 @@ excerpt: "The user clicks the shared mailbox and Outlook says 'You don't have pe
 coverImage: "/assets/blog/shared-mailbox-permission-error-microsoft-365-fixes/diagram.svg"
 date: "2026-05-17T09:00:00.000Z"
 author:
-  name: "M.U"
+  name: "MU.A"
 ogImage:
   url: "/assets/blog/shared-mailbox-permission-error-microsoft-365-fixes/diagram.svg"
 ---

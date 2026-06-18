@@ -4,7 +4,7 @@ excerpt: "MFA in a small tenant is a Saturday evening. In a real one with hybrid
 coverImage: "/assets/blog/microsoft-365-mfa-rollout-strategy-conditional-access-authentication-strength/diagram.svg"
 date: "2026-05-10T09:00:00.000Z"
 author:
-  name: "M.U"
+  name: "MU.A"
 ogImage:
   url: "/assets/blog/microsoft-365-mfa-rollout-strategy-conditional-access-authentication-strength/diagram.svg"
 ---

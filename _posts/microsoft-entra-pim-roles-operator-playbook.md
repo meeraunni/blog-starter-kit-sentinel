@@ -4,7 +4,7 @@ excerpt: "PIM is one of those features that looks simple in the demo and is humb
 coverImage: "/assets/blog/microsoft-entra-pim-roles-operator-playbook/diagram.svg"
 date: "2026-06-16T09:00:00.000Z"
 author:
-  name: "M.U"
+  name: "MU.A"
 ogImage:
   url: "/assets/blog/microsoft-entra-pim-roles-operator-playbook/diagram.svg"
 ---

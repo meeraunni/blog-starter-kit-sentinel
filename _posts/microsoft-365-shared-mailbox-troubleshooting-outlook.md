@@ -4,7 +4,7 @@ excerpt: "The shared mailbox isn't there. Or it's there but Send As fails. Or se
 coverImage: "/assets/blog/microsoft-365-shared-mailbox-troubleshooting-outlook/diagram.svg"
 date: "2026-06-09T09:00:00.000Z"
 author:
-  name: "M.U"
+  name: "MU.A"
 ogImage:
   url: "/assets/blog/microsoft-365-shared-mailbox-troubleshooting-outlook/diagram.svg"
 ---

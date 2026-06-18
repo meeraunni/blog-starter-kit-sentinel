@@ -4,7 +4,7 @@ excerpt: "The two-policy pattern everyone half-implements: require MFA on medium
 coverImage: "/assets/blog/microsoft-entra-id-protection-risk-policies/diagram.svg"
 date: "2026-06-14T09:00:00.000Z"
 author:
-  name: "M.U"
+  name: "MU.A"
 ogImage:
   url: "/assets/blog/microsoft-entra-id-protection-risk-policies/diagram.svg"
 ---

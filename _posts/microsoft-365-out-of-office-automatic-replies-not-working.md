@@ -4,7 +4,7 @@ excerpt: "OOF is turned on but external senders aren't getting replies. Walk the
 coverImage: "/assets/blog/microsoft-365-out-of-office-automatic-replies-not-working/diagram.svg"
 date: "2026-05-14T09:00:00.000Z"
 author:
-  name: "M.U"
+  name: "MU.A"
 ogImage:
   url: "/assets/blog/microsoft-365-out-of-office-automatic-replies-not-working/diagram.svg"
 ---

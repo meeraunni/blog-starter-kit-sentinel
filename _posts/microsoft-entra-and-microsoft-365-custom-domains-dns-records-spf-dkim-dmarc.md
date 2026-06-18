@@ -4,7 +4,7 @@ excerpt: "The wizard makes adding a domain to Microsoft 365 look like a checklis
 coverImage: "/assets/blog/custom-domains-dns/cover.svg"
 date: "2026-05-13T09:00:00.000Z"
 author:
-  name: "M.U"
+  name: "MU.A"
 ogImage:
   url: "/assets/blog/custom-domains-dns/cover.svg"
 ---

@@ -76,7 +76,7 @@ export default function RootLayout({
     sameAs: ["https://sentinelidentity.ca"],
     founder: {
       "@type": "Person",
-      name: "M.U",
+      name: "MU.A",
       jobTitle: "Microsoft 365 / Entra Engineer",
       url: "https://sentinelidentity.ca/author/m-u",
     },

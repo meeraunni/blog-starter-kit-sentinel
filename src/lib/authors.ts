@@ -2,7 +2,7 @@ import { getBaseUrl } from "@/lib/site";
 
 export type Author = {
   slug: string;
-  /** Byline shown on posts and cards (e.g. "M.U") */
+  /** Byline shown on posts and cards (e.g. "MU.A") */
   name: string;
   /** Initials used for the avatar badge */
   initials: string;
@@ -21,13 +21,13 @@ export type Author = {
 const AUTHORS: Author[] = [
   {
     slug: "m-u",
-    name: "M.U",
-    initials: "MU",
+    name: "MU.A",
+    initials: "MUA",
     title: "Microsoft 365 / Entra Engineer",
     shortBio:
-      "M.U is a hands-on Microsoft 365 and Microsoft Entra engineer. Sentinel Identity is where M.U writes the long-form troubleshooting and architecture notes that ship articles people can actually use in production tenants.",
+      "MU.A is a hands-on Microsoft 365 and Microsoft Entra engineer. Sentinel Identity is where MU.A writes the long-form troubleshooting and architecture notes that ship articles people can actually use in production tenants.",
     longBio:
-      "M.U works hands-on with Microsoft 365, Microsoft Entra ID, Conditional Access, hybrid identity, and tenant operations. Articles on Sentinel Identity are written from the operator's seat — what the control actually does, how it fails in production, and how to remediate without guessing. Every published article is sourced against Microsoft Learn and reviewed before publication.",
+      "MU.A works hands-on with Microsoft 365, Microsoft Entra ID, Conditional Access, hybrid identity, and tenant operations. Articles on Sentinel Identity are written from the operator's seat — what the control actually does, how it fails in production, and how to remediate without guessing. Every published article is sourced against Microsoft Learn and reviewed before publication.",
     specialties: [
       "Microsoft Entra ID",
       "Conditional Access & MFA",

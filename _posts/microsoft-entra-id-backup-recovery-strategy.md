@@ -4,7 +4,7 @@ excerpt: "An operator's view of Microsoft Entra Backup and Recovery — what it 
 coverImage: "/assets/blog/entra-backup-recovery/cover.svg"
 date: "2026-05-09T09:00:00.000Z"
 author:
-  name: "M.U"
+  name: "MU.A"
 ogImage:
   url: "/assets/blog/entra-backup-recovery/cover.svg"
 ---

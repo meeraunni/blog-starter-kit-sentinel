@@ -232,6 +232,37 @@
     font-size: 0.85rem;
     line-height: 1.7;
     tab-size: 2;
+    /* Keep the body from bleeding past the wrapper's rounded edges */
+    max-width: 100%;
+    box-sizing: border-box;
+    /* Stable scrollbar so horizontal scroll doesn't shift the layout */
+    scrollbar-gutter: stable;
+  }
+  .code-block-wrapper > pre.shiki::-webkit-scrollbar {
+    height: 8px;
+  }
+  .code-block-wrapper > pre.shiki::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+  }
+  .code-block-wrapper > pre.shiki::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+  /* Each line wrapper produced by shiki — keep block-level, no list bullets */
+  .code-block-wrapper > pre.shiki .line {
+    display: block;
+    min-height: 1.7em;
+  }
+  /* Inside list items, neutralise the list indent / marker for the wrapper */
+  .markdown li > .code-block-wrapper,
+  .markdown-content li > .code-block-wrapper {
+    margin-left: 0;
+    list-style: none;
+  }
+  .markdown li > .code-block-wrapper > pre.shiki,
+  .markdown-content li > .code-block-wrapper > pre.shiki {
+    /* Prevent the list's left padding from being mirrored inside the code body */
+    text-indent: 0;
   }
   .code-block-wrapper > pre.shiki code {
     background: transparent !important;

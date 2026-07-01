@@ -31,7 +31,7 @@ The six books below cover all five layers. If you only read one, my recommendati
 
 ## 1. Active Directory (5th Edition) — Desmond, Richards, Allen, Lowe-Norris
 
-<a href="https://www.amazon.ca/dp/1449320023?tag=REPLACE_ME" rel="sponsored nofollow noopener" target="_blank">Active Directory, 5th Edition on Amazon.ca</a>
+<a href="https://www.amazon.ca/dp/1449320023?tag=sentinelident-20" rel="sponsored nofollow noopener" target="_blank">Active Directory, 5th Edition on Amazon.ca</a>
 
 O'Reilly's canonical Active Directory reference. Twenty years old in various editions and still the book every serious AD engineer keeps within arm's reach. The 5th edition is old enough that some of the Windows Server 2012-era chapters feel dated, but the fundamentals — schema, replication, sites and services, group policy internals, forest and domain trust design — have not changed in any way that makes the book obsolete. This is the reference layer. Nothing has replaced it.
 
@@ -43,7 +43,7 @@ O'Reilly's canonical Active Directory reference. Twenty years old in various edi
 
 ## 2. Modern Authentication with Azure Active Directory for Web Applications — Vittorio Bertocci
 
-<a href="https://www.amazon.ca/dp/0735696942?tag=REPLACE_ME" rel="sponsored nofollow noopener" target="_blank">Modern Authentication with Azure Active Directory on Amazon.ca</a>
+<a href="https://www.amazon.ca/dp/0735696942?tag=sentinelident-20" rel="sponsored nofollow noopener" target="_blank">Modern Authentication with Azure Active Directory on Amazon.ca</a>
 
 Written by the identity architect who spent a decade making OAuth 2 and OpenID Connect actually usable in the Microsoft stack, before he moved to Auth0/Okta. The book predates the "Entra" rebrand and refers throughout to "Azure Active Directory," which is fine because the concepts are unchanged and Bertocci is one of the clearest writers on this topic in the industry.
 
@@ -55,7 +55,7 @@ Written by the identity architect who spent a decade making OAuth 2 and OpenID C
 
 ## 3. OAuth 2 in Action — Justin Richer and Antonio Sanso
 
-<a href="https://www.amazon.ca/dp/161729327X?tag=REPLACE_ME" rel="sponsored nofollow noopener" target="_blank">OAuth 2 in Action on Amazon.ca</a>
+<a href="https://www.amazon.ca/dp/161729327X?tag=sentinelident-20" rel="sponsored nofollow noopener" target="_blank">OAuth 2 in Action on Amazon.ca</a>
 
 Manning's canonical OAuth 2 book, written by an OAuth working group author and a security researcher who's spent years finding real-world OAuth vulnerabilities. Denser than the Bertocci book and vendor-neutral — it covers OAuth 2 as a standard rather than any one vendor's implementation.
 
@@ -67,7 +67,7 @@ Manning's canonical OAuth 2 book, written by an OAuth working group author and a
 
 ## 4. Windows Internals, Part 1 (7th Edition) — Yosifovich, Ionescu, Russinovich, Solomon
 
-<a href="https://www.amazon.ca/dp/0735684189?tag=REPLACE_ME" rel="sponsored nofollow noopener" target="_blank">Windows Internals, Part 1 on Amazon.ca</a>
+<a href="https://www.amazon.ca/dp/0735684189?tag=sentinelident-20" rel="sponsored nofollow noopener" target="_blank">Windows Internals, Part 1 on Amazon.ca</a>
 
 The systems layer. If you've never sat down with the internals book, the amount of Windows behaviour you thought was magic and turns out to be documentable will surprise you. Part 1 covers processes, threads, security, and the object manager. Security is the chapter to read first — it's a hundred-plus pages on tokens, SIDs, integrity levels, LSA, Kerberos, NTLM, and the authentication subsystem.
 
@@ -79,7 +79,7 @@ The systems layer. If you've never sat down with the internals book, the amount 
 
 ## 5. Zero Trust Networks — Evan Gilman and Doug Barth
 
-<a href="https://www.amazon.ca/dp/149196265X?tag=REPLACE_ME" rel="sponsored nofollow noopener" target="_blank">Zero Trust Networks on Amazon.ca</a>
+<a href="https://www.amazon.ca/dp/149196265X?tag=sentinelident-20" rel="sponsored nofollow noopener" target="_blank">Zero Trust Networks on Amazon.ca</a>
 
 The philosophy layer. Everyone in security uses the phrase "zero trust." Most of them are wrong about what it means. This book is what most of them should read before saying it again. Written by two engineers at Google Cloud and PagerDuty who actually built zero-trust systems, before Zero Trust became a vendor marketing category.
 
@@ -91,7 +91,7 @@ The philosophy layer. Everyone in security uses the phrase "zero trust." Most of
 
 ## 6. Designing Data-Intensive Applications — Martin Kleppmann
 
-<a href="https://www.amazon.ca/dp/1449373321?tag=REPLACE_ME" rel="sponsored nofollow noopener" target="_blank">Designing Data-Intensive Applications on Amazon.ca</a>
+<a href="https://www.amazon.ca/dp/1449373321?tag=sentinelident-20" rel="sponsored nofollow noopener" target="_blank">Designing Data-Intensive Applications on Amazon.ca</a>
 
 Not an identity book at all. A distributed-systems textbook that happens to be the single best book on how large systems handle data, consistency, replication, partitioning, and failure — which is exactly what identity systems are underneath the surface. Entra ID is a globally-distributed directory. AD replication is distributed consensus with specific compromises. Federation is distributed authorization. All of it becomes clearer once you understand the general theory.
 

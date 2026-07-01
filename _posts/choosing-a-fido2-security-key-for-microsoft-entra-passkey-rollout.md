@@ -64,7 +64,7 @@ A note on prices: these are indicative single-unit Canadian retail prices as of 
 
 ### YubiKey 5C NFC
 
-<a href="https://www.amazon.ca/dp/B08DHL1PVL?tag=REPLACE_ME" rel="sponsored nofollow noopener" target="_blank">YubiKey 5C NFC on Amazon.ca</a>
+<a href="https://www.amazon.ca/dp/B08DHL1PVL?tag=sentinelident-20" rel="sponsored nofollow noopener" target="_blank">YubiKey 5C NFC on Amazon.ca</a>
 
 The default enterprise choice, and the most fully-featured key on this list. USB-C and NFC, so it works with modern laptops, phones, and tablets. In addition to FIDO2 it supports Yubico's proprietary OTP, OpenPGP, PIV smartcard, and OATH TOTP — none of which you need for Entra sign-in, but useful if you also use the key for SSH, code signing, or password-manager integration. Full FIDO L2 certification. Yubico's enterprise programme includes centralised inventory, factory-preloaded configuration, and one of the better attestation-management stories.
 
@@ -74,7 +74,7 @@ Why you might not: cost. At CAD $80/user, rolling out to a thousand users is CAD
 
 ### YubiKey Security Key C NFC
 
-<a href="https://www.amazon.ca/dp/B08GVFJ87Z?tag=REPLACE_ME" rel="sponsored nofollow noopener" target="_blank">YubiKey Security Key C NFC on Amazon.ca</a>
+<a href="https://www.amazon.ca/dp/B08GVFJ87Z?tag=sentinelident-20" rel="sponsored nofollow noopener" target="_blank">YubiKey Security Key C NFC on Amazon.ca</a>
 
 Yubico's stripped-down FIDO-only line. Same hardware quality, same USB-C + NFC form factor, same FIDO2 certification. What's missing is the OTP, PGP, PIV, and OATH support. For an Entra rollout where you're only using the key for FIDO2 sign-in, none of that matters, so this is the honest recommendation for organisations that don't need the rest.
 
@@ -84,7 +84,7 @@ Why you might not: if you eventually want to use one key for FIDO2 and smartcard
 
 ### Feitian ePass NFC K9
 
-<a href="https://www.amazon.ca/dp/B08K4B5Z4N?tag=REPLACE_ME" rel="sponsored nofollow noopener" target="_blank">Feitian ePass NFC K9 on Amazon.ca</a>
+<a href="https://www.amazon.ca/dp/B08K4B5Z4N?tag=sentinelident-20" rel="sponsored nofollow noopener" target="_blank">Feitian ePass NFC K9 on Amazon.ca</a>
 
 Feitian is the second-tier enterprise vendor most Microsoft-heavy shops consider when YubiKey is out of budget. The K9 is a solid mid-market key: FIDO2 L2 certified, 100 resident credentials, USB-A + NFC. The USB-A part matters — a lot of enterprise fleet laptops from the mid-2020s still have USB-A ports and dongles are one more thing to lose. Feitian's enterprise support and attestation story are good but less polished than Yubico's.
 
@@ -94,7 +94,7 @@ Why you might not: if the fleet is USB-C only, you'd need Feitian's ePass K10 (U
 
 ### Token2 T2F2-ALU
 
-<a href="https://www.amazon.ca/dp/B0BJTMB8N9?tag=REPLACE_ME" rel="sponsored nofollow noopener" target="_blank">Token2 T2F2-ALU on Amazon.ca</a>
+<a href="https://www.amazon.ca/dp/B0BJTMB8N9?tag=sentinelident-20" rel="sponsored nofollow noopener" target="_blank">Token2 T2F2-ALU on Amazon.ca</a>
 
 Token2 is a Swiss vendor that's built a real business around FIDO2 keys at aggressive prices. The T2F2-ALU has an aluminium body, USB-A + NFC, and stores up to 300 resident credentials — the highest in this list. FIDO L2 certified. The Swiss manufacturing origin matters for organisations with data-sovereignty concerns about US-manufactured hardware. Token2 also publishes AAGUIDs prominently and supports Entra attestation cleanly.
 
@@ -104,7 +104,7 @@ Why you might not: the ecosystem is smaller than YubiKey's. If your security tea
 
 ### TrustKey T110
 
-<a href="https://www.amazon.ca/dp/B09KMLK3N7?tag=REPLACE_ME" rel="sponsored nofollow noopener" target="_blank">TrustKey T110 on Amazon.ca</a>
+<a href="https://www.amazon.ca/dp/B09KMLK3N7?tag=sentinelident-20" rel="sponsored nofollow noopener" target="_blank">TrustKey T110 on Amazon.ca</a>
 
 The budget end of what I'd recommend at all. USB-A only (no NFC), 50 passkey slots, FIDO2 L2 certified. TrustKey is a Korean vendor with reasonable market presence in Asia-Pacific and increasingly in North America. Sub-$20 per key means you can afford to give every user two of them and still come in under the Feitian budget.
 

@@ -24,6 +24,7 @@ const services = [
     body:
       "Two-week engagement. I audit Conditional Access, PIM configuration, authentication methods, sign-in log signals, guest and B2B posture, and hybrid identity health. You get a written report with prioritised findings, risk ratings, and a remediation roadmap you can execute against.",
     fit: "You know your Entra posture drifted somewhere over the last few years and you want an outside view before something breaks.",
+    rate: "From CAD $6,500",
   },
   {
     title: "Conditional Access & MFA rollout",
@@ -31,6 +32,7 @@ const services = [
     body:
       "Four to eight week project depending on tenant size. Covers policy design, ring-based rollout planning, phishing-resistant Authentication Strengths, break-glass account hardening, and monitoring. Includes documentation and a runbook for future changes.",
     fit: "You're on per-user MFA or Security Defaults and need to move to a proper Conditional Access model without locking anyone out.",
+    rate: "CAD $12,000 – $35,000",
   },
   {
     title: "Identity governance implementation",
@@ -38,6 +40,7 @@ const services = [
     body:
       "Six to twelve week project depending on the number of roles, resources, and stakeholder teams. Covers PIM configuration for privileged roles, Entitlement Management catalog and access package design, Access Review scheduling, and monitoring KQL for each.",
     fit: "You have Entra ID Governance licenses and haven't operationalised them yet, or the initial rollout stalled.",
+    rate: "CAD $20,000 – $75,000",
   },
   {
     title: "Incident support",
@@ -45,6 +48,7 @@ const services = [
     body:
       "Same-day availability for active incidents. Common shapes: unexplained Conditional Access blocks, sign-in log forensics, PRT and token issues, hybrid identity replication failures, mail flow authentication problems, unexpected policy behaviour after a Microsoft change.",
     fit: "You have a ticket that's been open for two weeks and nobody on your team has time to dig into it properly.",
+    rate: "CAD $275 / hour",
   },
   {
     title: "Advisory retainer",
@@ -52,6 +56,7 @@ const services = [
     body:
       "Monthly retainer with a defined block of hours. Use them for architecture questions, design reviews, quarterly tenant health checks, or on-demand access when Microsoft ships something new that affects your environment. Unused hours don't roll over; predictable spend.",
     fit: "You have an internal team that can execute but wants a specialist to talk through architecture decisions and validate designs.",
+    rate: "From CAD $2,500 / month",
   },
 ];
 
@@ -77,9 +82,31 @@ const audience = [
   "Internal identity teams running their first Conditional Access or IGA rollout",
 ];
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: "Sentinel Identity Consulting",
+  description:
+    "Consulting for Microsoft Entra, Microsoft 365, and Windows Server identity: tenant assessments, Conditional Access design, PIM and identity governance rollout, incident support, and advisory retainers.",
+  url: "https://sentinelidentity.ca/consulting",
+  areaServed: "Worldwide (remote)",
+  serviceType: "Microsoft Entra and Microsoft 365 consulting",
+  provider: {
+    "@type": "Organization",
+    name: "Sentinel Identity",
+    url: "https://sentinelidentity.ca",
+    email: "info@sentinelidentity.ca",
+  },
+  priceRange: "CAD $275/hour to CAD $75,000/project",
+};
+
 export default function ConsultingPage() {
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Header />
       <section className="mx-auto max-w-5xl px-6 py-16 lg:px-10 lg:py-20">
         <Breadcrumbs
@@ -131,9 +158,14 @@ export default function ConsultingPage() {
                 key={service.title}
                 className="rounded-2xl border border-slate-200 bg-white p-7 shadow-[0_18px_45px_rgba(15,23,42,0.05)]"
               >
-                <h3 className="text-xl font-semibold tracking-[-0.02em] text-slate-950">
-                  {service.title}
-                </h3>
+                <div className="flex items-start justify-between gap-3">
+                  <h3 className="text-xl font-semibold tracking-[-0.02em] text-slate-950">
+                    {service.title}
+                  </h3>
+                  <span className="whitespace-nowrap rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-900">
+                    {service.rate}
+                  </span>
+                </div>
                 <p className="mt-2 text-sm font-medium text-cyan-800">{service.tagline}</p>
                 <p className="mt-4 text-base leading-7 text-slate-600">{service.body}</p>
                 <p className="mt-4 border-t border-slate-100 pt-4 text-sm leading-6 text-slate-500">
@@ -167,8 +199,9 @@ export default function ConsultingPage() {
           </div>
 
           <p className="mt-6 max-w-3xl text-sm leading-7 text-slate-500">
-            Rates are quoted per engagement based on scope and complexity. I'll send a written proposal after an
-            initial conversation. All engagements are covered by a mutual NDA before any tenant details are shared.
+            Rates shown above are indicative ranges in Canadian dollars, exclusive of GST/HST. Final quotes are
+            confirmed in writing after an initial scoping call. All engagements are covered by a mutual NDA before
+            any tenant details are shared. Non-profit, education, and public-sector discounts available on request.
           </p>
         </section>
 

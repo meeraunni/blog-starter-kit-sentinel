@@ -23,6 +23,7 @@ const navColumns = [
     heading: "Site",
     links: [
       { href: "/about", label: "About" },
+      { href: "/consulting", label: "Consulting" },
       { href: "/editorial-policy", label: "Editorial policy" },
       { href: "/contact", label: "Contact" },
     ],
@@ -33,6 +34,7 @@ const navColumns = [
       { href: "/privacy", label: "Privacy" },
       { href: "/terms", label: "Terms of Use" },
       { href: "/cookies", label: "Cookies" },
+      { href: "/affiliate-disclosure", label: "Affiliate disclosure" },
     ],
   },
 ];

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 export const metadata = {
-  title: "Archive",
+  title: "Consulting",
   robots: {
     index: false,
     follow: false,
@@ -9,5 +9,5 @@ export const metadata = {
 };
 
 export default function ServicesPage() {
-  redirect("/archive");
+  redirect("/consulting");
 }

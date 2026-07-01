@@ -5,7 +5,6 @@ import CommandPaletteWrapper from "@/app/_components/command-palette-wrapper";
 import { CMS_NAME } from "@/lib/constants";
 import { getSiteUrl } from "@/lib/site";
 import type { Metadata } from "next";
-import Script from "next/script";
 import { Manrope, Sora, JetBrains_Mono } from "next/font/google";
 import cn from "classnames";
 
@@ -99,12 +98,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9915553948229076"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
         <link
           rel="apple-touch-icon"
           sizes="180x180"

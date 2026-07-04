@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="AADSTS53003 diagnosis flow diagram">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b1220"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.06)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0.02)"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(8,145,178,0.18)"/>
+      <stop offset="100%" stop-color="rgba(8,145,178,0.06)"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <text x="72" y="92" font-family="system-ui, sans-serif" font-size="18" letter-spacing="6" fill="#67e8f9">ENTRA · CONDITIONAL ACCESS</text>
+  <text x="72" y="170" font-family="system-ui, sans-serif" font-size="58" font-weight="700" letter-spacing="-1.5" fill="#ffffff">AADSTS53003.</text>
+  <text x="72" y="216" font-family="system-ui, sans-serif" font-size="22" fill="#cbd5e1">Blocked by Conditional Access. Read the sign-in log to find out why.</text>
+
+  <g transform="translate(72,300)">
+    <rect width="260" height="180" rx="20" fill="url(#card)" stroke="rgba(255,255,255,0.15)"/>
+    <text x="22" y="36" font-family="system-ui, sans-serif" font-size="12" letter-spacing="3" fill="#67e8f9">1 · CATCH</text>
+    <text x="22" y="72" font-family="system-ui, sans-serif" font-size="20" font-weight="600" fill="#ffffff">Correlation ID</text>
+    <text x="22" y="106" font-family="system-ui, sans-serif" font-size="14" fill="#cbd5e1">From the user's</text>
+    <text x="22" y="128" font-family="system-ui, sans-serif" font-size="14" fill="#cbd5e1">error page</text>
+
+    <g transform="translate(280,0)">
+      <rect width="260" height="180" rx="20" fill="url(#card)" stroke="rgba(255,255,255,0.15)"/>
+      <text x="22" y="36" font-family="system-ui, sans-serif" font-size="12" letter-spacing="3" fill="#67e8f9">2 · LOOK</text>
+      <text x="22" y="72" font-family="system-ui, sans-serif" font-size="20" font-weight="600" fill="#ffffff">Sign-in logs</text>
+      <text x="22" y="106" font-family="system-ui, sans-serif" font-size="14" fill="#cbd5e1">CA tab shows which</text>
+      <text x="22" y="128" font-family="system-ui, sans-serif" font-size="14" fill="#cbd5e1">policy failed</text>
+    </g>
+
+    <g transform="translate(560,0)">
+      <rect width="260" height="180" rx="20" fill="url(#accent)" stroke="rgba(103,232,249,0.4)"/>
+      <text x="22" y="36" font-family="system-ui, sans-serif" font-size="12" letter-spacing="3" fill="#67e8f9">3 · MATCH</text>
+      <text x="22" y="72" font-family="system-ui, sans-serif" font-size="20" font-weight="600" fill="#ffffff">Grant vs auth</text>
+      <text x="22" y="106" font-family="system-ui, sans-serif" font-size="14" fill="#cbd5e1">What did policy want,</text>
+      <text x="22" y="128" font-family="system-ui, sans-serif" font-size="14" fill="#cbd5e1">what did user provide?</text>
+    </g>
+
+    <g transform="translate(840,0)">
+      <rect width="260" height="180" rx="20" fill="url(#card)" stroke="rgba(255,255,255,0.15)"/>
+      <text x="22" y="36" font-family="system-ui, sans-serif" font-size="12" letter-spacing="3" fill="#67e8f9">4 · FIX</text>
+      <text x="22" y="72" font-family="system-ui, sans-serif" font-size="20" font-weight="600" fill="#ffffff">Five patterns</text>
+      <text x="22" y="106" font-family="system-ui, sans-serif" font-size="14" fill="#cbd5e1">MFA · device · strength</text>
+      <text x="22" y="128" font-family="system-ui, sans-serif" font-size="14" fill="#cbd5e1">location · break-glass</text>
+    </g>
+  </g>
+
+  <text x="72" y="560" font-family="system-ui, sans-serif" font-size="14" letter-spacing="4" fill="#94a3b8">SENTINELIDENTITY.CA · MICROSOFT ENTRA REFERENCE</text>
+</svg>

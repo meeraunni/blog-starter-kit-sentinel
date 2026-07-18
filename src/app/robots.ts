@@ -5,6 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
+      disallow: ["/api/", "/thanks", "/unsubscribe"],
     },
     sitemap: "https://sentinelidentity.ca/sitemap.xml",
   };

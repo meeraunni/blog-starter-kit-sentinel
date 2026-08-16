@@ -23,6 +23,13 @@ export default function SubscribeForm() {
           placeholder="Name"
           className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-cyan-600 focus:bg-white"
         />
+        <div className="hidden" aria-hidden="true">
+          <label>Website<input type="text" name="website" tabIndex={-1} autoComplete="off" /></label>
+        </div>
+        <label className="flex items-start gap-3 text-xs leading-5 text-slate-600">
+          <input type="checkbox" name="consent" value="yes" required className="mt-1" />
+          <span>I agree to receive new-article emails and understand I can unsubscribe at any time.</span>
+        </label>
         <input
           type="email"
           required
@@ -37,6 +44,7 @@ export default function SubscribeForm() {
           Subscribe
         </button>
       </form>
+      <p className="mt-4 text-xs text-slate-500">We will email you a confirmation link before adding you.</p>
     </div>
   );
 }

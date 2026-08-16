@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-const LAST_UPDATED = "May 1, 2026";
+const LAST_UPDATED = "August 16, 2026";
 
 export default function PrivacyPage() {
   return (
@@ -46,10 +46,10 @@ export default function PrivacyPage() {
                 submit through our newsletter signup, contact form, or consulting request form.
               </li>
               <li>
-                <strong>Information collected automatically:</strong> IP address (truncated where possible),
-                user-agent string, referring URL, page paths visited, approximate location derived from IP, and
-                interaction events such as clicks and scroll depth — used for traffic measurement and to detect
-                abuse.
+                <strong>Information collected automatically:</strong> Page path, referring page path, and a
+                one-day pseudonymous visitor identifier created with a keyed hash of the IP address and a shortened
+                user-agent string. The raw IP address and user-agent are not written to the analytics database.
+                The daily identifier is used for aggregate traffic measurement and cannot be linked across days.
               </li>
               <li>
                 <strong>Cookies and similar technologies:</strong> See Section 4 below and our{" "}
@@ -146,7 +146,7 @@ export default function PrivacyPage() {
               <li>Newsletter contact records: retained until you unsubscribe, plus a short suppression period to prevent re-adds.</li>
               <li>Contact and consulting form messages: retained for up to 24 months for follow-up, then deleted.</li>
               <li>Server access logs: retained by Vercel for the period stated in its policy (typically 30 days).</li>
-              <li>Aggregate analytics: retained for up to 26 months.</li>
+              <li>Page-view records containing daily pseudonymous identifiers: retained for up to 26 months.</li>
             </ul>
           </section>
 

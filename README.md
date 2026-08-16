@@ -1,72 +1,83 @@
-# A statically generated blog example using Next.js, Markdown, and TypeScript
+# Sentinel Identity
 
-This is the existing [blog-starter](https://github.com/vercel/next.js/tree/canary/examples/blog-starter) plus TypeScript.
+Production source for [sentinelidentity.ca](https://sentinelidentity.ca), an independent technical publication covering Microsoft Entra ID, Microsoft 365, Active Directory, authentication, Conditional Access, passkeys, and Windows DNS.
 
-This example showcases Next.js's [Static Generation](https://nextjs.org/docs/app/building-your-application/routing/layouts-and-templates) feature using Markdown files as the data source.
+## Stack
 
-The blog posts are stored in `/_posts` as Markdown files with front matter support. Adding a new Markdown file in there will create a new blog post.
+- Next.js App Router, React, and TypeScript
+- Tailwind CSS
+- Markdown articles in `_posts/`
+- Resend for verified newsletter subscriptions and contact email
+- Neon Postgres for privacy-conscious first-party analytics and article feedback
 
-To create the blog posts we use [`remark`](https://github.com/remarkjs/remark) and [`remark-html`](https://github.com/remarkjs/remark-html) to convert the Markdown files into an HTML string, and then send it down as a prop to the page. The metadata of every post is handled by [`gray-matter`](https://github.com/jonschlinkert/gray-matter) and also sent in props to the page.
-
-## Demo
-
-[https://next-blog-starter.vercel.app/](https://next-blog-starter.vercel.app/)
-
-## Deploy your own
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/next.js/tree/canary/examples/blog-starter&project-name=blog-starter&repository-name=blog-starter)
-
-### Related examples
-
-- [AgilityCMS](/examples/cms-agilitycms)
-- [Builder.io](/examples/cms-builder-io)
-- [ButterCMS](/examples/cms-buttercms)
-- [Contentful](/examples/cms-contentful)
-- [Cosmic](/examples/cms-cosmic)
-- [DatoCMS](/examples/cms-datocms)
-- [DotCMS](/examples/cms-dotcms)
-- [Drupal](/examples/cms-drupal)
-- [Enterspeed](/examples/cms-enterspeed)
-- [Ghost](/examples/cms-ghost)
-- [GraphCMS](/examples/cms-graphcms)
-- [Kontent.ai](/examples/cms-kontent-ai)
-- [MakeSwift](/examples/cms-makeswift)
-- [Payload](/examples/cms-payload)
-- [Plasmic](/examples/cms-plasmic)
-- [Prepr](/examples/cms-prepr)
-- [Prismic](/examples/cms-prismic)
-- [Sanity](/examples/cms-sanity)
-- [Sitecore XM Cloud](/examples/cms-sitecore-xmcloud)
-- [Sitefinity](/examples/cms-sitefinity)
-- [Storyblok](/examples/cms-storyblok)
-- [TakeShape](/examples/cms-takeshape)
-- [Tina](/examples/cms-tina)
-- [Umbraco](/examples/cms-umbraco)
-- [Umbraco heartcore](/examples/cms-umbraco-heartcore)
-- [Webiny](/examples/cms-webiny)
-- [WordPress](/examples/cms-wordpress)
-- [Blog Starter](/examples/blog-starter)
-
-## How to use
-
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
+## Local development
 
 ```bash
-npx create-next-app --example blog-starter blog-starter-app
+npm install
+cp .env.example .env.local
+npm run dev
 ```
+
+Open `http://localhost:3000`. Production builds are checked with:
 
 ```bash
-yarn create next-app --example blog-starter blog-starter-app
+npm run build
 ```
 
-```bash
-pnpm create next-app --example blog-starter blog-starter-app
+## Publishing an article
+
+Add a Markdown file to `_posts/` with the existing frontmatter shape. Use `date` for initial publication and optional `updated` when a material revision is published. The filename becomes the article slug.
+
+```yaml
+---
+title: "Article title"
+excerpt: "Concise search and social description."
+date: "2026-08-16"
+updated: "2026-08-20"
+coverImage: "/assets/blog/example/diagram.svg"
+author:
+  name: "MU.A"
+  picture: "/assets/blog/authors/joe.jpeg"
+ogImage:
+  url: "/assets/blog/example/diagram.svg"
+---
 ```
 
-Your blog should be up and running on [http://localhost:3000](http://localhost:3000)! If it doesn't work, post on [GitHub discussions](https://github.com/vercel/next.js/discussions).
+Before publishing, verify commands and product behavior against primary documentation, check internal links, and follow the public editorial policy.
 
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
+## Environment variables
 
-# Notes
+See `.env.example`. Important production-only values include:
 
-`blog-starter` uses [Tailwind CSS](https://tailwindcss.com) [(v3.0)](https://tailwindcss.com/blog/tailwindcss-v3).
+- `RESEND_API_KEY`, `RESEND_AUDIENCE_ID`, and `RESEND_SEGMENT_ID`
+- `NEWSLETTER_TOKEN_SECRET`: at least 32 random characters, used for confirmation and unsubscribe links
+- `DATABASE_URL`
+- `ANALYTICS_HASH_SECRET`: a separate random secret used to create rotating visitor identifiers
+- `CRON_SECRET`: protects scheduled analytics and newsletter endpoints
+- `SITE_URL`: canonical production origin
+
+Never commit `.env.local` or production secrets.
+
+## Newsletter behavior
+
+Subscriptions use double opt-in. A visitor submits the form, receives a signed 48-hour confirmation link, and is added to the Resend audience only after confirming. Unsubscribe links are signed and long-lived. Form routes also validate origin, input length, email syntax, a honeypot, and a lightweight per-instance request limit.
+
+## Site architecture
+
+- `src/app/`: pages, metadata, feeds, and route handlers
+- `src/app/_components/`: shared UI
+- `src/lib/`: article loading, taxonomy, newsletter, analytics, and formatting
+- `_posts/`: Markdown article library
+- `public/assets/blog/`: article diagrams and images
+
+The homepage sends metadata-only article summaries to client-side search and progressively reveals results, keeping full Markdown bodies on article routes.
+
+## Deployment checklist
+
+1. Run `npm run build`.
+2. Confirm all required environment variables are configured in the hosting platform.
+3. Test subscription confirmation and unsubscribe links against the production origin.
+4. Check `/robots.txt`, `/sitemap.xml`, `/feed.xml`, and a representative article’s social preview.
+5. Review the git diff and deploy from the intended commit.
+
+Newsletter broadcasts are never triggered by page views. After publishing, call `POST /api/newsletter/sync` with `Authorization: Bearer $CRON_SECRET` and JSON `{ "slug": "the-published-article-slug" }` exactly once.

@@ -1,23 +1,25 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Suspense } from "react";
 import Header from "@/app/_components/header";
 import HomeHero from "@/app/_components/home-hero";
 import TopicGrid from "@/app/_components/topic-grid";
 import SearchablePosts from "@/app/_components/searchable-posts";
-import { getAllPosts } from "@/lib/api";
+import SubscribeForm from "@/app/_components/subscribe-form";
+import StartHere from "@/app/_components/start-here";
+import { getAllPosts, getAllPostSummaries } from "@/lib/api";
 import { CMS_NAME } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: {
-    absolute: `${CMS_NAME} — Microsoft Entra & Microsoft 365 articles`,
+    absolute: `${CMS_NAME} — Microsoft identity & infrastructure guidance`,
   },
   description:
-    "Articles on Microsoft Entra ID, Microsoft 365, Conditional Access, passkeys, hybrid identity, and DNS — written for IT admins and engineers.",
+    "Practical guidance on Microsoft Entra ID, Active Directory, Microsoft 365, Conditional Access, passkeys, hybrid identity, and Windows DNS.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: `${CMS_NAME} — Microsoft Entra & Microsoft 365 articles`,
+    title: `${CMS_NAME} — Microsoft identity & infrastructure guidance`,
     description:
-      "Articles on Microsoft Entra and Microsoft 365 for IT admins and engineers.",
+      "Practical Microsoft identity and infrastructure guidance for IT admins and engineers.",
     url: "/",
     type: "website",
   },
@@ -25,14 +27,20 @@ export const metadata: Metadata = {
 
 export default async function Index() {
   const allPosts = getAllPosts();
+  const summaries = getAllPostSummaries();
 
   return (
     <main>
       <Header />
       <HomeHero postCount={allPosts.length} />
+      <StartHere />
       <TopicGrid posts={allPosts} />
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
-        {allPosts.length > 0 && <SearchablePosts posts={allPosts} />}
+        {summaries.length > 0 && (
+          <Suspense fallback={<div className="py-16 text-sm text-slate-500">Loading article index…</div>}>
+            <SearchablePosts posts={summaries} />
+          </Suspense>
+        )}
       </div>
 
       <section className="border-t border-stone-200 bg-[#fbfaf7]">
@@ -43,28 +51,7 @@ export default async function Index() {
           <p className="mt-3 text-base leading-7 text-slate-600">
             Get notified when a new article goes up. No marketing, no third-party lists.
           </p>
-          <form action="/api/subscribe" method="POST" className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <input
-              type="email"
-              required
-              name="email"
-              placeholder="you@example.com"
-              className="w-full rounded-full border border-slate-200 bg-white px-5 py-3 text-base text-slate-900 outline-none transition focus:border-cyan-700 sm:w-80"
-            />
-            <button
-              type="submit"
-              className="inline-flex items-center justify-center rounded-full bg-slate-950 px-6 py-3 text-sm font-semibold text-white transition hover:bg-cyan-900"
-            >
-              Subscribe
-            </button>
-          </form>
-          <p className="mt-4 text-xs text-slate-500">
-            One email per new article. Unsubscribe anytime. See our{" "}
-            <Link href="/privacy" className="underline hover:text-slate-900">
-              privacy policy
-            </Link>
-            .
-          </p>
+          <div className="mx-auto mt-6 max-w-xl text-left"><SubscribeForm /></div>
         </div>
       </section>
     </main>

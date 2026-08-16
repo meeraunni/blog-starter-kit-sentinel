@@ -9,6 +9,13 @@ type TopicRule = {
 
 const TOPIC_RULES: TopicRule[] = [
   {
+    label: "Active Directory",
+    slug: "active-directory",
+    description:
+      "Windows Server identity, domain controllers, AD Sites, replication, home labs, and hybrid foundations.",
+    matchers: [/active directory/i, /domain controller/i, /windows server/i, /ad sites/i],
+  },
+  {
     label: "Authentication",
     slug: "authentication",
     description:

@@ -61,7 +61,7 @@ export default async function Post(props: Params) {
     headline: post.title,
     description: post.excerpt,
     datePublished: post.date,
-    dateModified: post.date,
+    dateModified: post.updated || post.date,
     author: personSchema(author),
     publisher: {
       "@type": "Organization",
@@ -105,6 +105,7 @@ export default async function Post(props: Params) {
             excerpt={post.excerpt}
             coverImage={post.coverImage}
             date={post.date}
+            updated={post.updated}
             readingTime={readingTime}
             author={post.author}
           />
@@ -189,6 +190,10 @@ export async function generateMetadata(props: Params): Promise<Metadata> {
       title,
       description: post.excerpt,
       type: "article",
+      publishedTime: post.date,
+      modifiedTime: post.updated || post.date,
+      authors: [getBaseUrl(`/author/${resolveAuthor(post.author?.name).slug}`)],
+      tags: getPostTopics(post),
       url: getBaseUrl(`/posts/${post.slug}`),
       images: [post.ogImage.url],
     },

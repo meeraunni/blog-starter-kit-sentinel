@@ -1,5 +1,4 @@
 import Footer from "@/app/_components/footer";
-import NewsletterSync from "@/app/_components/newsletter-sync";
 import VisitorTracker from "@/app/_components/visitor-tracker";
 import CommandPaletteWrapper from "@/app/_components/command-palette-wrapper";
 import { CMS_NAME } from "@/lib/constants";
@@ -72,7 +71,6 @@ export default function RootLayout({
     name: "Sentinel Identity",
     url: "https://sentinelidentity.ca",
     email: "info@sentinelidentity.ca",
-    sameAs: ["https://sentinelidentity.ca"],
     founder: {
       "@type": "Person",
       name: "MU.A",
@@ -153,7 +151,6 @@ export default function RootLayout({
           "min-h-screen antialiased",
         )}
       >
-        <NewsletterSync />
         <VisitorTracker />
         <CommandPaletteWrapper />
         <div className="min-h-screen">{children}</div>

@@ -8,11 +8,11 @@ export default function HomeHero({ postCount }: { postCount: number }) {
           Sentinel Identity
         </p>
         <h1 className="mt-4 text-4xl font-semibold leading-[1.1] tracking-[-0.03em] text-slate-950 dark:text-slate-50 md:text-5xl">
-          Microsoft Entra and Microsoft 365 articles for IT teams.
+          Microsoft identity and infrastructure guidance for IT teams.
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-300">
-          Troubleshooting, architecture notes, and how-to guides for admins working with
-          Conditional Access, MFA, passkeys, hybrid identity, shared mailboxes, and DNS.
+          Practical troubleshooting, architecture notes, and implementation guides for Microsoft Entra,
+          Active Directory, Microsoft 365, Conditional Access, passkeys, and Windows DNS.
         </p>
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <Link

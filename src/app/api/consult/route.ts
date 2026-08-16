@@ -1,18 +1,20 @@
 import { NextResponse } from "next/server";
 import { sendConsultingRequestEmail } from "@/lib/newsletter";
-
-function sanitize(value: unknown) {
-  return typeof value === "string" ? value.trim() : "";
-}
+import { cleanFormValue, isTrustedFormRequest, isValidEmail } from "@/lib/form-security";
 
 export async function POST(request: Request) {
   const formData = await request.formData();
-  const name = sanitize(formData.get("name"));
-  const company = sanitize(formData.get("company"));
-  const email = sanitize(formData.get("email"));
-  const challenge = sanitize(formData.get("challenge"));
+  const name = cleanFormValue(formData.get("name"), 100);
+  const company = cleanFormValue(formData.get("company"), 160);
+  const email = cleanFormValue(formData.get("email"), 254).toLowerCase();
+  const challenge = cleanFormValue(formData.get("challenge"), 5000);
+  const honeypot = cleanFormValue(formData.get("website"), 120);
 
-  if (!name || !email || !challenge) {
+  if (honeypot) {
+    return NextResponse.redirect(new URL("/thanks?form=assessment&status=success", request.url));
+  }
+
+  if (!name || !isValidEmail(email) || !challenge || !(await isTrustedFormRequest(request))) {
     return NextResponse.redirect(new URL("/thanks?form=assessment&status=error", request.url));
   }
 
@@ -26,7 +28,6 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Consult form delivery failed", {
       message: error instanceof Error ? error.message : "Unknown error",
-      email,
     });
     return NextResponse.redirect(new URL("/thanks?form=assessment&status=error", request.url));
   }

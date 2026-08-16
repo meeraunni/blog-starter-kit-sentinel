@@ -8,6 +8,7 @@ type Props = {
   excerpt: string;
   coverImage: string;
   date: string;
+  updated?: string;
   readingTime: number;
   author: {
     name: string;
@@ -20,6 +21,7 @@ export function PostHeader({
   excerpt,
   coverImage,
   date,
+  updated,
   readingTime,
   author,
 }: Props) {
@@ -42,8 +44,11 @@ export function PostHeader({
 
           <div className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500 md:text-right">
             <div>
-              <DateFormatter dateString={date} />
+              Published <DateFormatter dateString={date} />
             </div>
+            {updated && updated !== date && (
+              <div className="mt-2">Updated <DateFormatter dateString={updated} /></div>
+            )}
             <div className="mt-2">{readingTime} min read</div>
           </div>
         </div>

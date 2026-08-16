@@ -1,24 +1,21 @@
 import { NextResponse } from "next/server";
 import { sendContactEmail } from "@/lib/newsletter";
-
-function sanitize(value: unknown) {
-  return typeof value === "string" ? value.trim() : "";
-}
+import { cleanFormValue, isTrustedFormRequest, isValidEmail } from "@/lib/form-security";
 
 export async function POST(request: Request) {
   const formData = await request.formData();
-  const name = sanitize(formData.get("name"));
-  const email = sanitize(formData.get("email"));
-  const subject = sanitize(formData.get("subject"));
-  const message = sanitize(formData.get("message"));
+  const name = cleanFormValue(formData.get("name"), 100);
+  const email = cleanFormValue(formData.get("email"), 254).toLowerCase();
+  const subject = cleanFormValue(formData.get("subject"), 160);
+  const message = cleanFormValue(formData.get("message"), 5000);
   // Honeypot — bots tend to fill hidden fields. If present, silently succeed.
-  const honeypot = sanitize(formData.get("website"));
+  const honeypot = cleanFormValue(formData.get("website"), 120);
 
   if (honeypot) {
     return NextResponse.redirect(new URL("/thanks?form=contact&status=success", request.url));
   }
 
-  if (!name || !email || !message) {
+  if (!name || !isValidEmail(email) || !message || !(await isTrustedFormRequest(request))) {
     return NextResponse.redirect(new URL("/thanks?form=contact&status=error", request.url));
   }
 
@@ -27,7 +24,6 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Contact form delivery failed", {
       message: error instanceof Error ? error.message : "Unknown error",
-      email,
     });
     return NextResponse.redirect(new URL("/thanks?form=contact&status=error", request.url));
   }

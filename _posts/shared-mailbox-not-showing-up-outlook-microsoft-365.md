@@ -1,6 +1,6 @@
 ---
-title: "The Shared Mailbox Just Isn't There: Why Outlook Refuses To Show It, and What Actually Fixes It"
-excerpt: "Full Access was granted three days ago, other people see the mailbox, this one user doesn't. Restart didn't help. Patience didn't help. The fix the help-desk article suggests is to rebuild the profile, which works often enough that everyone accepts it as the answer. That isn't the actual answer. Here's what is."
+title: "Outlook Shared Mailbox Auto-Mapping Not Working: Causes, Diagnostics, and Fixes"
+excerpt: "A focused guide to shared-mailbox auto-mapping: how Autodiscover exposes additional mailboxes, why group-based permissions and AutoMapping:$false prevent discovery, and how to repair the client state without unnecessary OST deletion."
 coverImage: "/assets/blog/shared-mailbox-not-showing-up-outlook-microsoft-365/diagram.svg"
 date: "2026-05-18T09:00:00.000Z"
 author:

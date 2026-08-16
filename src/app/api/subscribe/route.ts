@@ -1,29 +1,30 @@
 import { NextResponse } from "next/server";
-import { registerSubscriber, sendSubscriptionConfirmation } from "@/lib/newsletter";
-
-function sanitize(value: unknown) {
-  return typeof value === "string" ? value.trim() : "";
-}
+import { sendSubscriptionVerification } from "@/lib/newsletter";
+import { cleanFormValue, isTrustedFormRequest, isValidEmail } from "@/lib/form-security";
 
 export async function POST(request: Request) {
   const formData = await request.formData();
-  const email = sanitize(formData.get("email"));
-  const name = sanitize(formData.get("name"));
+  const email = cleanFormValue(formData.get("email"), 254).toLowerCase();
+  const name = cleanFormValue(formData.get("name"), 80);
+  const honeypot = cleanFormValue(formData.get("website"), 120);
+  const consent = formData.get("consent") === "yes";
 
-  if (!email) {
+  if (honeypot) {
+    return NextResponse.redirect(new URL("/thanks?form=subscribe&status=pending", request.url));
+  }
+
+  if (!consent || !isValidEmail(email) || !(await isTrustedFormRequest(request))) {
     return NextResponse.redirect(new URL("/thanks?form=subscribe&status=error", request.url));
   }
 
   try {
-    const subscriber = await registerSubscriber(email, name);
-    await sendSubscriptionConfirmation(subscriber);
+    await sendSubscriptionVerification({ email, firstName: name || undefined });
   } catch (error) {
     console.error("Subscribe form delivery failed", {
       message: error instanceof Error ? error.message : "Unknown error",
-      email,
     });
     return NextResponse.redirect(new URL("/thanks?form=subscribe&status=error", request.url));
   }
 
-  return NextResponse.redirect(new URL("/thanks?form=subscribe&status=success", request.url));
+  return NextResponse.redirect(new URL("/thanks?form=subscribe&status=pending", request.url));
 }

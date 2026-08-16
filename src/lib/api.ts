@@ -1,4 +1,6 @@
 import { Post } from "@/interfaces/post";
+import { PostSummary } from "@/interfaces/post";
+import { getPostTopics } from "@/lib/post-taxonomy";
 import fs from "fs";
 import matter from "gray-matter";
 import { join } from "path";
@@ -25,4 +27,16 @@ export function getAllPosts(): Post[] {
     // sort posts by date in descending order
     .sort((post1, post2) => (post1.date > post2.date ? -1 : 1));
   return posts;
+}
+
+export function getAllPostSummaries(): PostSummary[] {
+  return getAllPosts().map((post) => ({
+    slug: post.slug,
+    title: post.title,
+    date: post.date,
+    updated: post.updated,
+    excerpt: post.excerpt,
+    author: post.author,
+    topics: getPostTopics(post),
+  }));
 }

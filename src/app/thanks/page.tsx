@@ -16,7 +16,8 @@ type Props = {
   }>;
 };
 
-function getCopy(form: string | undefined, isError: boolean) {
+function getCopy(form: string | undefined, status: string | undefined) {
+  const isError = status === "error";
   if (form === "assessment") {
     return isError
       ? {
@@ -41,6 +42,10 @@ function getCopy(form: string | undefined, isError: boolean) {
         };
   }
 
+  if (status === "confirmed") {
+    return { heading: "Your subscription is confirmed.", body: "You will receive an email when a new Sentinel Identity article is published." };
+  }
+
   return isError
     ? {
         heading: "We could not complete your subscription yet.",
@@ -55,7 +60,7 @@ function getCopy(form: string | undefined, isError: boolean) {
 export default async function ThanksPage({ searchParams }: Props) {
   const params = await searchParams;
   const isError = params.status === "error";
-  const copy = getCopy(params.form, isError);
+  const copy = getCopy(params.form, params.status);
 
   return (
     <main>

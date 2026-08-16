@@ -1,22 +1,29 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Post } from "@/interfaces/post";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { PostSummary } from "@/interfaces/post";
 import { MoreStories } from "./more-stories";
 
 type Props = {
-  posts: Post[];
+  posts: PostSummary[];
 };
 
+const PAGE_SIZE = 12;
+
 export default function SearchablePosts({ posts }: Props) {
-  const [query, setQuery] = useState("");
+  const searchParams = useSearchParams();
+  const [query, setQuery] = useState(() => searchParams.get("q") || "");
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+  useEffect(() => setVisibleCount(PAGE_SIZE), [query]);
 
   const filteredPosts = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     if (!normalizedQuery) return posts;
 
     return posts.filter((post) => {
-      const haystack = [post.title, post.excerpt, post.slug, post.author?.name, post.content]
+      const haystack = [post.title, post.excerpt, post.slug, post.author?.name, ...post.topics]
         .filter(Boolean)
         .join(" ")
         .toLowerCase();
@@ -46,7 +53,16 @@ export default function SearchablePosts({ posts }: Props) {
       </div>
 
       {filteredPosts.length > 0 ? (
-        <MoreStories posts={filteredPosts} query={query} />
+        <>
+          <MoreStories posts={filteredPosts.slice(0, visibleCount)} query={query} />
+          {visibleCount < filteredPosts.length && (
+            <div className="mt-8 text-center">
+              <button type="button" onClick={() => setVisibleCount((count) => count + PAGE_SIZE)} className="rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-900 transition hover:border-slate-950">
+                Show more articles ({filteredPosts.length - visibleCount} remaining)
+              </button>
+            </div>
+          )}
+        </>
       ) : (
         <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center dark:border-slate-800 dark:bg-slate-900">
           <p className="text-base text-slate-600 dark:text-slate-300">

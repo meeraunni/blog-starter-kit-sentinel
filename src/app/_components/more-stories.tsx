@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { Fragment, ReactNode } from "react";
-import { Post } from "@/interfaces/post";
+import { PostSummary } from "@/interfaces/post";
 import DateFormatter from "./date-formatter";
-import { getPostTopics, getTopicByLabel } from "@/lib/post-taxonomy";
+import { getTopicByLabel } from "@/lib/post-taxonomy";
 
 type Props = {
-  posts: Post[];
+  posts: PostSummary[];
   query?: string;
 };
 
@@ -33,7 +33,7 @@ export function MoreStories({ posts, query }: Props) {
   return (
     <ul className="divide-y divide-stone-200 border-y border-stone-200 dark:divide-slate-800 dark:border-slate-800">
       {posts.map((post) => {
-        const topics = getPostTopics(post).slice(0, 2);
+        const topics = post.topics.slice(0, 2);
         return (
           <li key={post.slug} className="py-6">
             <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">

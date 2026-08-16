@@ -48,7 +48,7 @@ function getReportTimeZone() {
 }
 
 export function analyticsReady() {
-  return Boolean(process.env.DATABASE_URL);
+  return Boolean(process.env.DATABASE_URL && process.env.ANALYTICS_HASH_SECRET);
 }
 
 function formatDateInTimeZone(date: Date, timeZone = getReportTimeZone()) {
@@ -74,7 +74,9 @@ export function createVisitorHash(values: {
   date: string;
 }) {
   const normalizedUa = values.userAgent.slice(0, 180);
-  return crypto.createHash("sha256").update(`${values.date}:${values.ip}:${normalizedUa}`).digest("hex");
+  const secret = process.env.ANALYTICS_HASH_SECRET;
+  if (!secret) throw new Error("Missing ANALYTICS_HASH_SECRET");
+  return crypto.createHmac("sha256", secret).update(`${values.date}:${values.ip}:${normalizedUa}`).digest("hex");
 }
 
 export function isBot(userAgent: string) {

@@ -2,7 +2,7 @@
 title: "25 Active Directory Interview Questions and Answers"
 excerpt: "Twenty-five practical Active Directory interview questions with clear, technically accurate answers covering AD DS, DNS, Kerberos, replication, Group Policy, recovery, and security."
 coverImage: "/assets/blog/active-directory-interview-questions/cover.svg"
-date: "2026-08-25T13:00:00.000Z"
+date: "2026-08-24T23:17:12.000Z"
 author:
   name: "Sentinel Identity"
 ogImage:

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">25 Active Directory Interview Questions and Answers</title>
+  <desc id="desc">A dark editorial cover with connected directory nodes and the article title.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07111f"/>
+      <stop offset="1" stop-color="#101b34"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#58c7ff"/>
+      <stop offset="1" stop-color="#8d7cff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <circle cx="1390" cy="130" r="330" fill="#132b4d" opacity=".42"/>
+  <g stroke="#58c7ff" stroke-width="4" opacity=".5">
+    <path d="M1215 246v120M1080 485h270M1080 485v125M1350 485v125"/>
+  </g>
+  <g fill="#101b34" stroke="url(#accent)" stroke-width="5">
+    <rect x="1120" y="155" width="190" height="92" rx="18"/>
+    <rect x="985" y="394" width="190" height="92" rx="18"/>
+    <rect x="1255" y="394" width="190" height="92" rx="18"/>
+    <rect x="985" y="610" width="190" height="92" rx="18"/>
+    <rect x="1255" y="610" width="190" height="92" rx="18"/>
+  </g>
+  <text x="120" y="190" fill="#58c7ff" font-family="Inter,Arial,sans-serif" font-size="28" font-weight="700" letter-spacing="7">SENTINEL IDENTITY</text>
+  <text x="120" y="370" fill="#ffffff" font-family="Inter,Arial,sans-serif" font-size="170" font-weight="800">25</text>
+  <text x="120" y="505" fill="#ffffff" font-family="Inter,Arial,sans-serif" font-size="76" font-weight="750">ACTIVE DIRECTORY</text>
+  <text x="120" y="610" fill="#ffffff" font-family="Inter,Arial,sans-serif" font-size="76" font-weight="750">INTERVIEW QUESTIONS</text>
+  <text x="120" y="705" fill="#aebbd0" font-family="Inter,Arial,sans-serif" font-size="43">Practical answers for administrators</text>
+</svg>

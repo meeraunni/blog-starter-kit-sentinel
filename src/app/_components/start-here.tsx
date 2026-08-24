@@ -22,13 +22,13 @@ export default function StartHere() {
   return (
     <section aria-labelledby="start-here-heading" className="border-b border-stone-200 bg-slate-950 text-white">
       <div className="mx-auto max-w-7xl px-6 py-12 lg:px-10">
-        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">New to the library?</p>
-        <h2 id="start-here-heading" className="mt-3 text-2xl font-semibold tracking-[-0.03em] md:text-3xl">Start with a foundation guide.</h2>
+        <p className="text-xs font-semibold uppercase tracking-[0.28em] !text-cyan-300">New to the library?</p>
+        <h2 id="start-here-heading" className="mt-3 text-2xl font-semibold tracking-[-0.03em] !text-white md:text-3xl">Start with a foundation guide.</h2>
         <div className="mt-7 grid gap-4 md:grid-cols-3">
           {GUIDES.map((guide) => (
-            <Link key={guide.href} href={guide.href} className="rounded-2xl border border-white/15 bg-white/5 p-5 transition hover:border-cyan-300 hover:bg-white/10">
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-300">{guide.label}</span>
-              <span className="mt-3 block text-lg font-semibold leading-7">{guide.title} →</span>
+            <Link key={guide.href} href={guide.href} className="rounded-2xl border border-white/20 bg-white/[0.07] p-5 transition hover:border-cyan-300 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cyan-300">
+              <span className="text-xs font-semibold uppercase tracking-[0.18em] !text-cyan-300">{guide.label}</span>
+              <span className="mt-3 block text-lg font-semibold leading-7 text-white">{guide.title} →</span>
             </Link>
           ))}
         </div>

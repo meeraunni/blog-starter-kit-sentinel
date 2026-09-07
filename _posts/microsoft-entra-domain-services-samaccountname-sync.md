@@ -2,7 +2,7 @@
 title: "Microsoft Entra Domain Services SAM Account Name Sync"
 excerpt: "Pilot Microsoft Entra Domain Services SAM account name sync safely: verify Active Directory source names, test legacy authentication, and monitor convergence."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-09-07T04:04:00-04:00"
+date: "2026-09-07T10:57:00-04:00"
 author:
   name: "MU.A"
 ogImage:

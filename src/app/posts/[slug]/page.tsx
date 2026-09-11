@@ -129,7 +129,7 @@ export default async function Post(props: Params) {
           </div>
 
           <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
-            <div>
+            <div className="min-w-0">
               <PostBody content={content} />
               <CopyCodeButtons />
               <AuthorBio author={author} />

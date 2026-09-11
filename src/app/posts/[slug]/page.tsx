@@ -2,7 +2,6 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getAllPosts, getPostBySlug } from "@/lib/api";
-import { CMS_NAME } from "@/lib/constants";
 import markdownToHtml from "@/lib/markdownToHtml";
 import { estimateReadingTime, extractTableOfContents } from "@/lib/post-format";
 import { getBaseUrl } from "@/lib/site";
@@ -178,7 +177,7 @@ export async function generateMetadata(props: Params): Promise<Metadata> {
     return notFound();
   }
 
-  const title = `${post.title} | ${CMS_NAME}`;
+  const title = post.title;
 
   return {
     title,

@@ -25,6 +25,7 @@ import CopyCodeButtons from "@/app/_components/copy-code";
 import AuthorBio from "@/app/_components/author-bio";
 import ReadingProgress from "@/app/_components/reading-progress";
 import BackToTop from "@/app/_components/back-to-top";
+import ArticleRevenuePaths from "@/app/_components/article-revenue-paths";
 import { personSchema, resolveAuthor } from "@/lib/authors";
 
 type Params = {
@@ -131,6 +132,7 @@ export default async function Post(props: Params) {
             <div className="min-w-0">
               <PostBody content={content} />
               <CopyCodeButtons />
+              <ArticleRevenuePaths currentSlug={post.slug} topics={postTopics} />
               <AuthorBio author={author} />
               <ArticleFeedback slug={post.slug} />
               <PrevNextNav previous={previous} next={next} />

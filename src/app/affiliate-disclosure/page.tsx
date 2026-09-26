@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-const LAST_UPDATED = "June 20, 2026";
+const LAST_UPDATED = "September 26, 2026";
 
 export default function AffiliateDisclosurePage() {
   return (
@@ -38,9 +38,13 @@ export default function AffiliateDisclosurePage() {
         <div className="mt-10 space-y-10 text-base leading-8 text-slate-600">
           <p>
             Sentinel Identity is a publication maintained by a working practitioner. To help sustain the writing
-            and keep articles free to read, the site participates in a small number of affiliate programs. This page
-            explains what that means, which programs the site currently participates in, and the guardrails that
+            and keep articles free to read, the site participates in an affiliate program. This page explains what
+            that means, which program the site currently participates in, and the guardrails that
             keep affiliate relationships from influencing what gets written.
+          </p>
+
+          <p className="rounded-2xl border-l-4 border-cyan-700 bg-cyan-50/70 px-6 py-5 font-semibold text-slate-800">
+            As an Amazon Associate I earn from qualifying purchases.
           </p>
 
           <section>
@@ -48,9 +52,9 @@ export default function AffiliateDisclosurePage() {
             <p className="mt-4">
               An affiliate link is a URL that includes a tracking identifier so that the retailer or software vendor
               can attribute a sale back to the referring site. When a reader clicks an affiliate link and later makes
-              a purchase, the retailer pays Sentinel Identity a small commission (typically between three and thirty
-              percent depending on the program). The commission is paid by the retailer out of their existing margin —
-              the reader pays exactly the same price they would if they had reached the retailer directly.
+              a qualifying purchase, the retailer may pay Sentinel Identity a commission. The program and product
+              category determine the commission rate. The reader pays the same price they would if they had reached
+              the retailer directly.
             </p>
           </section>
 
@@ -61,7 +65,8 @@ export default function AffiliateDisclosurePage() {
               <code className="rounded bg-slate-100 px-1.5 py-0.5 text-sm">rel=&quot;sponsored&quot;</code>, which is
               the standard signal to search engines and readers that the link is a paid relationship. Where an entire
               post or section relies on affiliate revenue, a visible disclosure appears at the top of the article. The
-              disclosure is not buried in the footer or hidden behind a link.
+              disclosure is not buried in the footer or hidden behind a link. Amazon product links are also labelled
+              as paid links beside the action.
             </p>
           </section>
 
@@ -78,8 +83,9 @@ export default function AffiliateDisclosurePage() {
             </p>
             <ul className="mt-4 list-disc space-y-3 pl-6">
               <li>
-                <strong>Amazon Associates (Canada, US, UK).</strong> Small referral commission on physical goods
-                (hardware, books, FIDO2 security keys) linked from technical posts.
+                <strong>Amazon Associates Canada.</strong> Sentinel Identity may earn a referral commission on
+                qualifying purchases of physical goods such as hardware, books, and FIDO2 security keys linked from
+                technical posts.
               </li>
               <li>
                 <strong>Reserved for future certification-vendor partnerships.</strong> If the site adds an affiliate

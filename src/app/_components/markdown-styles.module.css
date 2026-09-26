@@ -46,6 +46,16 @@
   word-break: break-word;
 }
 
+.markdown a[href^="https://www.amazon.ca/"] {
+  @apply my-2 inline-flex items-center rounded-xl bg-slate-950 px-4 py-3 font-semibold text-white no-underline shadow-sm transition-colors hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-700 focus:ring-offset-2;
+  word-break: normal;
+}
+
+.markdown a[href^="https://www.amazon.ca/"]::after {
+  content: "\2197";
+  @apply ml-2 text-sm;
+}
+
 .markdown img + em,
 .markdown p + em {
   @apply block text-sm leading-7 text-slate-500;

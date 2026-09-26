@@ -112,6 +112,14 @@ function escapeAttr(value: string) {
 }
 
 const CODE_BLOCK_REGEX = /<pre><code(?:\s+class="language-(\w+)")?>([\s\S]*?)<\/code><\/pre>/g;
+const AMAZON_CA_LINK_REGEX = /<a href="(https:\/\/www\.amazon\.ca\/[^\"]+)">/g;
+
+function decorateAffiliateLinks(input: string) {
+  return input.replace(
+    AMAZON_CA_LINK_REGEX,
+    '<a href="$1" target="_blank" rel="sponsored nofollow noopener">',
+  );
+}
 
 async function highlightCodeBlocks(input: string): Promise<string> {
   const matches = Array.from(input.matchAll(CODE_BLOCK_REGEX));
@@ -161,6 +169,7 @@ export default async function markdownToHtml(markdown: string) {
   const result = await remark().use(gfm).use(html).process(markdown);
   let output = addHeadingIdsToHtml(result.toString());
   output = transformCallouts(output);
+  output = decorateAffiliateLinks(output);
   output = await highlightCodeBlocks(output);
   return output;
 }

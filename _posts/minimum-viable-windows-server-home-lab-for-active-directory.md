@@ -9,7 +9,8 @@ ogImage:
   url: "/assets/blog/home-lab-ad/diagram.svg"
 ---
 
-<aside class="callout callout-note" role="note"><p class="callout-label">Affiliate disclosure</p><div class="callout-body"><p>This post contains affiliate links to Amazon. If you buy hardware through one of these links, this site earns a small referral commission at no extra cost to you. Product recommendations reflect what I would actually put in a home lab today — the affiliate relationship doesn't change the picks. See the <a href="/affiliate-disclosure">affiliate disclosure page</a> for the full policy.</p></div></aside>
+> [!NOTE]
+> **Affiliate disclosure:** **As an Amazon Associate I earn from qualifying purchases.** If you buy hardware through one of the paid links in this guide, this site may earn a commission at no extra cost to you. Product recommendations reflect what I would actually put in a home lab today — the affiliate relationship doesn't change the picks. See the [affiliate disclosure page](/affiliate-disclosure) for the full policy.
 
 There's a phase of learning Active Directory where you can quote the difference between a forest and a domain, name the five FSMO roles, describe how replication works between sites, and still fail to actually build a working two-domain lab because you've never done it. Every mid-career identity engineer who's honest about how they learned will tell you the moment it clicked was the moment they broke something in a lab, spent a weekend fixing it, and never forgot how it worked afterwards.
 
@@ -63,7 +64,7 @@ Where this shape breaks down: no Wi-Fi built in on most models (fine — put it 
 
 Where I'd actually start. A Beelink or Minisforum mini PC with a current-generation Ryzen 7 or Intel Core Ultra 5, 32 GB of RAM already installed, and a 500 GB or 1 TB NVMe SSD. Roughly the size of a paperback book, silent under normal load, and enough grunt to run eight VMs.
 
-<a href="https://www.amazon.ca/dp/B0CQVBBQY5?tag=sentinelident-20" rel="sponsored nofollow noopener" target="_blank">Beelink SER8 mini PC on Amazon.ca</a> is one commonly-recommended pick in this range as of mid-2026 — Ryzen 7 8845HS, 32 GB DDR5, 1 TB NVMe, dual 2.5 GbE ports which matters if you want to segment lab traffic.
+[Check the Beelink SER8 mini PC price on Amazon.ca](https://www.amazon.ca/dp/B0CQVBBQY5?tag=sentinelident-20) (paid link) is one commonly-recommended pick in this range as of mid-2026 — Ryzen 7 8845HS, 32 GB DDR5, 1 TB NVMe, dual 2.5 GbE ports which matters if you want to segment lab traffic.
 
 Look for:
 
@@ -84,9 +85,9 @@ Only worth it if you know you'll use the lab hard — running Kubernetes alongsi
 
 Regardless of tier, three cheap add-ons make lab life significantly better.
 
-**Extra RAM.** If your machine ships with 16 GB, upgrade to 32 GB before you build the first VM. Windows Server likes 2 GB minimum per VM to feel snappy, and running four VMs at 2 GB each plus the host at 8 GB puts you right at the edge on 16 GB. <a href="https://www.amazon.ca/dp/B08C4V8FYX?tag=sentinelident-20" rel="sponsored nofollow noopener" target="_blank">Crucial 32 GB DDR4 SODIMM kit on Amazon.ca</a> is the safe pick for most 2020-era mini PCs and business desktops. Confirm DDR4 vs DDR5 before ordering — a DDR5 mini PC needs a DDR5 kit.
+**Extra RAM.** If your machine ships with 16 GB, upgrade to 32 GB before you build the first VM. Windows Server likes 2 GB minimum per VM to feel snappy, and running four VMs at 2 GB each plus the host at 8 GB puts you right at the edge on 16 GB. [Check the Crucial 32 GB DDR4 SODIMM kit price on Amazon.ca](https://www.amazon.ca/dp/B08C4V8FYX?tag=sentinelident-20) (paid link) is the safe pick for most 2020-era mini PCs and business desktops. Confirm DDR4 vs DDR5 before ordering — a DDR5 mini PC needs a DDR5 kit.
 
-**External SSD for VM storage or backups.** A 1 TB portable NVMe SSD gives you room to store VM exports, keep a golden Windows Server image, or move a VM between hosts. <a href="https://www.amazon.ca/dp/B08GJH3D18?tag=sentinelident-20" rel="sponsored nofollow noopener" target="_blank">Samsung T7 portable SSD on Amazon.ca</a> is the default recommendation — small, fast, USB-C.
+**External SSD for VM storage or backups.** A 1 TB portable NVMe SSD gives you room to store VM exports, keep a golden Windows Server image, or move a VM between hosts. [Check the Samsung T7 portable SSD price on Amazon.ca](https://www.amazon.ca/dp/B08GJH3D18?tag=sentinelident-20) (paid link) is the default recommendation — small, fast, USB-C.
 
 **USB-C hub / dock.** Only if the mini PC's port layout doesn't match your peripherals. Nothing exotic needed.
 

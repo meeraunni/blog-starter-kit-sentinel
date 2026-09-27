@@ -55,6 +55,9 @@ See `.env.example`. Important production-only values include:
 - `ANALYTICS_HASH_SECRET`: a separate random secret used to create rotating visitor identifiers
 - `CRON_SECRET`: protects scheduled analytics and newsletter endpoints
 - `SITE_URL`: canonical production origin
+- `NEXT_PUBLIC_TROUBLESHOOTING_CHECKOUT_URL`: optional verified HTTPS checkout for the fixed-price troubleshooting session
+- `NEXT_PUBLIC_TOOLKIT_CHECKOUT_URL`: optional verified HTTPS checkout; configure only after the toolkit is ready to deliver
+- `NEXT_PUBLIC_SUPPORT_URL`: optional verified HTTPS Ko-fi, Stripe, or equivalent one-time support page
 
 Never commit `.env.local` or production secrets.
 

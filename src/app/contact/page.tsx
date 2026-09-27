@@ -16,7 +16,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ContactPage() {
+type Props = {
+  searchParams: Promise<{
+    subject?: string;
+  }>;
+};
+
+export default async function ContactPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const defaultSubject = (params.subject || "").slice(0, 160);
+
   return (
     <main>
       <Header />
@@ -45,7 +54,7 @@ export default function ContactPage() {
               Use the form below or email us directly. Replies typically arrive within two business days.
             </p>
             <div className="mt-8">
-              <ContactForm />
+              <ContactForm defaultSubject={defaultSubject} />
             </div>
           </div>
 

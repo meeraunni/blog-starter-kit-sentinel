@@ -23,6 +23,7 @@ const navColumns = [
     heading: "Site",
     links: [
       { href: "/about", label: "About" },
+      { href: "/resources", label: "Resources" },
       { href: "/consulting", label: "Consulting" },
       { href: "/editorial-policy", label: "Editorial policy" },
       { href: "/contact", label: "Contact" },

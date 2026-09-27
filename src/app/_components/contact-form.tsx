@@ -1,4 +1,8 @@
-export default function ContactForm() {
+type Props = {
+  defaultSubject?: string;
+};
+
+export default function ContactForm({ defaultSubject = "" }: Props) {
   return (
     <form action="/api/contact" method="POST" className="grid gap-4">
       <div className="grid gap-4 md:grid-cols-2">
@@ -30,6 +34,7 @@ export default function ContactForm() {
         <input
           type="text"
           name="subject"
+          defaultValue={defaultSubject}
           className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-base text-slate-900 outline-none transition focus:border-cyan-700 focus:bg-white"
           placeholder="Question about a post / typo / general feedback"
         />

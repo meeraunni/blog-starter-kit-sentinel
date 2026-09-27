@@ -51,16 +51,16 @@ export default function ArticleRevenuePaths({ currentSlug, topics }: Props) {
       <div className={`mt-6 grid gap-5 ${affiliateGuide ? "md:grid-cols-2" : ""}`}>
         <div className="rounded-2xl border border-slate-200 bg-slate-950 p-6 text-white shadow-[0_18px_45px_rgba(15,23,42,0.12)]">
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-300">Production help</p>
-          <h3 className="mt-3 text-xl font-semibold tracking-[-0.02em] text-white">Need a specialist in the room?</h3>
+          <h3 className="mt-3 text-xl font-semibold tracking-[-0.02em] text-white">Stuck on a specific Entra problem?</h3>
           <p className="mt-3 text-sm leading-7 text-slate-300">
-            Get independent help with Microsoft Entra assessments, Conditional Access, identity governance, or a
-            difficult production incident.
+            Book a fixed-price 60-minute troubleshooting session, or explore larger Microsoft Entra assessments and
+            implementation engagements.
           </p>
           <Link
-            href="/consulting"
+            href="/consulting#troubleshooting-session"
             className="mt-5 inline-flex items-center rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-950 transition hover:bg-cyan-100"
           >
-            Explore consulting
+            View troubleshooting session
           </Link>
         </div>
 

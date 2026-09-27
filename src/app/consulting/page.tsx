@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Header from "@/app/_components/header";
 import Breadcrumbs from "@/app/_components/breadcrumbs";
+import { getMonetizationLinks } from "@/lib/monetization";
 
 export const metadata: Metadata = {
   title: "Consulting — Microsoft Entra & Microsoft 365 Advisory",
@@ -101,6 +102,8 @@ const jsonLd = {
 };
 
 export default function ConsultingPage() {
+  const links = getMonetizationLinks();
+
   return (
     <main>
       <script
@@ -145,11 +148,63 @@ export default function ConsultingPage() {
           </div>
         </div>
 
+        <section
+          id="troubleshooting-session"
+          className="mt-14 scroll-mt-28 rounded-3xl border border-slate-200 bg-slate-950 p-8 text-white shadow-[0_24px_60px_rgba(15,23,42,0.16)] lg:p-10"
+        >
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_260px] lg:items-center">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">
+                Fixed-price working session
+              </p>
+              <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-white">
+                60-minute Entra troubleshooting session
+              </h2>
+              <p className="mt-4 max-w-2xl text-base leading-8 text-slate-300">
+                Bring one defined Microsoft Entra, Conditional Access, authentication, or hybrid identity problem.
+                We use the hour to narrow the failure, identify the strongest evidence, and leave you with a written
+                next-step summary. No long engagement or tenant-wide assessment required.
+              </p>
+              <ul className="mt-5 grid gap-2 text-sm leading-7 text-slate-300 sm:grid-cols-2">
+                <li>• One focused remote working session</li>
+                <li>• Written next-step summary</li>
+                <li>• No credentials or secrets sent in advance</li>
+                <li>• CAD $275, exclusive of applicable tax</li>
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+              <p className="text-sm text-slate-400">Fixed price</p>
+              <p className="mt-1 text-3xl font-semibold text-white">CAD $275</p>
+              {links.troubleshootingCheckout ? (
+                <a
+                  href={links.troubleshootingCheckout}
+                  target="_blank"
+                  rel="noopener"
+                  className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-100"
+                >
+                  Reserve and pay
+                </a>
+              ) : (
+                <Link
+                  href="/contact?subject=60-minute%20Entra%20troubleshooting%20session"
+                  className="mt-5 inline-flex w-full items-center justify-center rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-100"
+                >
+                  Request a session
+                </Link>
+              )}
+              <p className="mt-4 text-xs leading-6 text-slate-400">
+                Payment is requested only after scope and availability are confirmed unless a verified checkout link
+                is shown above.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* Services */}
         <section className="mt-16">
           <h2 className="text-2xl font-semibold tracking-[-0.03em] text-slate-950">Services</h2>
           <p className="mt-2 max-w-2xl text-base leading-7 text-slate-600">
-            Five ways to work together, in rough order of engagement size.
+            Five larger engagement options, in rough order of scope.
           </p>
 
           <div className="mt-8 grid gap-6 md:grid-cols-2">

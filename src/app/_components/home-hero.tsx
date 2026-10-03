@@ -6,8 +6,8 @@ export default function HomeHero({ postCount }: { postCount: number }) {
     <section className="hub-hero journal-width">
       <div className="hub-intro">
         <div>
-          <p className="eyebrow">Microsoft identity. Real-world questions.</p>
-          <h1>Make sense of what’s next.</h1>
+          <p className="eyebrow">Independent Microsoft identity guides</p>
+          <h1>Practical guidance for Microsoft identity</h1>
           <p>
             Guides, ideas, and troubleshooting for the people behind every
             successful sign-in.
@@ -39,11 +39,7 @@ export default function HomeHero({ postCount }: { postCount: number }) {
           </div>
           <h2>
             <Link href="/posts/external-idp-passkeys-microsoft-365">
-              Your identity provider.
-              <br />
-              Your passkeys.
-              <br />
-              <span>Your Microsoft apps.</span>
+              Using external identity provider passkeys with Microsoft 365
             </Link>
           </h2>
           <p>

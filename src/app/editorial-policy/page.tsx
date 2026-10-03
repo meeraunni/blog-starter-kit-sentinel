@@ -14,9 +14,7 @@ export default function EditorialPolicyPage() {
       <article className="policy-page journal-width">
         <p className="eyebrow">About the publication</p>
         <h1>
-          Show the evidence.
-          <br />
-          Make corrections visible.
+          Editorial standards and corrections
         </h1>
         <p className="policy-date">Policy revised October 1, 2026</p>
         <p>

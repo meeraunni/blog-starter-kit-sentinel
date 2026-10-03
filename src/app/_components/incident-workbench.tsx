@@ -84,7 +84,7 @@ export default function IncidentWorkbench() {
     >
       <div className="workbench-heading">
         <p className="eyebrow">01 / Browser tool</p>
-        <h2 id="workbench-title">Build a sign-in investigation note.</h2>
+        <h2 id="workbench-title">Build a sign-in investigation note</h2>
         <p>
           Capture what you observed, separate it from the suspected cause, and
           leave the next administrator a useful handover.

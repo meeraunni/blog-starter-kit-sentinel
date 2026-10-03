@@ -36,9 +36,7 @@ export default function Index() {
         <div>
           <p className="eyebrow">Stay in the loop</p>
           <h2>
-            A new note.
-            <br />
-            In your inbox.
+            Get new articles by email
           </h2>
           <p>
             Get an email when a new article is published. You can also follow

@@ -28,7 +28,7 @@ export default function TopicGrid({ posts }: { posts: Post[] }) {
       </ul>
       <div className="notebook-note">
         <p className="eyebrow">Free administrator tools</p>
-        <h3>Evidence before changes.</h3>
+        <h3>Tools for investigating sign-in issues</h3>
         <p>
           Build a sign-in investigation note and download editable worksheets.
           No account needed.

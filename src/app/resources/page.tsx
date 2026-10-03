@@ -35,9 +35,7 @@ export default function ResourcesPage() {
       <div className="journal-width resource-page">
         <p className="eyebrow">The workbench / Free resources</p>
         <h1>
-          A useful place
-          <br />
-          <em>to do the paperwork.</em>
+          Tools and templates for identity administrators
         </h1>
         <p className="resource-intro">
           Good troubleshooting leaves a trail. These small tools help you
@@ -47,7 +45,7 @@ export default function ResourcesPage() {
         <IncidentWorkbench />
         <section className="resource-downloads">
           <p className="eyebrow">02 / Editable worksheets</p>
-          <h2>Take a copy. Make it yours.</h2>
+          <h2>Download editable templates</h2>
           <p>
             Plain Markdown files that open in any text editor. Free to adapt for
             your own operational records; no email address required.

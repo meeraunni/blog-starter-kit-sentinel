@@ -28,7 +28,7 @@ export default function StartHere() {
       <div className="journal-width">
         <div className="reading-path-heading">
           <p className="eyebrow">Build your understanding</p>
-          <h2>A few good places to start.</h2>
+          <h2>Start with the fundamentals</h2>
         </div>
         <div className="reading-path-grid">
           {guides.map((guide) => (

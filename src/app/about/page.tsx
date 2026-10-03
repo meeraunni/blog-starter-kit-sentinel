@@ -14,9 +14,7 @@ export default function AboutPage() {
       <article className="policy-page journal-width">
         <p className="eyebrow">Behind the notebook</p>
         <h1>
-          For the person
-          <br />
-          following the sign-in trail.
+          About Sentinel Identity
         </h1>
         <p>
           Sentinel Identity is an independent publication about Microsoft Entra,

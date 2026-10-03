@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/api/", "/thanks", "/unsubscribe"],
     },
-    sitemap: "https://sentinelidentity.ca/sitemap.xml",
+    sitemap: "https://www.sentinelidentity.ca/sitemap.xml",
   };
 }

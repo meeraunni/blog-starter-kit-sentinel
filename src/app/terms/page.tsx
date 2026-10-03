@@ -29,7 +29,7 @@ export default function TermsPage() {
         <div className="mt-10 space-y-10 text-base leading-8 text-slate-600">
           <p>
             These Terms of Use (&quot;Terms&quot;) govern your access to and use of{" "}
-            <a href="https://sentinelidentity.ca" className="text-cyan-800 hover:text-slate-950">
+            <a href="https://www.sentinelidentity.ca" className="text-cyan-800 hover:text-slate-950">
               sentinelidentity.ca
             </a>{" "}
             (the &quot;Site&quot;), operated by Sentinel Identity. By accessing or using the Site you agree to be

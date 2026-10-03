@@ -25,7 +25,6 @@ import CopyCodeButtons from "@/app/_components/copy-code";
 import AuthorBio from "@/app/_components/author-bio";
 import ReadingProgress from "@/app/_components/reading-progress";
 import BackToTop from "@/app/_components/back-to-top";
-import ArticleRevenuePaths from "@/app/_components/article-revenue-paths";
 import { personSchema, resolveAuthor } from "@/lib/authors";
 
 type Params = {
@@ -66,7 +65,7 @@ export default async function Post(props: Params) {
     publisher: {
       "@type": "Organization",
       name: "Sentinel Identity",
-      url: "https://sentinelidentity.ca",
+      url: "https://www.sentinelidentity.ca",
       logo: {
         "@type": "ImageObject",
         url: getBaseUrl("/favicon/apple-touch-icon.png"),
@@ -132,7 +131,6 @@ export default async function Post(props: Params) {
             <div className="min-w-0">
               <PostBody content={content} />
               <CopyCodeButtons />
-              <ArticleRevenuePaths currentSlug={post.slug} topics={postTopics} />
               <AuthorBio author={author} />
               <ArticleFeedback slug={post.slug} />
               <PrevNextNav previous={previous} next={next} />
@@ -152,7 +150,7 @@ export default async function Post(props: Params) {
                 {relatedPosts.map((related) => (
                   <article
                     key={related.slug}
-                    className="rounded-[1.5rem] border border-stone-200 bg-white p-6 shadow-[0_16px_40px_rgba(15,23,42,0.05)] transition hover:border-slate-900 hover:shadow-[0_20px_60px_rgba(15,23,42,0.1)]"
+                    className="border-t-2 border-stone-300 py-6 transition hover:border-[#173d3a]"
                   >
                     <h2 className="text-xl font-semibold tracking-[-0.03em] text-slate-950">
                       <Link href={`/posts/${related.slug}`} className="transition hover:text-cyan-900">

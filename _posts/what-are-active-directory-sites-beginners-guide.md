@@ -1,15 +1,17 @@
 ---
 title: "What are Active Directory Sites? A Beginner's Guide to Making AD Work Across Locations"
-excerpt: "Your company has offices in three cities. When a user in London logs in, do they really talk to a Domain Controller in Sydney? Nope — AD is smarter than that. Grab a coffee. We're going to demystify Active Directory Sites — the invisible layer that makes AD work sensibly across offices, subnets, and the whole planet."
+excerpt: "Understand how sites, subnets, and site links model an Active Directory network—and which discovery and replication behaviours need verification."
 coverImage: "/assets/blog/what-are-ad-sites/diagram.svg"
 date: "2026-07-04T22:00:00.000Z"
+updated: "2026-10-03"
 author:
   name: "MU.A"
 ogImage:
   url: "/assets/blog/what-are-ad-sites/diagram.svg"
 ---
 
-Grab a coffee. This one's fun because it's one of those Active Directory features that most people never really learn — they just kind of hope the defaults work out. And usually they do. Until they don't.
+> [!NOTE]
+> **Updated October 3, 2026:** Corrected claims about DNS resolver changes, fallback selection, universal refresh times, and a nonexistent site-local switch. Examples are illustrative, not recorded lab results.
 
 Today we're talking about **Active Directory Sites**. If you've read the [What is Active Directory? beginner's guide](/posts/what-is-active-directory-beginners-guide) and you're comfortable with the basics — users, groups, Domain Controllers — then Sites is the next natural thing to understand. It's what makes AD *usable* when your company grows beyond one office.
 
@@ -90,15 +92,15 @@ Let me walk you through what happens when a laptop in London boots up in the mor
 2. Laptop asks DNS: "hey, where are the domain controllers for contoso.com?" DNS returns a list of all DCs in the domain — Toronto, London, Sydney.
 3. **This is where sites matter.** Laptop contacts the first DC in the list (say, Toronto). Toronto DC looks at the laptop's IP address (`10.6.42.15`). Toronto DC checks its site database: which site owns subnet `10.6.0.0/16`? Answer: **London**.
 4. Toronto DC essentially says "hey, you're in London — here's the list of DCs in *your* site, use one of them instead."
-5. Laptop switches over to the London DC. From now on, all login checks, group policy lookups, and DNS queries go to London.
+5. Laptop switches over to the London DC. Site-aware discovery can favour an appropriate controller. This does not reconfigure the client's DNS resolvers or move every existing application connection.
 
 **That's the whole point of Sites.** Without them, the laptop would just keep talking to whichever DC it hit first. With them, the laptop finds its local DC and stays there.
 
-If London's DC becomes unavailable, the laptop falls back to another DC — but AD will prefer sites with cheap site links to London. So the fallback goes to the "next closest" DC based on site link cost, not just some random one.
+If London's DC becomes unavailable, the laptop falls back to another DC — but AD will prefer sites with cheap site links to London. Next-closest-site behaviour depends on discovery configuration and available services; a site definition alone does not guarantee a particular fallback controller.
 
 ## When you'd actually think about sites
 
-Small companies with one office don't need to think about this. There's one site (called "Default-First-Site-Name" out of the box), all clients are in it, and everything works.
+Even a single-site deployment should review subnet mapping and discovery. A default site name does not establish that every client subnet is correctly represented.
 
 **You start caring about sites when:**
 
@@ -117,9 +119,9 @@ Six things go wrong in AD Sites deployments repeatedly. Knowing them saves hours
 
 **"Replication is stuck between two sites."** Usually the site link between them is broken — could be a network issue, a firewall blocking port 135/445/389, or a misconfigured site link cost that's causing the KCC to route strangely. Run `repadmin /replsummary` to see the current state.
 
-**"Users in the new office are slow to log in for the first time."** Windows caches DC lookups. When a new site is created, existing clients don't switch over until their cache expires (usually within an hour, but can be forced with `nltest /dsgetdc:contoso.com`).
+**"Users in the new office are slow to log in for the first time."** Windows caches discovery information. Record the observed site and controller rather than promising a fixed refresh time. `nltest /dsgetdc:contoso.com /force` requests fresh discovery; it does not move every application session.
 
-**"A DC in a small remote site is getting hammered."** Small remote sites need "site local" services enabled — otherwise clients in that site still go to the primary site's DNS or DFS servers, defeating the whole point of the local DC.
+**"A DC in a small remote site is getting hammered."** Inspect actual load, client subnet mapping, resolver configuration, and the service being requested. There is no universal "site local" switch that configures DNS and DFS together.
 
 **"I deleted a site but the KCC still references it."** Deleted sites can leave orphan objects. Force a KCC recalculation with `repadmin /kcc` on all remaining DCs; usually clears itself within a replication cycle.
 
@@ -141,7 +143,7 @@ That's called the "hub and spoke" topology. You have one or two hub sites with f
 No. Entra ID is a global cloud service — Microsoft handles the geographic routing for you. Users authenticate against the nearest Microsoft data centre automatically. Sites are only relevant to on-premises Active Directory.
 
 **How often does site data replicate?**
-Within a site: every 15 seconds by default (near-real-time). Between sites: every 3 hours by default, but you can lower this if you need faster cross-site consistency.
+Replication timing depends on topology, schedules, notification behaviour, and health. Check the actual configuration and replication results; do not treat a nominal interval as a convergence guarantee.
 
 **Can I run "sites and services" without ever creating any additional sites?**
 Yes. Small single-office deployments just leave the default site and it works fine. Sites and Services becomes important when you have multiple physical locations.
@@ -171,4 +173,9 @@ Now that you understand Sites, the natural next topics are:
 
 If you're studying for **AZ-800** or **MS-102**, the Sites topic shows up in both exams. Building the two-site lab above is the single best exam prep for the AD topology sections.
 
-Now go grab another coffee. You've earned this one.
+
+## Primary references
+
+- [Designing AD site topology](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/plan/designing-the-site-topology)
+- [DC Locator](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/dc-locator)
+- [Subnet change verification](/posts/what-happens-when-you-assign-a-site-in-active-directory)

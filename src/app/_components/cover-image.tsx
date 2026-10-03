@@ -28,10 +28,10 @@ export default function CoverImage({
         src={src}
         alt={`Cover image for ${title}`}
         fill
+        sizes="(max-width: 768px) 100vw, 1000px"
         priority={priority}
-        className="object-cover transition duration-700 group-hover:scale-[1.03]"
+        className="object-contain p-2"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/25 via-transparent to-transparent" />
     </div>
   );
 

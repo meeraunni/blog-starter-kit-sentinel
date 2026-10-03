@@ -44,7 +44,7 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-stone-200 bg-[#fbfaf7]">
+    <footer className="border-t border-stone-200 bg-[#f5f8fc]">
       <div className="mx-auto max-w-7xl px-6 py-12 lg:px-10">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {navColumns.map((column) => (

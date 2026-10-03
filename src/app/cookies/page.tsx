@@ -29,7 +29,7 @@ export default function CookiesPage() {
         <div className="mt-10 space-y-10 text-base leading-8 text-slate-600">
           <p>
             This Cookie Notice explains what cookies and similar technologies are, which ones we use on{" "}
-            <a href="https://sentinelidentity.ca" className="text-cyan-800 hover:text-slate-950">
+            <a href="https://www.sentinelidentity.ca" className="text-cyan-800 hover:text-slate-950">
               sentinelidentity.ca
             </a>
             , and how you can manage or opt out of them. It supplements our{" "}

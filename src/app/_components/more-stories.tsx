@@ -3,6 +3,7 @@ import { Fragment, ReactNode } from "react";
 import { PostSummary } from "@/interfaces/post";
 import DateFormatter from "./date-formatter";
 import { getTopicByLabel } from "@/lib/post-taxonomy";
+import ArticleArtwork from "./article-artwork";
 
 type Props = {
   posts: PostSummary[];
@@ -31,36 +32,39 @@ function highlight(text: string, query?: string): ReactNode {
 
 export function MoreStories({ posts, query }: Props) {
   return (
-    <ul className="divide-y divide-stone-200 border-y border-stone-200 dark:divide-slate-800 dark:border-slate-800">
-      {posts.map((post) => {
-        const topics = post.topics.slice(0, 2);
-        return (
-          <li key={post.slug} className="py-6">
-            <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-              <DateFormatter dateString={post.date} />
-              {topics.map((topic) => (
-                <Fragment key={topic}>
-                  <span aria-hidden="true">·</span>
-                  <Link
-                    href={`/topics/${getTopicByLabel(topic).slug}`}
-                    className="hover:text-slate-900 dark:hover:text-slate-100"
-                  >
-                    {topic}
-                  </Link>
-                </Fragment>
-              ))}
+    <ul className="story-cards">
+      {posts.map((post) => (
+        <li key={post.slug} className="story-card">
+          <Link
+            href={`/posts/${post.slug}`}
+            className="story-art-link"
+            aria-label={`Read ${post.title}`}
+          >
+            <ArticleArtwork slug={post.slug} topics={post.topics} coverImage={post.coverImage} />
+          </Link>
+          <div className="story-card-body">
+            <div className="story-card-meta">
+              <Link href={`/topics/${getTopicByLabel(post.topics[0]).slug}`}>
+                {post.topics[0]}
+              </Link>
+              <span>{post.readingTime} min read</span>
             </div>
-            <h3 className="mt-2 text-xl font-semibold tracking-[-0.01em] text-slate-950 dark:text-slate-50 md:text-2xl">
-              <Link href={`/posts/${post.slug}`} className="hover:text-cyan-900 dark:hover:text-cyan-300">
+            <h3>
+              <Link href={`/posts/${post.slug}`}>
                 {highlight(post.title, query)}
               </Link>
             </h3>
-            <p className="mt-2 max-w-3xl text-base leading-7 text-slate-600 dark:text-slate-300">
-              {highlight(post.excerpt, query)}
-            </p>
-          </li>
-        );
-      })}
+            <p>{highlight(post.excerpt, query)}</p>
+            <div className="story-card-footer">
+              <Link href="/author/m-u">
+                <span className="byline-avatar">MU</span>
+                {post.author?.name || "MU.A"}
+              </Link>
+              <DateFormatter dateString={post.date} />
+            </div>
+          </div>
+        </li>
+      ))}
     </ul>
   );
 }

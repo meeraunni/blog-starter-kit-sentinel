@@ -1,0 +1,1143 @@
+{
+  "generated": "2026-10-03T20:24:30.363Z",
+  "scope": "Structural checks and review signals only. Does not establish factual accuracy, originality, lab execution, or AdSense eligibility.",
+  "articles": 126,
+  "errors": 0,
+  "warnings": 0,
+  "inventory": [
+    {
+      "slug": "25-active-directory-interview-questions-and-answers",
+      "title": "25 Active Directory Interview Questions and Answers",
+      "words": 2557,
+      "externalSources": 5,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "aadsts50011-reply-url-mismatch-microsoft-entra",
+      "title": "AADSTS50011 Reply URL Mismatch: Microsoft Entra Fix",
+      "words": 2835,
+      "externalSources": 20,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "aadsts50034-user-account-not-found-microsoft-entra",
+      "title": "AADSTS50034 User Account Not Found: Microsoft Entra Fix",
+      "words": 3284,
+      "externalSources": 15,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "aadsts50105-user-not-assigned-microsoft-entra",
+      "title": "AADSTS50105 User Not Assigned: Microsoft Entra Fix",
+      "words": 2730,
+      "externalSources": 12,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "aadsts53003-access-blocked-by-conditional-access",
+      "title": "AADSTS53003: Access Has Been Blocked by Conditional Access Policies — How to Read It, Trace It, and Fix It",
+      "words": 2615,
+      "externalSources": 6,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "aadsts65001-consent-required-microsoft-entra",
+      "title": "AADSTS65001 Consent Required: Microsoft Entra Fix Guide",
+      "words": 2897,
+      "externalSources": 14,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "aadsts700016-application-not-found-microsoft-entra",
+      "title": "AADSTS700016 Application Not Found: Microsoft Entra Fix",
+      "words": 2904,
+      "externalSources": 21,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "aadsts7000215-invalid-client-secret-microsoft-entra",
+      "title": "AADSTS7000215 Invalid Client Secret: Microsoft Entra Fix",
+      "words": 2949,
+      "externalSources": 15,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "aadsts700027-invalid-client-assertion-microsoft-entra",
+      "title": "AADSTS700027 Invalid Client Assertion: Microsoft Entra Fix",
+      "words": 3518,
+      "externalSources": 21,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "access-token-vs-refresh-token-in-microsoft-identity",
+      "title": "Access Tokens vs Refresh Tokens in Microsoft Entra: Lifetime, Storage, and Trust Boundaries",
+      "words": 1969,
+      "externalSources": 6,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "assign-external-users-microsoft-entra-access-packages",
+      "title": "Assign External Users to Microsoft Entra Access Packages",
+      "words": 2683,
+      "externalSources": 14,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "books-that-made-me-a-better-identity-engineer",
+      "title": "Six Books That Made Me a Better Identity Engineer",
+      "words": 2539,
+      "externalSources": 10,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "choosing-a-fido2-security-key-for-microsoft-entra-passkey-rollout",
+      "title": "Choosing a FIDO2 Security Key for a Microsoft Entra Passkey Rollout: A Practical Comparison for Admins",
+      "words": 3189,
+      "externalSources": 10,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "clone-microsoft-entra-lifecycle-workflow-safely",
+      "title": "Clone a Microsoft Entra Lifecycle Workflow: Safe Guide",
+      "words": 2868,
+      "externalSources": 15,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "conditional-access-authentication-context",
+      "title": "Conditional Access Authentication Context: Step-Up Auth Without Policy Sprawl",
+      "words": 1992,
+      "externalSources": 9,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "convert-synced-microsoft-entra-user-cloud-only",
+      "title": "Convert a Synced Microsoft Entra User to Cloud Only",
+      "words": 2469,
+      "externalSources": 14,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "core-authentication-methods-kerberos-ntlm-ldap-passkeys-certificates-windows-hello",
+      "title": "Core Authentication Methods in Microsoft Identity: Kerberos, NTLM, LDAP, Passkeys, Certificates, and Windows Hello",
+      "words": 2409,
+      "externalSources": 9,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "delegate-microsoft-entra-lifecycle-workflows-administration",
+      "title": "Delegate Microsoft Entra Lifecycle Workflows Administration",
+      "words": 2561,
+      "externalSources": 9,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "disable-microsoft-entra-agent-id-blueprint",
+      "title": "Disable a Microsoft Entra Agent ID Blueprint Safely",
+      "words": 2848,
+      "externalSources": 10,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "external-idp-passkeys-microsoft-365",
+      "title": "External IdP Passkeys for Microsoft 365: Admin Guide",
+      "words": 2875,
+      "externalSources": 7,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "federation-and-token-protocols-explained-saml-ws-fed-oauth-openid-connect",
+      "title": "Federation and Token Protocols Explained: SAML, WS-Fed, OAuth 2.0, and OpenID Connect for Microsoft Entra",
+      "words": 1510,
+      "externalSources": 3,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "hibob-to-active-directory-provisioning-microsoft-entra",
+      "title": "HiBob to Active Directory Provisioning with Microsoft Entra",
+      "words": 3354,
+      "externalSources": 11,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "how-to-build-a-physical-domain-controller",
+      "title": "Preparing a Physical Windows Server for Active Directory",
+      "words": 629,
+      "externalSources": 3,
+      "updated": "2026-10-03",
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "how-to-migrate-from-adfs-to-entra-id",
+      "title": "Migrating AD FS to Entra Cloud Authentication: A Decision and Test Plan",
+      "words": 696,
+      "externalSources": 3,
+      "updated": "2026-10-03",
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "how-to-promote-a-server-to-domain-controller",
+      "title": "Promoting a Windows Server to a Domain Controller: Decisions and Verification",
+      "words": 650,
+      "externalSources": 3,
+      "updated": "2026-10-03",
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "hybrid-microsoft-sign-in-architectures-phs-pta-federation-adfs",
+      "title": "Hybrid Microsoft Sign-In Architectures Compared: PHS, PTA, Federation, and AD FS",
+      "words": 1399,
+      "externalSources": 3,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "inside-the-microsoft-entra-conditional-access-evaluation-pipeline",
+      "title": "Inside the Microsoft Entra Conditional Access Evaluation Pipeline: How Policies Decide Token Issuance",
+      "words": 1899,
+      "externalSources": 4,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "manage-microsoft-entra-recommendations-graph",
+      "title": "Manage Microsoft Entra Recommendations with Microsoft Graph",
+      "words": 3169,
+      "externalSources": 23,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-365-cross-tenant-calendar-sharing-migration",
+      "title": "Microsoft 365 Cross-Tenant Calendar Sharing Migration",
+      "words": 2795,
+      "externalSources": 9,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-365-distribution-list-dynamic-group-not-updating",
+      "title": "Microsoft 365 Distribution List or Dynamic Group Membership Not Updating: Diagnosing the Cache, Filter, and Sync Layers",
+      "words": 1748,
+      "externalSources": 6,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-365-mfa-rollout-strategy-conditional-access-authentication-strength",
+      "title": "How To Roll Out MFA in Microsoft 365 Without Locking Out the CEO on a Monday Morning",
+      "words": 2548,
+      "externalSources": 10,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-365-onedrive-sharepoint-access-denied-permissions",
+      "title": "OneDrive and SharePoint Access Denied in Microsoft 365: The Sharing Model Diagnostic",
+      "words": 1684,
+      "externalSources": 9,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-365-out-of-office-automatic-replies-not-working",
+      "title": "Out of Office Not Sending in Microsoft 365: Why Automatic Replies Stop Working and How to Fix Them",
+      "words": 1505,
+      "externalSources": 7,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-365-shared-mailbox-troubleshooting-outlook",
+      "title": "Shared Mailbox Not Showing Up in Outlook? Here's How To Walk the Five Things That Might Be Wrong",
+      "words": 2008,
+      "externalSources": 7,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-authentication-protocols-and-sign-in-models-kerberos-saml-oidc-oauth-adfs-entra",
+      "title": "Microsoft Authentication Protocols and Sign-In Models: From Kerberos to OpenID Connect on Microsoft Entra",
+      "words": 5990,
+      "externalSources": 18,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-authenticator-device-is-rooted-fix",
+      "title": "Microsoft Authenticator Device Is Rooted: Admin Fix",
+      "words": 3158,
+      "externalSources": 14,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-aadsts50020-external-user-sign-in-failures",
+      "title": "AADSTS50020: Why External User Sign-Ins Fail in Microsoft Entra and How to Fix Them",
+      "words": 1683,
+      "externalSources": 8,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-access-reviews",
+      "title": "Access Reviews in Microsoft Entra: What They Are, How They Work, and How To Set One Up That Actually Closes the Loop",
+      "words": 3609,
+      "externalSources": 7,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-account-discovery-orphan-accounts",
+      "title": "Microsoft Entra Account Discovery: Find Orphan Accounts",
+      "words": 2499,
+      "externalSources": 11,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-ad-group-enforcement-pilot-guide",
+      "title": "Microsoft Entra AD Group Enforcement: Safe Pilot Guide",
+      "words": 3043,
+      "externalSources": 10,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-agent-id-security-architecture-conditional-access-governance",
+      "title": "Microsoft Entra Agent ID: Security Architecture, Conditional Access, and Governance for AI Agents",
+      "words": 2844,
+      "externalSources": 8,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-agent-id-sponsors-admin-guide",
+      "title": "Microsoft Entra Agent ID Sponsors: Administrator Guide",
+      "words": 3556,
+      "externalSources": 10,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-agent-user-conditional-access",
+      "title": "Microsoft Entra Agent User Conditional Access Guide",
+      "words": 3103,
+      "externalSources": 10,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-and-microsoft-365-custom-domains-dns-records-spf-dkim-dmarc",
+      "title": "SPF, DKIM, and DMARC for Microsoft 365: A Working Guide to Getting Email Authentication Right",
+      "words": 2547,
+      "externalSources": 11,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-branding-themes-safe-rollout-guide",
+      "title": "Microsoft Entra Branding Themes: Safe Rollout Guide",
+      "words": 2911,
+      "externalSources": 7,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-catalog-access-reviews-deployment-guide",
+      "title": "Microsoft Entra Catalog Access Reviews Deployment Guide",
+      "words": 3207,
+      "externalSources": 13,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-cba-ca-scoping-safe-rollout",
+      "title": "Microsoft Entra CBA CA Scoping: Safe Rollout Guide",
+      "words": 2425,
+      "externalSources": 9,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-cloud-sync-agent-inactive",
+      "title": "Microsoft Entra Cloud Sync Agent Inactive: Fix Guide",
+      "words": 2662,
+      "externalSources": 6,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-cloud-sync-device-sync-pilot-guide",
+      "title": "Microsoft Entra Cloud Sync Device Sync: Safe Pilot Guide",
+      "words": 2659,
+      "externalSources": 16,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-cloud-sync-exchange-attribute-writeback",
+      "title": "Microsoft Entra Cloud Sync Exchange Attribute Writeback: A Safe Rollout Guide for Hybrid Mailboxes",
+      "words": 2793,
+      "externalSources": 13,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-conditional-access-baseline-scopes-enforcement",
+      "title": "Conditional Access Baseline Scopes: Enforcement Guide",
+      "words": 3479,
+      "externalSources": 18,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-conditional-access-browser-support-edge-chrome-safari",
+      "title": "\"Works in Edge but Not in Chrome\": Conditional Access Browser Support, Explained",
+      "words": 2320,
+      "externalSources": 8,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-conditional-access-compliant-device-blocked-sign-in",
+      "title": "Why a Compliant Device Still Gets Blocked by Microsoft Entra Conditional Access — and How to Diagnose It",
+      "words": 1998,
+      "externalSources": 10,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-conditional-access-troubleshooting-sign-in-logs",
+      "title": "Reading the Conditional Access Sign-in Log: A Working Field Guide",
+      "words": 2867,
+      "externalSources": 11,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-connect-2-6-92-hotfix",
+      "title": "Microsoft Entra Connect 2.6.92.0 Hotfix: Admin Guide",
+      "words": 2564,
+      "externalSources": 12,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-connect-september-2026-upgrade-guide",
+      "title": "Microsoft Entra Connect September 2026 Upgrade Guide",
+      "words": 3035,
+      "externalSources": 17,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-cross-tenant-group-synchronization",
+      "title": "Microsoft Entra Cross-Tenant Group Synchronization Guide",
+      "words": 2833,
+      "externalSources": 15,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-cross-tenant-synchronization",
+      "title": "Cross-Tenant Synchronization in Microsoft Entra: Multi-Tenant Identity Lifecycle Without the Manual Work",
+      "words": 2551,
+      "externalSources": 6,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-csp-enforcement-october-2026",
+      "title": "Microsoft Entra CSP Enforcement: October 2026 Guide",
+      "words": 2923,
+      "externalSources": 8,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-custom-controls-external-mfa-migration",
+      "title": "Migrate Microsoft Entra Custom Controls to External MFA",
+      "words": 2706,
+      "externalSources": 7,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-custom-css-retirement-admin-guide",
+      "title": "Microsoft Entra Custom CSS Retirement: Admin Guide",
+      "words": 2701,
+      "externalSources": 7,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-domain-services-samaccountname-sync",
+      "title": "Microsoft Entra Domain Services SAM Account Name Sync",
+      "words": 2866,
+      "externalSources": 9,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-domainless-saml-federation",
+      "title": "Microsoft Entra Domainless SAML Federation: Admin Guide",
+      "words": 2736,
+      "externalSources": 12,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-emergency-access-accounts-admin-guide",
+      "title": "Microsoft Entra Emergency Access Accounts: Admin Guide",
+      "words": 3489,
+      "externalSources": 8,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-entitlement-management-access-packages",
+      "title": "Entitlement Management and Access Packages: The Lifecycle Loop That Doesn't Drift",
+      "words": 1699,
+      "externalSources": 6,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-external-id-jit-password-migration",
+      "title": "Microsoft Entra External ID JIT Password Migration",
+      "words": 3153,
+      "externalSources": 11,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-external-id-username-sign-in",
+      "title": "Microsoft Entra External ID Username Sign-In Guide",
+      "words": 3457,
+      "externalSources": 11,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-external-mfa-not-working",
+      "title": "Microsoft Entra External MFA Not Working: Admin Guide",
+      "words": 2771,
+      "externalSources": 8,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-federated-identity-credentials-workload-identity",
+      "title": "Federated Identity Credentials: How To Stop Holding Client Secrets for Your CI/CD Pipelines",
+      "words": 2331,
+      "externalSources": 10,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-id-backup-recovery-strategy",
+      "title": "Microsoft Entra Backup and Recovery: Operating Model, Incident Playbook, and the Limits Microsoft Doesn't Lead With",
+      "words": 2761,
+      "externalSources": 8,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-id-passkey-policy-profiles-attestation",
+      "title": "Microsoft Entra Passkey Policy in Practice: Profiles, AAGUID Allowlists, and Attestation Trade-offs",
+      "words": 1418,
+      "externalSources": 6,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-id-passkey-registration-windows-mobile",
+      "title": "Passkey Registration on Windows, iOS, and Android: What Actually Happens, and Why It Sometimes Doesn't",
+      "words": 2322,
+      "externalSources": 9,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-id-passkey-sign-in-compatibility-rollout",
+      "title": "Microsoft Entra Passkey Sign-In Compatibility: Browser, OS, and Cross-Device Matrix for Rollout Planning",
+      "words": 1526,
+      "externalSources": 6,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-id-protection-risk-policies",
+      "title": "Sign-in Risk and User Risk in Microsoft Entra ID Protection: A Working Setup, Not a Slide Deck",
+      "words": 2225,
+      "externalSources": 8,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-internet-access-overview",
+      "title": "Microsoft Entra Internet Access: What It Actually Is, When To Use It, and How To Plan a Rollout",
+      "words": 2277,
+      "externalSources": 6,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-license-usage-insights-guide",
+      "title": "Microsoft Entra License Usage Insights: Admin Guide",
+      "words": 3079,
+      "externalSources": 16,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-lifecycle-workflows-safety-controls",
+      "title": "Microsoft Entra Lifecycle Workflows Safety Controls: Scope Preview, Quarantine, and Run Cancellation",
+      "words": 2696,
+      "externalSources": 10,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-mcp-firewall-safe-deployment-guide",
+      "title": "Microsoft Entra MCP Firewall: Safe Deployment Guide",
+      "words": 2988,
+      "externalSources": 8,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-memberof-retirement-migration-guide",
+      "title": "Microsoft Entra memberOf Retirement: Migration Guide",
+      "words": 3162,
+      "externalSources": 20,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-passkey-auto-enablement-admin-guide",
+      "title": "Microsoft Entra Passkey Auto-Enablement: Admin Guide",
+      "words": 2377,
+      "externalSources": 9,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-passkey-not-showing-up-fixes-security-info-authenticator-fido2",
+      "title": "When the Passkey Option Won't Appear in Microsoft Entra Security Info: A Walkthrough That Closes Most Tickets in Two Minutes",
+      "words": 2126,
+      "externalSources": 8,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-passkey-troubleshooting-common-issues-fixes",
+      "title": "Microsoft Entra Passkey Troubleshooting: Common Sign-In Failures and Their Root Causes",
+      "words": 2357,
+      "externalSources": 7,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-passkeys-explained-architecture-registration-policy",
+      "title": "How Microsoft Entra Passkeys Work: Architecture, Registration, and Policy Controls",
+      "words": 2441,
+      "externalSources": 12,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-password-change-failed",
+      "title": "Microsoft Entra Password Change Failed: Admin Guide",
+      "words": 3179,
+      "externalSources": 9,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-permissions-management-ciem",
+      "title": "Microsoft Entra Permissions Management Is Retired: Review Your Dependencies",
+      "words": 642,
+      "externalSources": 1,
+      "updated": "2026-10-01",
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-pim-activation-failed",
+      "title": "Microsoft Entra PIM Activation Failed: An Admin Fix Guide",
+      "words": 2737,
+      "externalSources": 16,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-pim-roles-operator-playbook",
+      "title": "Privileged Identity Management for Entra Roles: The Setup That Doesn't Backfire",
+      "words": 2367,
+      "externalSources": 6,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-primary-refresh-token-prt-failures-windows",
+      "title": "Microsoft Entra Primary Refresh Token (PRT) Failures on Windows: Reading dsregcmd Output and Fixing the Common Causes",
+      "words": 1930,
+      "externalSources": 5,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-private-access-vpn-replacement",
+      "title": "Replacing a Legacy VPN with Microsoft Entra Private Access: A Practitioner's Rollout Guide",
+      "words": 2126,
+      "externalSources": 6,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-provisioning-quarantine-fix-guide",
+      "title": "Microsoft Entra Provisioning Quarantine: Fix Guide",
+      "words": 2714,
+      "externalSources": 13,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-security-administrator-role-changes",
+      "title": "Microsoft Entra Security Administrator Role Change Guide",
+      "words": 2858,
+      "externalSources": 7,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-security-group-sensitivity-labels",
+      "title": "Microsoft Entra Security Group Sensitivity Labels Guide",
+      "words": 2794,
+      "externalSources": 9,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-security-questions-retirement",
+      "title": "Microsoft Entra Security Questions Retirement: Admin Guide",
+      "words": 3264,
+      "externalSources": 21,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-sms-voice-retirement-admin-guide",
+      "title": "Microsoft Entra SMS and Voice Retirement: Admin Guide",
+      "words": 3181,
+      "externalSources": 10,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-soc-identity-responder-admin-guide",
+      "title": "Microsoft Entra SOC Identity Responder: Admin Guide",
+      "words": 3139,
+      "externalSources": 13,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-sponsorless-guest-cleanup",
+      "title": "Microsoft Entra Sponsorless Guest Cleanup: Safe Pilot Guide",
+      "words": 2843,
+      "externalSources": 13,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-system-preferred-authentication-guide",
+      "title": "Microsoft Entra System-Preferred Authentication Guide",
+      "words": 2549,
+      "externalSources": 10,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-tenant-governance-multitenant-rollout-guide",
+      "title": "Microsoft Entra Tenant Governance: A Safe Rollout Guide for Multi-Tenant Administration",
+      "words": 2928,
+      "externalSources": 16,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-token-lifetime-revocation-continuous-access-evaluation",
+      "title": "What Actually Happens When You Disable an Entra User: Tokens, Revocation, and Continuous Access Evaluation",
+      "words": 1934,
+      "externalSources": 8,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-user-insights-retirement",
+      "title": "Microsoft Entra User Insights Retirement: Migration Guide",
+      "words": 2623,
+      "externalSources": 12,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-windows-device-join-registration-failures",
+      "title": "Windows Device Join and Registration Failures in Microsoft Entra: A Diagnostic Walkthrough",
+      "words": 1619,
+      "externalSources": 5,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-entra-windows-sso-prompt-autoacceptssopermission",
+      "title": "Microsoft Entra SSO Prompts on Windows: How to Deploy AutoAcceptSsoPermission Safely",
+      "words": 2189,
+      "externalSources": 7,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-graph-group-extension-attributes",
+      "title": "Microsoft Graph Group Extension Attributes: Admin Guide",
+      "words": 2823,
+      "externalSources": 11,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "microsoft-teams-rooms-passwordless-resource-accounts",
+      "title": "Microsoft Teams Rooms Passwordless Resource Accounts",
+      "words": 2699,
+      "externalSources": 9,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "migrate-microsoft-entra-connect-sync-cloud-sync",
+      "title": "Migrate Microsoft Entra Connect Sync to Cloud Sync",
+      "words": 3285,
+      "externalSources": 9,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "migrate-microsoft-entra-risk-policies-conditional-access",
+      "title": "Migrate Microsoft Entra Risk Policies to Conditional Access",
+      "words": 2856,
+      "externalSources": 12,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "minimum-viable-windows-server-home-lab-for-active-directory",
+      "title": "A Minimum-Viable Windows Server Home Lab for Practising Active Directory",
+      "words": 3160,
+      "externalSources": 8,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "outlook-keeps-asking-for-password-microsoft-365-mfa",
+      "title": "Why Outlook Keeps Asking for Your Password (And How To Make It Stop)",
+      "words": 1653,
+      "externalSources": 7,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "prevent-nested-groups-microsoft-entra",
+      "title": "Prevent Nested Groups in Microsoft Entra: Admin Guide",
+      "words": 2964,
+      "externalSources": 16,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "provision-microsoft-entra-users-to-active-directory",
+      "title": "Provision Microsoft Entra Users to Active Directory",
+      "words": 3186,
+      "externalSources": 15,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "publish-app-microsoft-entra-gallery",
+      "title": "How to Publish an App to the Microsoft Entra Gallery",
+      "words": 3515,
+      "externalSources": 20,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "revoke-microsoft-entra-service-principal-tokens-cae",
+      "title": "Revoke Microsoft Entra Service Principal Tokens with CAE",
+      "words": 2806,
+      "externalSources": 12,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "send-as-permission-not-working-microsoft-365",
+      "title": "Send As Looks Granted But the Send Still Fails: Why, And How To Fix It",
+      "words": 1474,
+      "externalSources": 5,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "shared-mailbox-not-showing-up-outlook-microsoft-365",
+      "title": "Outlook Shared Mailbox Auto-Mapping Not Working: Causes, Diagnostics, and Fixes",
+      "words": 1673,
+      "externalSources": 5,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "shared-mailbox-permission-error-microsoft-365-fixes",
+      "title": "Shared Mailbox 'You Don't Have Permission' Error in Microsoft 365: Diagnostic Path and Fixes",
+      "words": 1933,
+      "externalSources": 5,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "what-are-active-directory-sites-beginners-guide",
+      "title": "What are Active Directory Sites? A Beginner's Guide to Making AD Work Across Locations",
+      "words": 2037,
+      "externalSources": 2,
+      "updated": "2026-10-03",
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "what-are-entra-lifecycle-workflows-beginners-guide",
+      "title": "What are Entra ID Lifecycle Workflows? Automating Joiner-Mover-Leaver Without Losing Your Mind",
+      "words": 1999,
+      "externalSources": 1,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "what-happens-when-you-assign-a-site-in-active-directory",
+      "title": "Changing an Active Directory Subnet’s Site: What to Verify",
+      "words": 779,
+      "externalSources": 4,
+      "updated": "2026-10-01",
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "what-is-active-directory-beginners-guide",
+      "title": "What is Active Directory? A Complete Beginner's Guide (Coffee Included)",
+      "words": 2580,
+      "externalSources": 1,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "what-is-dhcp-beginners-guide",
+      "title": "What is DHCP? A Beginner's Guide to How Devices Get IP Addresses",
+      "words": 1923,
+      "externalSources": 2,
+      "updated": "2026-10-03",
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "what-is-dns-beginners-guide",
+      "title": "What is DNS? A Beginner's Guide to the Internet's Phone Book",
+      "words": 1632,
+      "externalSources": 3,
+      "updated": "2026-10-03",
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "windows-dns-forward-lookup-zones",
+      "title": "Forward Lookup Zones in Windows DNS: What They Are, How AD-Integrated Zones Work, and How To Set One Up Properly",
+      "words": 3584,
+      "externalSources": 6,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "windows-dns-forwarders-conditional-stub",
+      "title": "Forwarders, Conditional Forwarders, and Stub Zones in Windows DNS: What Each One Is, How They Differ, and How To Pick the Right One",
+      "words": 2882,
+      "externalSources": 6,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "windows-dns-reverse-lookup-zones",
+      "title": "Reverse Lookup Zones in Windows DNS: What PTR Records Are, When You Actually Need Them, and How To Set Them Up Without Surprises",
+      "words": 3060,
+      "externalSources": 6,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "windows-dns-root-hints",
+      "title": "Root Hints in Windows DNS: What They Are, How Recursion Uses Them, and When To Clear the File",
+      "words": 2805,
+      "externalSources": 8,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "slug": "windows-dns-server-configuration",
+      "title": "Windows DNS Server Configuration: What the Server-Level Settings Actually Do, and How To Harden a Fresh DNS Server in Ten Minutes",
+      "words": 3343,
+      "externalSources": 7,
+      "updated": null,
+      "errors": [],
+      "warnings": []
+    }
+  ]
+}

@@ -3,7 +3,7 @@ import { getAllPosts } from "@/lib/api";
 import { getAllTopics } from "@/lib/post-taxonomy";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://sentinelidentity.ca";
+  const baseUrl = "https://www.sentinelidentity.ca";
   const posts = getAllPosts();
   const topics = getAllTopics();
   const staticRoutes: MetadataRoute.Sitemap = [

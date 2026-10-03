@@ -1,15 +1,17 @@
 ---
 title: "What is DNS? A Beginner's Guide to the Internet's Phone Book"
-excerpt: "You type google.com and hit enter. Something magically figures out where Google actually lives on the internet — an IP address like 142.250.190.14 — and connects you to it. That something is DNS. Grab a coffee. We're going to explain how the internet's phone book actually works, why it matters in Active Directory environments, and what breaks when it goes wrong."
+excerpt: "Understand DNS records, resolvers, caching, and the checks that help distinguish a name-resolution failure from an application or Active Directory problem."
 coverImage: "/assets/blog/what-is-dns/diagram.svg"
 date: "2026-07-05T18:00:00.000Z"
+updated: "2026-10-03"
 author:
   name: "MU.A"
 ogImage:
   url: "/assets/blog/what-is-dns/diagram.svg"
 ---
 
-Grab a coffee. This one's easy to underestimate — DNS is the sort of thing everyone kind of knows about but almost no one truly understands. And in Windows environments, roughly 60% of the "weird problems" you'll ever see are actually DNS problems in disguise.
+> [!NOTE]
+> **Updated October 3, 2026:** Removed unsupported failure-rate statistics and corrected forwarding and cache-expiry claims. Examples are illustrative, not recorded lab results.
 
 By the end of this post you'll actually understand how it works. Let's do this.
 
@@ -47,7 +49,7 @@ Six terms. Learn these and everything else clicks.
 
 **Resolver.** The thing that does the lookup for you. When you type a URL, your operating system asks a resolver — usually your router at home, or your company's DNS server at work — to find the IP.
 
-**Authoritative server.** The server that officially knows the answer for a specific domain. `sentinelidentity.ca`'s authoritative servers are wherever the site's owner registered them (usually the hosting provider). Whatever the authoritative server says is the truth.
+**Authoritative server.** The server that officially knows the answer for a specific domain. `sentinelidentity.ca`'s authoritative servers are wherever the site's owner registered them (usually the hosting provider). An authoritative response describes that server's zone data; the data can still be misconfigured.
 
 **DNS record.** The entry in the phone book. Different types of records store different information. The most common:
 - **A record** — maps a hostname to an IPv4 address (`google.com` → `142.250.190.14`)
@@ -73,7 +75,7 @@ Let me walk through the full journey when you type `sentinelidentity.ca` in your
 6. **Your computer caches it too.** Faster next time.
 7. **Browser connects to the IP.** Now it can actually load the page.
 
-**All of this happens in tens of milliseconds.** Usually. When it's slow or broken, everything on your network feels slow or broken — because everything on your network depends on DNS.
+**Resolution time varies with caching, network conditions, and the servers involved.** Usually. When it's slow or broken, everything on your network feels slow or broken — because everything on your network depends on DNS.
 
 ## Why DNS matters so much in Active Directory
 
@@ -83,7 +85,7 @@ That's why:
 
 - **The first Domain Controller you install typically becomes a DNS server too.** Most AD deployments run DNS on the DCs themselves.
 - **Clients in an AD environment must have their DNS pointed at the DC** (or another DNS server that can resolve the AD zone). If a computer's DNS points at `8.8.8.8` instead of the DC, that computer can't find its domain and everything breaks.
-- **DNS problems look like AD problems.** When a user says "I can't access the file share" or "my computer says it can't reach the domain," 60% of the time the underlying cause is DNS misconfiguration.
+- **DNS problems look like AD problems.** When a user says "I can't access the file share" or "my computer says it can't reach the domain," DNS resolution is one dependency to verify; the symptom alone does not establish the cause.
 
 If you take one thing away from this post: **when Windows says "cannot find domain," check DNS first.**
 
@@ -95,11 +97,11 @@ Six DNS problems that cause the vast majority of tickets:
 
 **"I can ping the DC by IP but not by name."** Client is using the wrong DNS server, or DNS isn't answering. Try `nslookup contoso.com` — if it fails, that's your problem.
 
-**"External websites are slow but internal stuff is fine."** Your internal DNS server is missing a forwarder to a public DNS. When it doesn't have an answer for an external site, it doesn't know where to ask. Add `1.1.1.1` or `8.8.8.8` as a forwarder in your DNS server config.
+**"External websites are slow but internal resolution works."** Compare queries to the configured resolver and inspect its forwarding or recursive-resolution path. Windows DNS can use root hints when appropriate; a missing forwarder alone does not prove the cause. Follow your organisation's DNS design before changing resolvers.
 
-**"I updated a DNS record but nothing sees the change."** Caching. Wait for the TTL to expire (or flush client caches with `ipconfig /flushdns`). If you set the TTL to 24 hours, it'll take 24 hours for everyone to see the change.
+**"I updated a DNS record but nothing sees the change."** Caching. Wait for the TTL to expire (or flush client caches with `ipconfig /flushdns`). Resolvers may still hold an earlier answer until its remaining cache lifetime expires. Record which resolver you queried; a cache flush on one client does not clear other caches.
 
-**"Group Policy isn't applying to some computers."** Half the time it's DNS. Domain-joined computers need to resolve `_ldap._tcp.dc._msdcs.contoso.com` to find a DC that serves policies. Broken DNS breaks GPO application.
+**"Group Policy isn't applying to some computers."** Check DNS resolution alongside policy scope, permissions, and connectivity. Domain-joined computers need to resolve `_ldap._tcp.dc._msdcs.contoso.com` to find a DC that serves policies. Broken DNS breaks GPO application.
 
 **"Email isn't being delivered from our company."** Your MX or SPF records are wrong. Every email server that receives mail checks these records to decide whether to accept mail from your domain.
 
@@ -145,4 +147,9 @@ If DNS makes sense, the natural next posts:
 
 Studying for a cert? DNS is a huge topic in **AZ-800** and **MS-102**. Building a small lab and breaking DNS on purpose is the best way to prep.
 
-Now go grab a coffee. And next time someone at work says "the network is down," check DNS first.
+
+## Primary references
+
+- [DNS in Windows Server](https://learn.microsoft.com/en-us/windows-server/networking/dns/dns-overview)
+- [DNS forwarding](https://learn.microsoft.com/en-us/windows-server/networking/dns/forwarding)
+- [Domain controller discovery](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/dc-locator)

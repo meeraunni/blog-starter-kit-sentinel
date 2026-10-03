@@ -25,9 +25,9 @@ const AUTHORS: Author[] = [
     initials: "MUA",
     title: "Microsoft 365 / Entra Engineer",
     shortBio:
-      "MU.A is a hands-on Microsoft 365 and Microsoft Entra engineer. Sentinel Identity is where MU.A writes the long-form troubleshooting and architecture notes that ship articles people can actually use in production tenants.",
+      "MU.A is the editorial byline for Sentinel Identity, covering Microsoft Entra, Microsoft 365, and identity administration. Send corrections or questions through the contact page.",
     longBio:
-      "MU.A works hands-on with Microsoft 365, Microsoft Entra ID, Conditional Access, hybrid identity, and tenant operations. Articles on Sentinel Identity are written from the operator's seat — what the control actually does, how it fails in production, and how to remediate without guessing. Every published article is sourced against Microsoft Learn and reviewed before publication.",
+      "Sentinel Identity publishes under the byline MU.A. The library covers Microsoft identity architecture, troubleshooting, and change planning, with AI assistance in drafting and maintenance. Examples should be treated as illustrative unless a page records its test environment and results. The editorial policy explains sources, limitations, and corrections.",
     specialties: [
       "Microsoft Entra ID",
       "Conditional Access & MFA",

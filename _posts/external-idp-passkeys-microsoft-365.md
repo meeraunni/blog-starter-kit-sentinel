@@ -1,12 +1,12 @@
 ---
 title: "External IdP Passkeys for Microsoft 365: Admin Guide"
 excerpt: "Enable external IdP passkeys for Microsoft 365 apps safely: verify federation, brokers, browsers, platform scope, rollback, and sign-in evidence."
-coverImage: "/assets/blog/cover.jpg"
+coverImage: "/assets/technical/external-idp-browser-flow.svg"
 date: "2026-10-01T09:08:33-04:00"
 author:
   name: "MU.A"
 ogImage:
-  url: "/assets/blog/cover.jpg"
+  url: "/assets/technical/external-idp-browser-flow.svg"
 ---
 
 To enable **external IdP passkeys for Microsoft 365**, first confirm that the user's sign-in domain is federated to Microsoft Entra ID through SAML 2.0 or WS-Fed. Then enable the supported platform on that domain's `internalDomainFederation` object, verify the required system browser and Microsoft broker versions, and pilot a supported Microsoft app with a small federated-user ring. The external identity provider step should open in the system browser and return through the broker to the originating app.
@@ -21,13 +21,9 @@ Microsoft announced general availability on September 29, 2026 for supported bro
 
 Before this capability, the external identity provider step could run in an embedded WebView. That surface cannot satisfy every WebAuthn or passkey flow, and some identity providers deliberately reject embedded user agents. The new path moves only the **external IdP authentication step** into the supported system browser:
 
-```text
-Microsoft app
-  -> Microsoft identity broker
-  -> system browser and external IdP
-  -> Microsoft identity broker
-  -> Microsoft app
-```
+[![Technical flow: Microsoft app to identity broker to browser and external IdP, then return through the broker to the app.](/assets/technical/external-idp-browser-flow.svg)](/assets/technical/external-idp-browser-flow.svg)
+
+*Figure 1 — Original conceptual diagram based on [Microsoft’s browser-authentication documentation](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-passkey-browser-authentication-federated-identity-provider). It shows the handoff, not a captured sign-in or every federation exchange. [Open full-size diagram](/assets/technical/external-idp-browser-flow.svg).*
 
 The passkey remains registered with and evaluated by the external IdP. Microsoft explicitly warns that the broker is not directly gaining support for the third-party FIDO credential. The browser simply supplies the WebAuthn-capable surface, existing IdP session, and return path that the embedded WebView could not.
 

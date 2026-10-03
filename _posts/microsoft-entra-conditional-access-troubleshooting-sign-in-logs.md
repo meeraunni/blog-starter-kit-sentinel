@@ -19,6 +19,17 @@ If you only have time for a single takeaway, it's this: open the sign-in log fir
 
 ## Finding the sign-in that matters
 
+### Step 1 — Expand the sign-in error details
+
+On the error page, select **More details**. Note the event time and correlation ID so you can match the attempt in the sign-in logs.
+
+[![Microsoft sign-in error with expanded troubleshooting details](https://learn.microsoft.com/en-us/entra/identity/conditional-access/media/troubleshoot-conditional-access/image2.png)](https://learn.microsoft.com/en-us/entra/identity/conditional-access/media/troubleshoot-conditional-access/image2.png)
+
+*Actual Microsoft documentation screenshot, not a capture from this site's tenant. [Source](https://learn.microsoft.com/en-us/entra/identity/conditional-access/troubleshoot-conditional-access) · [Open full size](https://learn.microsoft.com/en-us/entra/identity/conditional-access/media/troubleshoot-conditional-access/image2.png).*
+
+### Step 2 — Find the matching event
+
+
 The Entra admin center keeps sign-ins under **Monitoring → Sign-in logs**, split across four tabs (Interactive user, Non-interactive user, Service principal, Managed identity). For day-to-day CA troubleshooting you'll spend almost all your time on Interactive and Non-interactive. Native rich clients and browser sessions show up on Interactive. Refresh-token redemption, background syncs, and Outlook reconnecting in the morning all show up on Non-interactive, which is why a user can report "I never signed in" while their account is in fact making token requests every few minutes.
 
 When the user gives you a rough time, search forward and backward by about ten minutes. The right record is the one matching app, device, IP, and approximate timestamp. Once you've found it, three values matter more than anything else: the **Correlation ID**, the **AADSTS code**, and the per-policy verdicts on the **Conditional Access** tab. Copy those into the ticket immediately, before anything else, because half the time you'll spend rereading them and you don't want to lose your place chasing them down again.
@@ -28,7 +39,11 @@ When the user gives you a rough time, search forward and backward by about ten m
 
 The rest of the fields on a record are useful in context: the resource (which is the *resource*, not the app the user thought they clicked on — Outlook clicks make requests to "Office 365 Exchange Online"); the Client app value (which is how you spot legacy auth quietly happening at the perimeter); the device join state and compliance state (which is how you separate "user error" from "device state out of sync with what Entra thinks"); and the IP address and named location, which matter the moment a geo-block or VPN is in play.
 
-## What the Conditional Access tab is actually telling you
+[![Conditional Access filter in Microsoft Entra sign-in logs](https://learn.microsoft.com/en-us/entra/identity/conditional-access/media/troubleshoot-conditional-access/image3.png)](https://learn.microsoft.com/en-us/entra/identity/conditional-access/media/troubleshoot-conditional-access/image3.png)
+
+*Microsoft documentation screenshot — Filter the sign-in list, then open the event that matches the time, user, and resource being investigated. Source: [Microsoft Learn](https://learn.microsoft.com/en-us/entra/identity/conditional-access/troubleshoot-conditional-access). The interface may differ in your tenant. [Open full-size screenshot](https://learn.microsoft.com/en-us/entra/identity/conditional-access/media/troubleshoot-conditional-access/image3.png).*
+
+## Step 3 — Inspect the Conditional Access result
 
 The Conditional Access tab on a sign-in record lists every policy that was *in scope* for that request, with a verdict next to each. The verdict values worth understanding:
 

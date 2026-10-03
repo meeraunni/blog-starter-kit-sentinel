@@ -5,6 +5,7 @@ import { getAllTopics, getPostsByTopic } from "@/lib/post-taxonomy";
 
 export const metadata = {
   title: "Topics",
+  alternates: { canonical: "/topics" },
   description:
     "Browse Sentinel Identity by topic, including authentication, passkeys, Conditional Access, tenant operations, domains and DNS, and Agent ID.",
 };

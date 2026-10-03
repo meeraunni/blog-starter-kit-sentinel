@@ -15,6 +15,7 @@ export type Post = {
   preview?: boolean;
 };
 
-export type PostSummary = Pick<Post, "slug" | "title" | "date" | "updated" | "excerpt" | "author"> & {
+export type PostSummary = Pick<Post, "slug" | "title" | "date" | "updated" | "excerpt" | "author" | "coverImage"> & {
   topics: string[];
+  readingTime: number;
 };

@@ -2,179 +2,134 @@ import type { Metadata } from "next";
 import Header from "@/app/_components/header";
 
 export const metadata: Metadata = {
-  title: "Editorial Policy",
+  title: "Editorial policy — sources, AI assistance, and corrections",
   description:
-    "How Sentinel Identity researches, writes, sources, and updates articles on Microsoft Entra, Microsoft 365, and identity engineering — including AI use, corrections process, and advertising standards.",
+    "How to distinguish documented product behaviour, examples, interpretation, and testing evidence in Sentinel Identity articles.",
   alternates: { canonical: "/editorial-policy" },
-  robots: { index: true, follow: true },
 };
-
-const LAST_UPDATED = "May 1, 2026";
-
 export default function EditorialPolicyPage() {
   return (
     <main>
       <Header />
-      <section className="mx-auto max-w-5xl px-6 py-16 lg:px-10 lg:py-20">
-        <nav aria-label="Breadcrumb" className="mb-6 text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
-          <a href="/" className="hover:text-slate-900">Home</a>
-          <span className="mx-2 text-slate-400">/</span>
-          <span className="text-slate-700">Editorial Policy</span>
-        </nav>
-
-        <p className="text-sm font-semibold uppercase tracking-[0.28em] text-slate-500">Editorial Policy</p>
-        <h1 className="mt-3 max-w-4xl text-4xl font-semibold tracking-[-0.04em] text-slate-950 md:text-5xl">
-          How articles are researched, written, and maintained.
+      <article className="policy-page journal-width">
+        <p className="eyebrow">About the publication</p>
+        <h1>
+          Show the evidence.
+          <br />
+          Make corrections visible.
         </h1>
-        <p className="mt-4 text-sm text-slate-500">Last updated: {LAST_UPDATED}</p>
-
-        <div className="mt-10 space-y-10 text-base leading-8 text-slate-600">
+        <p className="policy-date">Policy revised October 1, 2026</p>
+        <p>
+          Sentinel Identity publishes explanations and troubleshooting material
+          for Microsoft identity administrators. The value of an article should
+          come from helping a reader understand a problem, evaluate evidence, or
+          complete a task. An article’s length, publishing date, or confident
+          tone does not establish its accuracy.
+        </p>
+        <section>
+          <h2>Sources and interpretation</h2>
           <p>
-            Sentinel Identity is an independent technical publication. This page documents how we choose, write,
-            source, and update articles so readers can evaluate what they are reading. We expect to be held to it.
+            Use linked Microsoft documentation, specifications, and product
+            announcements to check product claims. Editorial recommendations
+            should be distinguishable from documented requirements. Links
+            provide a way to inspect a claim; they do not mean Microsoft has
+            reviewed or endorsed this site.
           </p>
-
-          <section>
-            <h2 className="text-2xl font-semibold tracking-[-0.03em] text-slate-950">1. Scope and audience</h2>
-            <p className="mt-4">
-              Articles target practising Microsoft identity administrators, Microsoft 365 engineers, SOC analysts,
-              and cloud security architects. The depth assumes familiarity with Microsoft Entra concepts and aims
-              for the level of detail that helps with real production decisions — not introductory overviews.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold tracking-[-0.03em] text-slate-950">2. Topic selection</h2>
-            <p className="mt-4">Topics are chosen on three criteria:</p>
-            <ul className="mt-4 list-disc space-y-3 pl-6">
-              <li>Operational relevance — does this come up in real tenants, real escalations, or real architecture reviews?</li>
-              <li>Gap in available public material — is the existing public coverage thin, outdated, or marketing-flavoured?</li>
-              <li>Long-shelf-life value — will the article still be useful in 12 to 24 months, or is it a fast-moving preview that we should defer?</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold tracking-[-0.03em] text-slate-950">3. Sourcing standards</h2>
-            <p className="mt-4">
-              Articles rely on primary sources wherever possible. Claims about Microsoft product behavior,
-              licensing, deprecation timelines, or support boundaries are linked inline to one or more of the
-              following:
-            </p>
-            <ul className="mt-4 list-disc space-y-3 pl-6">
-              <li>Microsoft Learn documentation.</li>
-              <li>Microsoft Entra and Microsoft 365 official blogs and product release notes.</li>
-              <li>Microsoft Tech Community posts authored by Microsoft staff.</li>
-              <li>RFCs and other IETF / W3C / FIDO Alliance specifications for protocol material.</li>
-              <li>Vendor partner documentation when the article concerns a specific integration.</li>
-            </ul>
-            <p className="mt-4">
-              We do not source from anonymous forums for factual claims. Where community sources or our own
-              testing are the only data point, the article says so explicitly.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold tracking-[-0.03em] text-slate-950">4. Original content</h2>
-            <p className="mt-4">
-              Articles are written for this site. We do not republish or paraphrase third-party blog posts. Short
-              quotations from Microsoft Learn or RFCs are used with attribution where they materially help the
-              explanation. We never copy substantial sections of another author&apos;s work.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold tracking-[-0.03em] text-slate-950">5. AI assistance disclosure</h2>
-            <p className="mt-4">
-              We use large language models as drafting and editing aids — for outline review, prose tightening,
-              and catching grammar issues. Every published article is reviewed and edited by a human editor with
-              relevant Microsoft identity experience before publication. Technical claims are verified against
-              primary sources by a human; we do not publish unverified model output, hallucinated references, or
-              fabricated code samples. Diagrams and screenshots are produced by humans.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold tracking-[-0.03em] text-slate-950">6. Fact-checking and verification</h2>
-            <p className="mt-4">Before publication we verify:</p>
-            <ul className="mt-4 list-disc space-y-3 pl-6">
-              <li>All inline links resolve and reference the documentation cited.</li>
-              <li>Cmdlet names, parameter syntax, and KQL queries compile and run.</li>
-              <li>Conditional Access, MFA, and Authentication Method references match current Entra portal behaviour.</li>
-              <li>Quoted error codes (AADSTS, MS-CV, KRB) are accurate to current Microsoft documentation.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold tracking-[-0.03em] text-slate-950">7. Update and corrections process</h2>
-            <p className="mt-4">
-              Microsoft Entra moves quickly. Articles include a publication date and, when materially revised, an
-              updated date. Significant updates are summarised at the top of the article.
-            </p>
-            <p className="mt-4">
-              If you spot an error, an out-of-date claim, or a broken link, please report it via the{" "}
-              <a href="/contact" className="text-cyan-800 hover:text-slate-950">contact form</a>{" "}
-              or email{" "}
-              <a href="mailto:info@sentinelidentity.ca" className="text-cyan-800 hover:text-slate-950">
-                info@sentinelidentity.ca
-              </a>
-              . We aim to acknowledge corrections within two business days and to publish a correction note when
-              one is warranted.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold tracking-[-0.03em] text-slate-950">8. Conflicts of interest</h2>
-            <p className="mt-4">
-              Sentinel Identity is independent. We are not paid by Microsoft, third-party identity vendors, or any
-              MSP to write specific articles, recommend specific products, or shape editorial outcomes. If a future
-              article is sponsored or includes paid placement, it will be clearly labelled as such before any
-              article body content.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold tracking-[-0.03em] text-slate-950">9. Advertising standards</h2>
-            <p className="mt-4">
-              The site may display advertising through Google AdSense. Ads are independent of editorial — no
-              advertiser previews, reviews, or influences article content. Ads are placed within standard layout
-              zones (header, between body sections, sidebar) and are subject to the AdSense publisher policies.
-              See our{" "}
-              <a href="/privacy" className="text-cyan-800 hover:text-slate-950">Privacy Policy</a>{" "}
-              and{" "}
-              <a href="/cookies" className="text-cyan-800 hover:text-slate-950">Cookie Notice</a>{" "}
-              for how advertising data is handled.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold tracking-[-0.03em] text-slate-950">10. Reader feedback</h2>
-            <p className="mt-4">
-              Each article includes a feedback control to flag whether it was useful or not. We use that signal —
-              alongside direct messages — to decide what to expand, rewrite, or retire. Feedback is anonymous.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold tracking-[-0.03em] text-slate-950">11. Comments and moderation</h2>
-            <p className="mt-4">
-              The site does not currently host on-article comments. Discussion is handled by email so that
-              corrections and edits stay traceable. If comments are added later, this policy will be updated to
-              describe moderation rules.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold tracking-[-0.03em] text-slate-950">12. Contact</h2>
-            <p className="mt-4">
-              Editorial questions, corrections, story ideas, or licensing requests:{" "}
-              <a href="mailto:info@sentinelidentity.ca" className="text-cyan-800 hover:text-slate-950">
-                info@sentinelidentity.ca
-              </a>
-              .
-            </p>
-          </section>
-        </div>
-      </section>
+          <p>
+            Some older articles need further source and technical review. We do
+            not represent the entire archive as independently verified. Where
+            behaviour depends on licensing, release stage, platform, or tenant
+            configuration, confirm those conditions before using the guidance.
+          </p>
+        </section>
+        <section>
+          <h2>AI assistance</h2>
+          <p>
+            AI tools are used in drafting, editing, coding, and maintaining this
+            site. An article’s byline identifies editorial responsibility; it
+            does not mean every sentence or illustration was created without AI
+            assistance. AI output and generated examples can contain errors.
+          </p>
+          <p>
+            Our previous policy made blanket claims that every technical
+            statement had been human-verified, every command had been run, and
+            every diagram was human-produced. We have removed those claims
+            because a site-wide statement is not a substitute for evidence
+            attached to the work.
+          </p>
+        </section>
+        <section>
+          <h2>Examples and testing</h2>
+          <p>
+            Treat code, tenant names, sample output, and scenarios as
+            illustrative unless the article explicitly documents a test. A
+            first-hand test report should identify its date, environment,
+            relevant versions, method, observed result, and limitations. Source
+            review and execution in a real environment are different checks.
+          </p>
+          <p>
+            Do not assume a command is safe for your tenant just because it
+            appears in an article. Review its scope, required permissions,
+            expected result, and rollback before using it. Never paste
+            credentials or sensitive tenant data into public feedback.
+          </p>
+        </section>
+        <section>
+          <h2>Corrections and dates</h2>
+          <p>
+            Publication dates identify when a page was first published. A
+            material correction should retain that date, add an updated date,
+            and explain what changed near the beginning of the article. A recent
+            date does not imply every statement was retested.
+          </p>
+          <p>
+            The October 2026 review corrected the{" "}
+            <a href="/posts/microsoft-entra-permissions-management-ciem">
+              Permissions Management article
+            </a>
+            , which had recommended a retired product, and the{" "}
+            <a href="/posts/what-happens-when-you-assign-a-site-in-active-directory">
+              Active Directory site-assignment article
+            </a>
+            . Their correction notes describe the changes.
+          </p>
+          <p>
+            Send an error report through <a href="/contact">the contact page</a>
+            . Include the article URL, the disputed statement, and supporting
+            documentation or redacted evidence. Reports help prioritise further
+            review.
+          </p>
+        </section>
+        <section>
+          <h2>Commercial interests</h2>
+          <p>
+            Consulting offers and affiliate links are commercial material.
+            Affiliate articles should disclose that relationship clearly.
+            Payment must not be presented as evidence that a technical
+            recommendation is sound. Read the{" "}
+            <a href="/affiliate-disclosure">affiliate disclosure</a> for
+            details.
+          </p>
+          <p>
+            The free <a href="/resources">administrator workbench</a> is
+            available without purchase or newsletter registration. Advertising
+            approval is decided by the advertising provider; this policy does
+            not imply approval.
+          </p>
+        </section>
+        <section>
+          <h2>Who is responsible</h2>
+          <p>
+            Articles use the byline <a href="/author/m-u">MU.A</a>. Sentinel
+            Identity is independent of Microsoft. Editorial questions and
+            corrections can be sent to{" "}
+            <a href="mailto:info@sentinelidentity.ca">
+              info@sentinelidentity.ca
+            </a>
+            .
+          </p>
+        </section>
+      </article>
     </main>
   );
 }

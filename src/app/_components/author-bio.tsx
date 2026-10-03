@@ -9,7 +9,7 @@ export default function AuthorBio({ author }: Props) {
   return (
     <section
       aria-label="About the author"
-      className="mt-16 rounded-[1.6rem] border border-stone-200 bg-[#fbfaf7] p-7 shadow-[0_18px_45px_rgba(15,23,42,0.05)]"
+      className="mt-16 rounded-[1.6rem] border border-stone-200 bg-[#f5f8fc] p-7 shadow-[0_18px_45px_rgba(15,23,42,0.05)]"
     >
       <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">About the author</p>
       <div className="mt-4 flex items-start gap-5">

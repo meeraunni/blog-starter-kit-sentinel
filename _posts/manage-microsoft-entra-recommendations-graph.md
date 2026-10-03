@@ -31,6 +31,42 @@ That object model matters. Marking one application as planned is different from 
 > [!IMPORTANT]
 > A recommendation status is workflow metadata. It is not a control-plane change to the affected user, application, Conditional Access policy, credential, or synchronization system.
 
+## Follow the settings in the admin center
+
+These are real product screenshots published by Microsoft, not generated UI or captures from this site’s tenant. Portal labels can change. Use a read-capable role for inspection and obtain the required update role only if you are authorized to change the state.
+
+### 1. Open the recommendation list
+
+In the Microsoft Entra admin center, go to **Entra ID → Overview → Recommendations**. Select a recommendation relevant to your task. The screenshot uses Microsoft’s Contoso demonstration data; your names and counts will differ.
+
+[![Contoso demonstration tenant showing the Recommendations list](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/media/howto-use-recommendations/recommendations-list.png)](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/media/howto-use-recommendations/recommendations-list.png)
+
+*Microsoft documentation screenshot. [Source and current instructions](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/howto-use-recommendations) · [Open full size](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/media/howto-use-recommendations/recommendations-list.png).*
+
+### 2. Read the selected recommendation
+
+Review the **status**, **priority**, and **impacted resource type** before deciding who should investigate. These describe the recommendation, not proof that a configuration change has been made.
+
+[![Recommendation details showing status, priority and impacted resource type](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/media/howto-use-recommendations/recommendation-status-risk.png)](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/media/howto-use-recommendations/recommendation-status-risk.png)
+
+*Microsoft documentation screenshot. [Source and current instructions](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/howto-use-recommendations) · [Open full size](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/media/howto-use-recommendations/recommendation-status-risk.png).*
+
+### 3. Inspect the affected resource
+
+Use **More details** beside the relevant impacted resource. Match the object to your inventory and review the recommended action before making a change.
+
+[![Impacted resources table with the More details link](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/media/howto-use-recommendations/impacted-resources-more-details.png)](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/media/howto-use-recommendations/impacted-resources-more-details.png)
+
+*Microsoft documentation screenshot. [Source and current instructions](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/howto-use-recommendations) · [Open full size](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/media/howto-use-recommendations/impacted-resources-more-details.png).*
+
+### 4. Choose the correct scope for a status change
+
+The recommendation-level **Mark as** menu applies to the recommendation. A resource-level action is separate. Choose a state only after recording the rationale and owner; a workflow-state update does not remediate the underlying configuration. This screenshot shows the published portal menu, not the newer Graph beta status actions described below.
+
+[![Recommendation-level Mark as menu in the Microsoft Entra admin center](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/media/howto-use-recommendations/recommendation-mark-as-options.png)](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/media/howto-use-recommendations/recommendation-mark-as-options.png)
+
+*Microsoft documentation screenshot. [Source and current instructions](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/howto-use-recommendations) · [Open full size](https://learn.microsoft.com/en-us/entra/identity/monitoring-health/media/howto-use-recommendations/recommendation-mark-as-options.png).*
+
 ## What changed in the September 2026 Graph preview
 
 Microsoft's [September 2026 Microsoft Graph update](https://learn.microsoft.com/en-us/graph/whats-new-overview#september-2026-new-in-preview-only) added the following recommendation capabilities to the **beta** endpoint:

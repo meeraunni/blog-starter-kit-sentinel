@@ -1,15 +1,17 @@
 ---
 title: "What is DHCP? A Beginner's Guide to How Devices Get IP Addresses"
-excerpt: "You plug a laptop into a network. Within seconds it has an IP address, a subnet mask, a default gateway, and DNS server settings — and you never typed any of them. That magic is DHCP. Grab a coffee. We're going to demystify how devices get on the network without any manual configuration, and why it matters for Windows environments."
+excerpt: "Learn how DHCP leases and scopes work, how reservations differ from static addresses, and what to check when a client cannot obtain network configuration."
 coverImage: "/assets/blog/what-is-dhcp/diagram.svg"
 date: "2026-07-05T20:00:00.000Z"
+updated: "2026-10-03"
 author:
   name: "MU.A"
 ogImage:
   url: "/assets/blog/what-is-dhcp/diagram.svg"
 ---
 
-Grab a coffee. DHCP is one of those things you probably rely on hundreds of times a day without realizing it — every time your phone connects to Wi-Fi, every time you plug a laptop into an ethernet cable, every time a printer boots up in the office.
+> [!NOTE]
+> **Updated October 3, 2026:** Clarified DHCP authorisation, failover, reservations, and multi-server designs. Examples are illustrative, not recorded lab results.
 
 Let's find out what it's actually doing.
 
@@ -115,13 +117,13 @@ If the device doesn't renew (say, it's off the network for a week), the lease ex
 
 ## DHCP in a Windows Server environment
 
-In enterprise Windows environments, DHCP is a Windows Server role. Install it via Server Manager, authorize it in Active Directory (which prevents rogue DHCP servers from stealing traffic), then create scopes for each network segment.
+In enterprise Windows environments, DHCP is a Windows Server role. Install it via Server Manager, authorize it in Active Directory (an authorisation check for participating Windows DHCP servers, not a network-wide defence against every rogue server), then create scopes for each network segment.
 
 Best practices:
-- **Two DHCP servers per environment** — for redundancy. Windows Server supports "DHCP failover" where two servers actively share a scope. One dies, the other picks up seamlessly.
+- **Two DHCP servers per environment** — for redundancy. Windows Server supports "DHCP failover" where two servers actively share a scope. Validate the configured failover mode and failure behaviour before relying on it.
 - **Scope size = subnet size minus statics.** If your subnet is `/24` (254 usable addresses), reserve some for static devices, put the rest in the DHCP scope.
 - **DNS integration.** Windows Server DHCP can automatically register clients in DNS (called **Dynamic DNS** or DDNS). This is what makes a domain-joined laptop's hostname resolvable — DHCP hands out the IP and updates DNS with the hostname.
-- **Reservations for anything important.** Any device that needs to be reachable at a known IP gets a reservation, not a static.
+- **Choose stable addressing deliberately.** Use reservations or static configuration according to the service requirements and recovery plan. Keep statically assigned addresses out of the dynamic pool.
 
 ## What breaks in real deployments
 
@@ -154,7 +156,7 @@ Once you've done this, DHCP is no longer mysterious.
 Yes. Every consumer router has a built-in DHCP server. It typically hands out `192.168.0.x` or `192.168.1.x` addresses.
 
 **Can I have multiple DHCP servers on the same network?**
-Yes — that's how failover works. But if they're not configured as a failover pair, they'll fight over who gives out IPs, causing conflicts. Either use proper failover or make sure only one is active per scope.
+Yes — that's how failover works. Multiple servers require a coordinated design. Overlapping, uncoordinated address pools can create conflicts; non-overlapping scopes and configured failover are different designs.
 
 **What's IPv6 DHCP (DHCPv6)?**
 Same idea as IPv4 DHCP but for IPv6 addresses. Increasingly relevant as IPv6 rollout continues, but most enterprises are still IPv4-primary for internal networks.
@@ -163,10 +165,10 @@ Same idea as IPv4 DHCP but for IPv6 addresses. Increasingly relevant as IPv6 rol
 Its DHCP lease expired while it was off. Fix: add a DHCP reservation so the printer always gets the same IP.
 
 **What's the difference between a static IP and a DHCP reservation?**
-Static: manually configured on the device itself. If you change the network, you have to change every device. DHCP reservation: assigned by the DHCP server based on the device's MAC address. Change the reservation once, done. Reservations are almost always the better choice.
+Static: manually configured on the device itself. If you change the network, you have to change every device. DHCP reservation: assigned by the DHCP server based on the device's MAC address. Change the reservation once, done. Choose based on the device requirements and whether it must obtain configuration while DHCP is unavailable.
 
 **Do domain controllers use DHCP?**
-No. DCs must have static IPs because clients cache "here's where my DC is" and can't handle it changing constantly.
+Plan stable addressing for domain controllers and follow the AD DS deployment guidance. Avoid making recovery depend on an unreviewed DHCP configuration.
 
 **What happens if the DHCP server dies?**
 Existing leases keep working until they expire. New devices can't get IPs. That's why you deploy two DHCP servers in failover mode.
@@ -179,4 +181,8 @@ Now that DHCP makes sense:
 - **[Windows DNS forward lookup zones](/posts/windows-dns-forward-lookup-zones)** — since DHCP integrates so closely with DNS.
 - **[Home lab guide](/posts/minimum-viable-windows-server-home-lab-for-active-directory)** — set up DHCP as part of your practice environment.
 
-Now go grab a coffee. And next time your Wi-Fi "just works" when you connect, remember there's a DHCP conversation happening in the background.
+
+## Primary references
+
+- [DHCP Server overview](https://learn.microsoft.com/en-us/windows-server/networking/technologies/dhcp/dhcp-top)
+- [DHCP failover](https://learn.microsoft.com/en-us/windows-server/networking/technologies/dhcp/dhcp-failover)

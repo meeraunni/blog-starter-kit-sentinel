@@ -61,6 +61,10 @@ Entra admin centre → **Users** → find the affected user → **Sign-in logs**
 
 Set the time filter to the last hour. Find the failed entry — the status column will show "Failure." Click into it.
 
+[![Conditional Access filter in Microsoft Entra sign-in logs](https://learn.microsoft.com/en-us/entra/identity/conditional-access/media/troubleshoot-conditional-access/image3.png)](https://learn.microsoft.com/en-us/entra/identity/conditional-access/media/troubleshoot-conditional-access/image3.png)
+
+*Microsoft documentation screenshot — Use filtering to find the relevant event; the filter alone does not identify the policy that blocked access. Source: [Microsoft Learn](https://learn.microsoft.com/en-us/entra/identity/conditional-access/troubleshoot-conditional-access). The interface may differ in your tenant. [Open full-size screenshot](https://learn.microsoft.com/en-us/entra/identity/conditional-access/media/troubleshoot-conditional-access/image3.png).*
+
 ### Read the "Conditional Access" tab
 
 The details pane for a failed sign-in has a Conditional Access tab. This is where the actual diagnosis lives. You'll see every policy that applied to the sign-in, and for each one:

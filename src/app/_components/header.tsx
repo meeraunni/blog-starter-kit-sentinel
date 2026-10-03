@@ -7,9 +7,7 @@ import { usePathname } from "next/navigation";
 const navItems = [
   { href: "/", label: "Articles" },
   { href: "/topics", label: "Topics" },
-  { href: "/archive", label: "Archive" },
   { href: "/resources", label: "Resources" },
-  { href: "/consulting", label: "Consulting" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
@@ -54,23 +52,21 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-stone-200/70 bg-[#fbfaf7]/92 backdrop-blur-2xl dark:border-slate-800/60 dark:bg-slate-950/80">
+    <header className="site-header sticky top-0 z-40">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-3.5 lg:px-10">
         <Link href="/" className="flex items-center gap-3" onClick={() => setOpen(false)}>
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-stone-300 bg-[#111827] text-[0.7rem] font-bold tracking-[0.24em] text-stone-100 shadow-[0_8px_20px_rgba(15,23,42,0.18)] dark:border-slate-700">
-            SI
-          </div>
+          <img className="brand-mark" src="/assets/brand/sentinel-mark.svg" alt="" width="48" height="48" />
           <div className="flex flex-col leading-tight">
-            <span className="text-[0.95rem] font-semibold tracking-[0.04em] text-slate-950 dark:text-slate-50">
+            <span className="brand-name">
               Sentinel Identity
             </span>
             <span className="text-[0.6rem] font-medium uppercase tracking-[0.26em] text-slate-500 dark:text-slate-400">
-              Entra &amp; M365 Reference
+              Independent identity insights
             </span>
           </div>
         </Link>
 
-        <nav className="hidden items-center gap-0.5 md:flex">
+        <nav aria-label="Main navigation" className="hidden items-center gap-0.5 lg:flex">
           {navItems.map((item) => {
             const active = isActive(item.href);
             return (
@@ -86,7 +82,7 @@ export default function Header() {
               >
                 {item.label}
                 {active && (
-                  <span className="absolute inset-x-3 -bottom-0.5 h-[2px] rounded-full bg-cyan-700 dark:bg-cyan-400" />
+                  <span className="absolute inset-x-3 -bottom-0.5 h-[2px] rounded-full bg-[#0868b5]" />
                 )}
               </Link>
             );
@@ -98,7 +94,7 @@ export default function Header() {
             type="button"
             onClick={openSearch}
             aria-label="Search articles"
-            className="hidden items-center gap-2 rounded-full border border-stone-300 bg-white/80 px-3 py-1.5 text-sm text-slate-500 transition hover:border-slate-400 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-400 dark:hover:border-slate-500 dark:hover:text-slate-100 md:inline-flex"
+            className="hidden items-center gap-2 rounded-full border border-stone-300 bg-white/80 px-3 py-1.5 text-sm text-slate-500 transition hover:border-slate-400 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-400 dark:hover:border-slate-500 dark:hover:text-slate-100 lg:inline-flex"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <circle cx="11" cy="11" r="8" />
@@ -116,7 +112,7 @@ export default function Header() {
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
             aria-controls="mobile-nav"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-stone-300 bg-white text-slate-900 transition hover:border-slate-950 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 md:hidden"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-stone-300 bg-white text-slate-900 transition hover:border-slate-950 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 lg:hidden"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -147,8 +143,8 @@ export default function Header() {
       </div>
 
       {open && (
-        <div id="mobile-nav" className="border-t border-stone-200 bg-[#fbfaf7] dark:border-slate-800 dark:bg-slate-950 md:hidden">
-          <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-6 py-4">
+        <div id="mobile-nav" className="border-t border-stone-200 bg-[#f5f8fc] dark:border-slate-800 dark:bg-slate-950 lg:hidden">
+          <nav aria-label="Mobile navigation" className="mx-auto flex max-w-7xl flex-col gap-1 px-6 py-4">
             <button
               type="button"
               onClick={() => {

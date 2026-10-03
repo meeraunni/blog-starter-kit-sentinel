@@ -76,3 +76,6 @@
 .markdown tbody td {
   @apply border-b border-slate-100 px-4 py-3 align-top;
 }
+
+.markdown img { display: block; max-width: 100%; height: auto; margin: 2rem auto 0.75rem; border: 1px solid #d8e2ed; border-radius: 8px; background: white; }
+.markdown p:has(> em:only-child) { margin-top: 0.5rem; font-size: 0.875rem; line-height: 1.6; color: #52647a; }

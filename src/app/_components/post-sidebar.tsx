@@ -13,12 +13,12 @@ export default function PostSidebar({ items, readingTime, topicLabel, topicSlug 
   return (
     <aside className="space-y-8 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-2">
       {items.length > 0 && (
-        <div className="rounded-2xl border border-slate-200 bg-white/70 p-5 backdrop-blur">
+        <div className="border-t-2 border-[#173d3a] py-5">
           <ArticleToc items={items} />
         </div>
       )}
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-5">
+      <div className="border-t border-stone-300 py-5">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Article details</p>
         <dl className="mt-4 space-y-2 text-sm leading-7 text-slate-600">
           <div className="flex justify-between gap-3">
@@ -38,14 +38,11 @@ export default function PostSidebar({ items, readingTime, topicLabel, topicSlug 
               </dd>
             </div>
           )}
-          <div className="flex justify-between gap-3">
-            <dt>Updated</dt>
-            <dd className="text-slate-900">As needed</dd>
-          </div>
+
         </dl>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-[#fbfaf7] p-5">
+      <div className="rounded-2xl border border-slate-200 bg-[#f5f8fc] p-5">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Get updates</p>
         <p className="mt-3 text-sm leading-7 text-slate-600">
           New deep-dives on Microsoft Entra and Microsoft 365 land in your inbox.

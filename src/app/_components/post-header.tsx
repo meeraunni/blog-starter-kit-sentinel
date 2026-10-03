@@ -27,9 +27,9 @@ export function PostHeader({
 }: Props) {
   return (
     <header className="mx-auto max-w-5xl pb-12 pt-8 lg:pb-16 lg:pt-12">
-      <div className="rounded-[2.25rem] border border-slate-200 bg-white p-8 shadow-[0_32px_80px_rgba(15,23,42,0.08)] lg:p-12">
+      <div className="article-heading">
         <p className="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-900">
-          Technical analysis
+          From the notebook
         </p>
         <div className="mt-5">
           <PostTitle>{title}</PostTitle>
@@ -54,9 +54,9 @@ export function PostHeader({
         </div>
       </div>
 
-      <div className="mt-8">
-        <CoverImage title={title} src={coverImage} priority />
-      </div>
+      {coverImage !== "/assets/blog/cover.jpg" && (
+        <div className="mt-8"><CoverImage title={title} src={coverImage} priority /></div>
+      )}
     </header>
   );
 }

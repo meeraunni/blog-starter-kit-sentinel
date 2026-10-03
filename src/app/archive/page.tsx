@@ -6,6 +6,7 @@ import { getPostTopics, getTopicByLabel } from "@/lib/post-taxonomy";
 
 export const metadata = {
   title: "Archive",
+  alternates: { canonical: "/archive" },
   description: "Archive of Sentinel Identity technical articles on Microsoft Entra, Conditional Access, authentication, passkeys, DNS, and tenant operations.",
 };
 

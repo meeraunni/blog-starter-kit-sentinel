@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 650" role="img" aria-labelledby="title desc">
+<title id="title">External identity provider browser handoff</title><desc id="desc">A supported Microsoft app starts sign-in with a broker. The broker opens the system browser for authentication at the external identity provider. A redirect returns to the broker, which resumes the app flow. Simplified conceptual diagram.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10" fill="#1677a5"/></marker></defs>
+<rect width="1100" height="650" rx="20" fill="#f2f7fc"/>
+<g font-family="Arial, sans-serif" fill="#142c46"><text x="48" y="56" fill="#1677a5" font-size="17" font-weight="700">AUTHENTICATION / EXTERNAL IDENTITY PROVIDER</text><text x="48" y="101" font-size="33" font-weight="700">Follow the browser handoff</text><text x="48" y="136" font-size="18">Simplified supported brokered-app flow • not a protocol trace</text>
+<rect x="48" y="200" width="245" height="156" rx="14" fill="white" stroke="#9bb9d5"/>
+<rect x="423" y="200" width="245" height="156" rx="14" fill="#dff2fd" stroke="#4398c0"/>
+<rect x="798" y="200" width="254" height="156" rx="14" fill="#dcf4ee" stroke="#549b8c"/>
+<text x="70" y="238" font-size="15" fill="#1677a5">01 / START</text><text x="70" y="274" font-size="24" font-weight="700">Microsoft app</text><text x="70" y="310" font-size="17">Supported app + platform</text>
+<text x="445" y="238" font-size="15" fill="#1677a5">02 / HAND OFF</text><text x="445" y="274" font-size="24" font-weight="700">Identity broker</text><text x="445" y="310" font-size="17">Opens system browser</text>
+<text x="820" y="238" font-size="15" fill="#176a60">03 / AUTHENTICATE</text><text x="820" y="274" font-size="24" font-weight="700">Browser + IdP</text><text x="820" y="310" font-size="17">External passkey sign-in</text>
+<g fill="none" stroke="#1677a5" stroke-width="3" marker-end="url(#arrow)"><path d="M293 260H413"/><path d="M668 260H788"/><path d="M925 356V426H560V365"/><path d="M530 356V481H170V365"/></g>
+<text x="686" y="415" font-size="17">04 / Redirect to broker</text><text x="205" y="469" font-size="17">05 / Resume app flow</text>
+<rect x="48" y="529" width="1004" height="77" rx="10" fill="#fff1d8"/><text x="70" y="559" font-size="18" font-weight="700">Separate authentication boundaries</text><text x="70" y="586" font-size="17">A browser handoff does not, by itself, prove that Entra policy requirements are satisfied.</text></g></svg>

@@ -1,5 +1,5 @@
 export function getSiteUrl() {
-  return (process.env.SITE_URL || "https://sentinelidentity.ca").replace(/\/$/, "");
+  return (process.env.SITE_URL || "https://www.sentinelidentity.ca").replace(/\/$/, "");
 }
 
 export function getBaseUrl(path: string) {

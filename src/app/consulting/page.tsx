@@ -89,13 +89,13 @@ const jsonLd = {
   name: "Sentinel Identity Consulting",
   description:
     "Consulting for Microsoft Entra, Microsoft 365, and Windows Server identity: tenant assessments, Conditional Access design, PIM and identity governance rollout, incident support, and advisory retainers.",
-  url: "https://sentinelidentity.ca/consulting",
+  url: "https://www.sentinelidentity.ca/consulting",
   areaServed: "Worldwide (remote)",
   serviceType: "Microsoft Entra and Microsoft 365 consulting",
   provider: {
     "@type": "Organization",
     name: "Sentinel Identity",
-    url: "https://sentinelidentity.ca",
+    url: "https://www.sentinelidentity.ca",
     email: "info@sentinelidentity.ca",
   },
   priceRange: "CAD $275/hour to CAD $75,000/project",

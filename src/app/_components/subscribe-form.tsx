@@ -1,6 +1,6 @@
 export default function SubscribeForm() {
   return (
-    <div className="rounded-[2rem] border border-slate-200/80 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
+    <div className="newsletter-form">
       <p className="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-900/80">
         Subscribe
       </p>
@@ -20,8 +20,10 @@ export default function SubscribeForm() {
         <input
           type="text"
           name="name"
+          aria-label="Name (optional)"
+          autoComplete="name"
           placeholder="Name"
-          className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-cyan-600 focus:bg-white"
+          className="w-full rounded-none border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-cyan-600 focus:bg-white"
         />
         <div className="hidden" aria-hidden="true">
           <label>Website<input type="text" name="website" tabIndex={-1} autoComplete="off" /></label>
@@ -34,12 +36,14 @@ export default function SubscribeForm() {
           type="email"
           required
           name="email"
+          aria-label="Email address"
+          autoComplete="email"
           placeholder="Email address"
-          className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-cyan-600 focus:bg-white"
+          className="w-full rounded-none border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-cyan-600 focus:bg-white"
         />
         <button
           type="submit"
-          className="inline-flex items-center justify-center rounded-full bg-slate-950 px-6 py-3 text-sm font-semibold text-white transition hover:bg-cyan-900 disabled:cursor-not-allowed disabled:opacity-70"
+          className="inline-flex items-center justify-center rounded-none bg-slate-950 px-6 py-3 text-sm font-semibold text-white transition hover:bg-cyan-900 disabled:cursor-not-allowed disabled:opacity-70"
         >
           Subscribe
         </button>

@@ -30,7 +30,7 @@ export default function PrivacyPage() {
           <p>
             This Privacy Policy describes how Sentinel Identity (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) collects, uses,
             stores, and shares personal information when you visit{" "}
-            <a href="https://sentinelidentity.ca" className="text-cyan-800 hover:text-slate-950">
+            <a href="https://www.sentinelidentity.ca" className="text-cyan-800 hover:text-slate-950">
               sentinelidentity.ca
             </a>{" "}
             or interact with our forms, newsletter, or articles. Sentinel Identity is an independent technical

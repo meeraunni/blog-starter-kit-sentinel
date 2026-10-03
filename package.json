@@ -3,7 +3,8 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "check:content": "node scripts/audit-content.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",

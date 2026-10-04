@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Header from "@/app/_components/header";
-import IncidentWorkbench from "@/app/_components/incident-workbench";
+import SignInErrorFinder from "@/app/_components/sign-in-error-finder";
 
 export const metadata: Metadata = {
-  title: "Administrator workbench — free tools and worksheets",
+  title: "Microsoft Entra error finder and administrator resources",
   description:
-    "Build a sign-in investigation note in your browser. Download free, editable incident, change, and Conditional Access rollout worksheets. No account required.",
+    "Look up common AADSTS sign-in errors, find the next troubleshooting check, and open step-by-step Microsoft Entra guides.",
   alternates: { canonical: "/resources" },
 };
 const downloads = [
@@ -33,18 +33,16 @@ export default function ResourcesPage() {
     <main>
       <Header />
       <div className="journal-width resource-page">
-        <p className="eyebrow">The workbench / Free resources</p>
+        <p className="eyebrow">Administrator resources</p>
         <h1>
           Tools and templates for identity administrators
         </h1>
         <p className="resource-intro">
-          Good troubleshooting leaves a trail. These small tools help you
-          collect evidence, plan a change, and hand over the work without losing
-          the details.
+          Find the meaning of a sign-in error, identify where to investigate, and follow a detailed guide for your issue.
         </p>
-        <IncidentWorkbench />
+        <SignInErrorFinder />
         <section className="resource-downloads">
-          <p className="eyebrow">02 / Editable worksheets</p>
+          <p className="eyebrow">Optional planning templates</p>
           <h2>Download editable templates</h2>
           <p>
             Plain Markdown files that open in any text editor. Free to adapt for
@@ -69,7 +67,7 @@ export default function ResourcesPage() {
         <section className="resource-notes">
           <h2>How to use these resources</h2>
           <p>
-            These are planning templates, not scripts or automated checks. Blank
+            The downloadable files are planning templates. Blank
             fields are intentional: an observation you have not collected should
             stay unknown. Keep secrets out of shared notes and store completed
             records in your organisation’s approved system.

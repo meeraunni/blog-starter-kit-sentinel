@@ -30,11 +30,10 @@ export default function TopicGrid({ posts }: { posts: Post[] }) {
         <p className="eyebrow">Free administrator tools</p>
         <h3>Tools for investigating sign-in issues</h3>
         <p>
-          Build a sign-in investigation note and download editable worksheets.
-          No account needed.
+          Look up an AADSTS error code and find the checks and walkthrough for your issue.
         </p>
         <Link href="/resources" className="journal-text-link">
-          Open the workbench →
+          Find your sign-in error →
         </Link>
       </div>
       <div className="editor-note">

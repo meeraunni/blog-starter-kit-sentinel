@@ -1328,3 +1328,31 @@
 .card-technical { position: relative; height: 220px; background: #edf4fb; overflow: hidden; }
 .card-technical img { object-fit: contain; padding: 8px 8px 28px; }
 .card-technical .art-caption { color: #233c58; background: #edf4fb; font-size: 11px; }
+
+.error-finder > h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin: 10px 0 16px; line-height: 1.2; }
+.error-finder > label { display: block; font-weight: 650; margin-top: 28px; }
+.error-search-row { display:flex; gap:16px; align-items:center; }
+.error-search-row input { flex:1; min-width:0; }
+.error-search-row button { flex-shrink:0; }
+.error-helper, .error-result-count, .error-source { font-size: 13px; line-height:1.6; color:#52647a; margin:12px 0; }
+.error-results { display:grid; grid-template-columns: minmax(210px, .8fr) minmax(0, 1.6fr); gap:28px; margin-top:20px; }
+.error-choices { display:flex; flex-direction:column; gap:8px; }
+.error-choices button { text-align:left; border:1px solid #ccd9e6; border-radius:8px; padding:16px; background:#fff; }
+.error-choices button[aria-pressed="true"] { background:#e6f3fb; border-color:#1677a5; box-shadow:inset 4px 0 #1677a5; }
+.error-choices strong, .error-choices span { display:block; }
+.error-choices strong { font-size:14px; color:#076795; }
+.error-choices span { font-size:14px; margin-top:5px; }
+.error-detail { padding:26px; background:#f2f7fc; border-radius:10px; }
+.error-detail h3 { font-size:25px; font-weight:700; margin:8px 0 16px; line-height:1.25; }
+.error-detail h4 { font-weight:700; margin:22px 0 8px; }
+.error-detail p, .error-detail li { line-height:1.7; }
+.error-detail ol { list-style:decimal; padding-left:22px; }
+.error-detail li { margin-bottom:9px; }
+.error-detail .journal-text-link { display:block; margin-top:18px; }
+.error-caution { border-left:3px solid #cc8a2b; padding:10px 14px; margin:22px 0; background:#fff8e8; }
+.error-source { border-top:1px solid #d8e2ed; padding-top:20px; margin-top:28px; }
+.error-source a { text-decoration:underline; }
+.error-empty { background:#f2f7fc; padding:24px; border-radius:8px; }
+.error-empty h3 { font-size:20px; font-weight:700; }
+.error-empty p { margin:12px 0; }
+@media(max-width:700px) { .error-results { grid-template-columns:1fr; } .error-choices { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); } .error-detail { padding:20px; } }

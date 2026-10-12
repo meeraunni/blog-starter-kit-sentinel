@@ -2,7 +2,7 @@
 title: "Microsoft Entra Token Protection Registration Guide"
 excerpt: "Pilot Microsoft Entra token protection registration safely. Map supported apps, read binding codes, stage enforcement, and preserve recovery paths."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-12T18:15:38-04:00"
+date: "2026-10-12T18:17:16-04:00"
 author:
   name: "MU.A"
 ogImage:

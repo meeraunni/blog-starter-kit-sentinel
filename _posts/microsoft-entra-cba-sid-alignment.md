@@ -2,7 +2,7 @@
 title: "Microsoft Entra CBA SID Alignment Deployment Guide"
 excerpt: "Pilot Microsoft Entra CBA SID alignment safely. Inventory certificate and user SIDs, stage enforcement, read sign-in evidence, and roll back precisely."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-07T09:40:06-04:00"
+date: "2026-10-12T10:23:19-04:00"
 author:
   name: "MU.A"
 ogImage:

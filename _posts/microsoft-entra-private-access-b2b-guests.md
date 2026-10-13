@@ -2,7 +2,7 @@
 title: "Microsoft Entra Private Access for B2B Guests: Guide"
 excerpt: "Deploy Microsoft Entra Private Access for B2B guests safely: validate licensing, tenant switching, Conditional Access, logs, known limits, and rollback."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-13T09:14:21-04:00"
+date: "2026-10-13T09:12:54-04:00"
 author:
   name: "MU.A"
 ogImage:

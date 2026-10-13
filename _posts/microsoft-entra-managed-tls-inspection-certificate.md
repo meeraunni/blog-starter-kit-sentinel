@@ -2,7 +2,7 @@
 title: "Microsoft Entra Managed TLS Inspection Certificate Guide"
 excerpt: "Deploy a Microsoft Entra managed TLS inspection certificate safely: distribute trust, pilot inspection, monitor failures, rotate cleanly, and roll back."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-13T17:03:51-04:00"
+date: "2026-10-13T17:31:24-04:00"
 author:
   name: "MU.A"
 ogImage:

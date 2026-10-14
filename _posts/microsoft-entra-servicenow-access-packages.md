@@ -2,7 +2,7 @@
 title: "Microsoft Entra ServiceNow Access Packages: Setup Guide"
 excerpt: "Deploy Microsoft Entra ServiceNow access packages safely: review Graph permissions, preserve Entra authority, pilot requests, monitor delivery, and recover."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-14T17:26:28-04:00"
+date: "2026-10-14T17:32:43-04:00"
 author:
   name: "MU.A"
 ogImage:

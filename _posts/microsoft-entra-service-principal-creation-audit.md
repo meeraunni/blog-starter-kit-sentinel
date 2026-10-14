@@ -2,7 +2,7 @@
 title: "Microsoft Entra Service Principal Creation Audit Guide"
 excerpt: "Investigate a Microsoft Entra service principal creation audit: identify the provisioning path, owning tenant, actor, permissions, risk, and response."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-14T09:04:12-04:00"
+date: "2026-10-14T09:34:46-04:00"
 author:
   name: "MU.A"
 ogImage:

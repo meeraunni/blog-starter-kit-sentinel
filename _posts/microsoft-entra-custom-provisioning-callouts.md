@@ -2,7 +2,7 @@
 title: "Microsoft Entra Custom Provisioning Call-Outs Guide"
 excerpt: "Deploy Microsoft Entra custom provisioning call-outs safely: scope create-only use, secure the Logic App, test failures, monitor logs, and roll back cleanly."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-15T09:14:06-04:00"
+date: "2026-10-15T09:19:29-04:00"
 author:
   name: "MU.A"
 ogImage:

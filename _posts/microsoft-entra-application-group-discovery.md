@@ -2,7 +2,7 @@
 title: "Microsoft Entra Application Group Discovery Admin Guide"
 excerpt: "Discover Microsoft Entra application groups: classify local and unassigned groups, validate matching and membership, govern access, and recover from drift."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-16T17:25:38-04:00"
+date: "2026-10-16T17:31:20-04:00"
 author:
   name: "MU.A"
 ogImage:

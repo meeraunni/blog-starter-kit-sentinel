@@ -2,7 +2,7 @@
 title: "Microsoft Entra mTLS Token Binding Deployment Guide"
 excerpt: "Deploy Microsoft Entra mTLS token binding safely: scope the private preview, validate certificate-bound app tokens, rotate keys, and troubleshoot failures."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-17T17:08:00-04:00"
+date: "2026-10-17T17:07:43-04:00"
 author:
   name: "MU.A"
 ogImage:

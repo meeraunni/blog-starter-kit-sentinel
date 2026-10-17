@@ -2,7 +2,7 @@
 title: "Microsoft Entra Internet Access Content Policy Guide"
 excerpt: "Deploy Microsoft Entra Internet Access content policies safely: block file types, validate TLS inspection, target pilot users, read logs, and roll back cleanly."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-17T09:08:00-04:00"
+date: "2026-10-17T09:22:57-04:00"
 author:
   name: "MU.A"
 ogImage:

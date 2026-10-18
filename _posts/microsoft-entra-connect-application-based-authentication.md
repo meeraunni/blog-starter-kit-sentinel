@@ -2,7 +2,7 @@
 title: "Microsoft Entra Connect Application-Based Authentication"
 excerpt: "Migrate Entra Connect to application-based authentication before April 7, 2027: inventory legacy accounts, stage certificates, validate sync, and recover."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-18T09:03:45-04:00"
+date: "2026-10-18T09:09:10-04:00"
 author:
   name: "MU.A"
 ogImage:

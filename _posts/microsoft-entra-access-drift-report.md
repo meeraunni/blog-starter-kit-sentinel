@@ -2,7 +2,7 @@
 title: "Microsoft Entra Access Drift Report: Admin Runbook"
 excerpt: "Use Microsoft Entra access drift reports to find unauthorized and missing access across governed groups and apps, remediate safely, and preserve evidence."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-18T17:03:06-04:00"
+date: "2026-10-18T17:08:30-04:00"
 author:
   name: "MU.A"
 ogImage:

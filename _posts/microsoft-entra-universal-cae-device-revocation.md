@@ -2,7 +2,7 @@
 title: "Microsoft Entra Universal CAE Device Revocation Guide"
 excerpt: "Use Microsoft Entra Universal CAE device revocation safely: validate Windows clients, pair Conditional Access, test signals, and troubleshoot tunnel drops."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-19T17:24:00-04:00"
+date: "2026-10-19T17:08:59-04:00"
 author:
   name: "MU.A"
 ogImage:

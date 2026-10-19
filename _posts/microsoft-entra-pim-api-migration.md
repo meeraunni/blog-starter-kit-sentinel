@@ -2,7 +2,7 @@
 title: "Microsoft Entra PIM API Migration Before Retirement"
 excerpt: "Migrate Microsoft Entra PIM Iteration 2 APIs before October 28, 2026: inventory legacy calls, map replacements, test permissions, and cut over safely."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-19T09:34:16-04:00"
+date: "2026-10-19T09:35:44-04:00"
 author:
   name: "MU.A"
 ogImage:

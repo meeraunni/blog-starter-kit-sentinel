@@ -2,7 +2,7 @@
 title: "AADSTS50126 Invalid Username or Password: Entra Fix"
 excerpt: "Fix AADSTS50126 invalid username or password errors by tracing the exact sign-in, cached credentials, hybrid authentication path, and attack patterns."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-20T17:10:27-04:00"
+date: "2026-10-20T17:15:49-04:00"
 author:
   name: "MU.A"
 ogImage:

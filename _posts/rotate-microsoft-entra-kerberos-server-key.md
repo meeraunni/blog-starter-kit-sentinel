@@ -2,7 +2,7 @@
 title: "Rotate the Microsoft Entra Kerberos Server Key Safely"
 excerpt: "Rotate the Microsoft Entra Kerberos server key safely: verify key versions, preserve dual-key continuity, validate tickets, and recover from failed rollover."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-20T09:33:02-04:00"
+date: "2026-10-20T09:39:59-04:00"
 author:
   name: "MU.A"
 ogImage:

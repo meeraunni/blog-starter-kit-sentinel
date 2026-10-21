@@ -2,7 +2,7 @@
 title: "AADSTS50053 Account Is Locked: Microsoft Entra Fix"
 excerpt: "Fix AADSTS50053 account is locked errors by distinguishing smart lockout from malicious-IP blocks, tracing the exact sign-in, and remediating safely."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-21T09:12:00-04:00"
+date: "2026-10-21T09:36:59-04:00"
 author:
   name: "MU.A"
 ogImage:

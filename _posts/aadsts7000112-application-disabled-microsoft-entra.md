@@ -2,7 +2,7 @@
 title: "AADSTS7000112 Application Disabled: Microsoft Entra Fix"
 excerpt: "Fix AADSTS7000112 application disabled errors by locating the blocked service principal, preserving audit evidence, and restoring tenant-local access safely."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-21T17:03:27-04:00"
+date: "2026-10-21T17:08:22-04:00"
 author:
   name: "MU.A"
 ogImage:

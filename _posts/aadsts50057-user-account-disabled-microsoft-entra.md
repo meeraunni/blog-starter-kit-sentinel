@@ -2,7 +2,7 @@
 title: "AADSTS50057 User Account Disabled: Microsoft Entra Fix"
 excerpt: "Fix AADSTS50057 user account disabled errors by proving the affected tenant and source of authority, reviewing audit evidence, and restoring access safely."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-22T17:04:41-04:00"
+date: "2026-10-22T17:11:04-04:00"
 author:
   name: "MU.A"
 ogImage:

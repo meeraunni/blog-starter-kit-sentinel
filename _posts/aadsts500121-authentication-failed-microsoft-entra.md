@@ -2,7 +2,7 @@
 title: "AADSTS500121 Authentication Failed: Microsoft Entra Fix"
 excerpt: "Fix AADSTS500121 authentication failures by reading MFA denial evidence, separating timeouts from suspicious prompts, and restoring access safely."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-22T09:02:40-04:00"
+date: "2026-10-22T09:28:27-04:00"
 author:
   name: "MU.A"
 ogImage:

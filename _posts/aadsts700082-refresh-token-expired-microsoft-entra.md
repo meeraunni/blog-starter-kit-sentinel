@@ -2,7 +2,7 @@
 title: "AADSTS700082 Refresh Token Expired: Microsoft Entra Fix"
 excerpt: "Fix AADSTS700082 refresh token expired errors by tracing the failed non-interactive sign-in, restoring interaction, and fixing application token handling."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-23T09:04:15-04:00"
+date: "2026-10-23T09:10:10-04:00"
 author:
   name: "MU.A"
 ogImage:

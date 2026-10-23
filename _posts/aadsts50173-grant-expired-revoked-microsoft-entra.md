@@ -2,7 +2,7 @@
 title: "AADSTS50173 Grant Expired or Revoked: Microsoft Entra Fix"
 excerpt: "Fix AADSTS50173 grant expired or revoked errors by tracing the token cutoff, finding the revocation event, and restoring access through fresh sign-in."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-23T17:04:11-04:00"
+date: "2026-10-23T17:10:46-04:00"
 author:
   name: "MU.A"
 ogImage:

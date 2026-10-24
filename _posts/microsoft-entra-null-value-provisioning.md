@@ -2,7 +2,7 @@
 title: "Microsoft Entra Null Value Provisioning: Admin Guide"
 excerpt: "Enable Microsoft Entra null value provisioning safely across API-driven, Workday, and SuccessFactors inbound flows without accidentally clearing attributes."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-24T09:28:33-04:00"
+date: "2026-10-24T09:30:15-04:00"
 author:
   name: "MU.A"
 ogImage:

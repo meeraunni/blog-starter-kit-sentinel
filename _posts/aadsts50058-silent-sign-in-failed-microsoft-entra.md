@@ -2,7 +2,7 @@
 title: "AADSTS50058 Silent Sign-In Failed: Microsoft Entra Fix"
 excerpt: "Fix AADSTS50058 silent sign-in failures by tracing the interrupted request, testing browser session cookies, and restoring a supported interactive flow."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-24T17:02:01-04:00"
+date: "2026-10-24T17:06:58-04:00"
 author:
   name: "MU.A"
 ogImage:

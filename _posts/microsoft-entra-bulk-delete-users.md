@@ -2,7 +2,7 @@
 title: "Bulk Delete Users in Microsoft Entra: Safe Admin Guide"
 excerpt: "Bulk delete users in Microsoft Entra safely: scope cloud-only accounts, validate every CSV row, preserve workload data, verify results, and restore mistakes."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-25T17:03:41-04:00"
+date: "2026-10-25T17:25:38-04:00"
 author:
   name: "MU.A"
 ogImage:

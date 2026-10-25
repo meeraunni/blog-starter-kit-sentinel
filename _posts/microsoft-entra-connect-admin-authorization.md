@@ -2,7 +2,7 @@
 title: "Microsoft Entra Connect Admin Authorization: Prep Guide"
 excerpt: "Prepare for Microsoft Entra Connect admin authorization: map interactive prompts, fix unattended runbooks, stage changes, audit results, and recover safely."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-25T09:03:57-04:00"
+date: "2026-10-25T09:33:24-04:00"
 author:
   name: "MU.A"
 ogImage:

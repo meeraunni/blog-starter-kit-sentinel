@@ -2,7 +2,7 @@
 title: "AADSTS500011 Resource Principal Not Found: Entra Fix"
 excerpt: "Fix AADSTS500011 resource principal not found by validating the target API URI, tenant, local service principal, consent path, and sign-in evidence."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-26T09:05:55-04:00"
+date: "2026-10-26T09:31:06-04:00"
 author:
   name: "MU.A"
 ogImage:

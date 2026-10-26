@@ -2,7 +2,7 @@
 title: "AADSTS75011 Authentication Method Mismatch: Entra Fix"
 excerpt: "Fix AADSTS75011 authentication method mismatch by tracing SAML RequestedAuthnContext, reused sessions, federation evidence, and the least disruptive repair."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-26T17:03:46-04:00"
+date: "2026-10-26T17:26:03-04:00"
 author:
   name: "MU.A"
 ogImage:

@@ -2,7 +2,7 @@
 title: "AADSTS9002326 Cross-Origin Token Redemption: Entra Fix"
 excerpt: "Fix AADSTS9002326 cross-origin token redemption errors by matching the SPA redirect URI, browser Origin, PKCE request, and Entra app registration."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-27T09:14:48-04:00"
+date: "2026-10-27T09:42:33-04:00"
 author:
   name: "MU.A"
 ogImage:

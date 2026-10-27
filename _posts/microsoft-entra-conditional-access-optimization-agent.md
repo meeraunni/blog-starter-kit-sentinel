@@ -2,7 +2,7 @@
 title: "Microsoft Entra Conditional Access Optimization Agent"
 excerpt: "Deploy the Microsoft Entra Conditional Access Optimization Agent safely: validate roles, SCU capacity, report-only suggestions, phased rollout, and rollback."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-27T17:01:49-04:00"
+date: "2026-10-27T17:06:00-04:00"
 author:
   name: "MU.A"
 ogImage:

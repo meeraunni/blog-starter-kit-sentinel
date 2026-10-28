@@ -2,7 +2,7 @@
 title: "AADSTS90002 Invalid Tenant Name: Microsoft Entra Fix"
 excerpt: "Fix AADSTS90002 invalid tenant name errors by validating the authority tenant ID, verified domain, cloud endpoint, app audience, and effective configuration."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-28T17:03:22-04:00"
+date: "2026-10-28T17:09:55-04:00"
 author:
   name: "MU.A"
 ogImage:

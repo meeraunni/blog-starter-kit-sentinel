@@ -2,7 +2,7 @@
 title: "AADSTS70011 Invalid Scope: Microsoft Entra Fix Guide"
 excerpt: "Fix AADSTS70011 invalid scope errors by matching the endpoint, resource, delegated scope or /.default request, API registration, consent, and token flow."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-28T09:33:29-04:00"
+date: "2026-10-28T09:35:05-04:00"
 author:
   name: "MU.A"
 ogImage:

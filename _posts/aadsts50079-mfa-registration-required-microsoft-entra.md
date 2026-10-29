@@ -2,7 +2,7 @@
 title: "AADSTS50079 MFA Registration Required: Entra Fix Guide"
 excerpt: "Fix AADSTS50079 MFA registration required errors by separating managed-user enrollment from federated MFA claims, then validating policy and audit evidence."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-29T09:02:30-04:00"
+date: "2026-10-29T09:09:03-04:00"
 author:
   name: "MU.A"
 ogImage:

@@ -2,7 +2,7 @@
 title: "AADSTS50194 Application Not Multitenant: Entra Fix"
 excerpt: "Fix AADSTS50194 application not multitenant errors by choosing the correct tenant authority or completing a secure multitenant conversion and validation."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-30T17:03:00-04:00"
+date: "2026-10-30T17:30:26-04:00"
 author:
   name: "MU.A"
 ogImage:

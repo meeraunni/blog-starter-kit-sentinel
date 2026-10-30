@@ -2,7 +2,7 @@
 title: "AADSTS900561 Endpoint Only Accepts POST: Entra Fix"
 excerpt: "Fix AADSTS900561 endpoint only accepts POST errors by separating harmless browser back navigation from a recurring application method or token-flow defect."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-30T09:20:40-04:00"
+date: "2026-10-30T09:25:00-04:00"
 author:
   name: "MU.A"
 ogImage:

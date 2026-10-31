@@ -2,7 +2,7 @@
 title: "AADSTS50017 Certificate Validation Failed: Entra Fix"
 excerpt: "Fix AADSTS50017 certificate validation failures by proving the CA chain, SKI and AKI links, policy OIDs, trust-store state, and sign-in evidence."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-31T09:20:22-04:00"
+date: "2026-10-31T09:26:38-04:00"
 author:
   name: "MU.A"
 ogImage:

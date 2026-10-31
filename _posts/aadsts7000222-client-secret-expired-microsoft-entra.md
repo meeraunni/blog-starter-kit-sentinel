@@ -2,7 +2,7 @@
 title: "AADSTS7000222 Client Secret Expired: Microsoft Entra Fix"
 excerpt: "Fix AADSTS7000222 client secret expired errors by proving the affected app, rotating safely, validating every deployment, and preventing repeat outages."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-10-31T17:05:27-04:00"
+date: "2026-10-31T17:07:32-04:00"
 author:
   name: "MU.A"
 ogImage:

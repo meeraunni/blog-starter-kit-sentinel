@@ -2,7 +2,7 @@
 title: "AADSTS90094 Admin Consent Required: Microsoft Entra Fix"
 excerpt: "Fix AADSTS90094 admin consent required errors by proving the requested permissions, consent policy, app trust, assignment, and approval evidence."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-01T09:02:53-05:00"
+date: "2026-11-01T09:08:47-05:00"
 author:
   name: "MU.A"
 ogImage:

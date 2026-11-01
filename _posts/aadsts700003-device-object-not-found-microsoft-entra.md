@@ -2,7 +2,7 @@
 title: "AADSTS700003 Device Object Not Found: Microsoft Entra Fix"
 excerpt: "Fix AADSTS700003 device object not found errors by proving deletion, choosing restore or re-registration, and validating device trust without weakening policy."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-01T17:02:54-05:00"
+date: "2026-11-01T17:08:56-05:00"
 author:
   name: "MU.A"
 ogImage:

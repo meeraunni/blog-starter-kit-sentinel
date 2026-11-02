@@ -2,7 +2,7 @@
 title: "AADSTS50055 Password Expired: Microsoft Entra Fix Guide"
 excerpt: "Fix AADSTS50055 password expired errors by identifying the password authority, choosing the right change or reset path, and validating fresh authentication."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-02T09:29:14-05:00"
+date: "2026-11-02T09:31:17-05:00"
 author:
   name: "MU.A"
 ogImage:

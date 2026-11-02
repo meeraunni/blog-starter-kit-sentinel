@@ -2,7 +2,7 @@
 title: "AADSTS7000218 Invalid Client Error: Microsoft Entra Fix"
 excerpt: "Fix AADSTS7000218 invalid client errors by identifying the OAuth flow, classifying the app, supplying the right credential, and validating the repair."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-02T17:23:21-05:00"
+date: "2026-11-02T17:25:35-05:00"
 author:
   name: "MU.A"
 ogImage:

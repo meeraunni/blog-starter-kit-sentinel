@@ -2,7 +2,7 @@
 title: "Microsoft Entra Global Secure Access Licensing Guide"
 excerpt: "Understand Microsoft Entra Global Secure Access licensing, choose the right Private and Internet Access plan, and validate assignments safely."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-03T09:03:18-05:00"
+date: "2026-11-03T09:28:12-05:00"
 author:
   name: "MU.A"
 ogImage:

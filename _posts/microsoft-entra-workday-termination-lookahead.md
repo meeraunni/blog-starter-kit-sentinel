@@ -2,7 +2,7 @@
 title: "Microsoft Entra Workday Termination Lookahead Guide"
 excerpt: "Configure Microsoft Entra Workday termination lookahead to prevent APAC offboarding delays, test account-disable logic, and avoid temporary reactivation."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-03T17:24:19-05:00"
+date: "2026-11-03T17:33:02-05:00"
 author:
   name: "MU.A"
 ogImage:

@@ -2,7 +2,7 @@
 title: "Microsoft Entra Lifecycle Workflows: Update Attributes"
 excerpt: "Configure Microsoft Entra Lifecycle Workflows to update user attributes safely, test set and clear operations, monitor evidence, and plan rollback."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-04T17:04:00-05:00"
+date: "2026-11-04T17:25:45-05:00"
 author:
   name: "MU.A"
 ogImage:

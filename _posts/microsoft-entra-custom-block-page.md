@@ -2,7 +2,7 @@
 title: "Microsoft Entra Custom Block Page: Deployment Guide"
 excerpt: "Customize Microsoft Entra Internet Access block pages safely: validate TLS inspection, publish clear support links, test propagation, and troubleshoot failures."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-04T09:24:55-05:00"
+date: "2026-11-04T09:33:19-05:00"
 author:
   name: "MU.A"
 ogImage:

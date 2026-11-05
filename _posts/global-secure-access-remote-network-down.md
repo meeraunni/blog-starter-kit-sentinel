@@ -2,7 +2,7 @@
 title: "Global Secure Access Remote Network Down: Admin Fix"
 excerpt: "Fix a Global Secure Access remote network outage by separating IPsec, BGP, route, and traffic-profile failures, then prove recovery with Entra logs."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-05T17:04:56-05:00"
+date: "2026-11-05T17:11:28-05:00"
 author:
   name: "MU.A"
 ogImage:

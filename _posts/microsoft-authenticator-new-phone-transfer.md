@@ -2,7 +2,7 @@
 title: "Microsoft Authenticator New Phone Transfer: Admin Guide"
 excerpt: "Transfer Microsoft Authenticator to a new phone safely, re-register work accounts and passkeys, prevent lockouts, and remove old methods with evidence."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-05T09:21:02-05:00"
+date: "2026-11-05T09:28:15-05:00"
 author:
   name: "MU.A"
 ogImage:

@@ -2,7 +2,7 @@
 title: "Global Secure Access Local Network Access: Admin Guide"
 excerpt: "Restore Global Secure Access local network access safely: enable Private Access home-network support, prove local bypass, and contain subnet-overlap risk."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-06T09:22:16-05:00"
+date: "2026-11-06T09:27:48-05:00"
 author:
   name: "MU.A"
 ogImage:

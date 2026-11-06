@@ -2,7 +2,7 @@
 title: "AADDS123 RC4 Alert: Entra Domain Services Admin Fix"
 excerpt: "Resolve the AADDS123 RC4 alert safely: trace Kerberos dependencies, migrate to AES, scope exceptions, and verify Microsoft Entra Domain Services."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-06T17:23:13-05:00"
+date: "2026-11-06T17:30:03-05:00"
 author:
   name: "MU.A"
 ogImage:

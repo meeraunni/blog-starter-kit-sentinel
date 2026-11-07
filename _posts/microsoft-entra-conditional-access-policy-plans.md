@@ -2,7 +2,7 @@
 title: "Conditional Access Policy Plans: Safe Migration Guide"
 excerpt: "Migrate to Conditional Access policy plans safely: map shared conditions, validate rules, avoid duplicate enforcement, and preserve a clean rollback."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-07T17:02:51-05:00"
+date: "2026-11-07T17:08:36-05:00"
 author:
   name: "MU.A"
 ogImage:

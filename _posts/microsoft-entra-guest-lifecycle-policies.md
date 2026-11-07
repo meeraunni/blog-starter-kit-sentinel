@@ -2,7 +2,7 @@
 title: "Microsoft Entra Guest Lifecycle Policies: Admin Guide"
 excerpt: "Deploy Microsoft Entra guest lifecycle policies safely: scope guests, test sponsor and activity rules, stage disablement, and monitor enforcement."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-07T09:19:02-05:00"
+date: "2026-11-07T09:43:53-05:00"
 author:
   name: "MU.A"
 ogImage:

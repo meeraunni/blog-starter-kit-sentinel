@@ -2,7 +2,7 @@
 title: "Global Secure Access Cloud Firewall: Safe Admin Guide"
 excerpt: "Deploy Global Secure Access cloud firewall for clients safely: align traffic acquisition, rule priority, security profiles, logs, rollback, and preview limits."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-08T17:04:22-05:00"
+date: "2026-11-08T17:11:08-05:00"
 author:
   name: "MU.A"
 ogImage:

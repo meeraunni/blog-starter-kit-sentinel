@@ -2,7 +2,7 @@
 title: "Microsoft Entra Agent ID Lifecycle Policies: Admin Guide"
 excerpt: "Deploy Microsoft Entra Agent ID lifecycle policies safely: compare default and custom rules, pilot priority, monitor enforcement, and recover agents."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-08T09:03:34-05:00"
+date: "2026-11-08T09:30:10-05:00"
 author:
   name: "MU.A"
 ogImage:

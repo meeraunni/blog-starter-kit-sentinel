@@ -2,7 +2,7 @@
 title: "AADSTS500133 Assertion Expired: Microsoft Entra Fix"
 excerpt: "Fix AADSTS500133 by tracing the expired OBO assertion, checking clock skew and token reuse, repairing cache flow, and validating Entra evidence safely."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-09T17:03:17-05:00"
+date: "2026-11-09T17:24:42-05:00"
 author:
   name: "MU.A"
 ogImage:

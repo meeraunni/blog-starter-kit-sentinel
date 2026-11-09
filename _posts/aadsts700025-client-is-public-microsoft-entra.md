@@ -2,7 +2,7 @@
 title: "AADSTS700025 Client Is Public: Microsoft Entra Fix"
 excerpt: "Fix AADSTS700025 by proving why Entra treats the request as public, removing misplaced credentials, aligning the OAuth flow, and validating safely."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-09T09:05:00-05:00"
+date: "2026-11-09T09:11:51-05:00"
 author:
   name: "MU.A"
 ogImage:

@@ -2,7 +2,7 @@
 title: "Microsoft Entra CYOT Setup: SMS and Voice Provider"
 excerpt: "Set up Microsoft Entra CYOT safely: deploy the Azure Function, evaluate SMS or voice delivery, phase traffic, monitor failures, and plan resiliency."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-10T17:18:28-05:00"
+date: "2026-11-10T17:41:09-05:00"
 author:
   name: "MU.A"
 ogImage:

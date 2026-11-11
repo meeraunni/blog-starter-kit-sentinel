@@ -2,7 +2,7 @@
 title: "AADSTS50003 Missing Signing Key: Microsoft Entra Fix"
 excerpt: "Fix AADSTS50003 missing signing key errors by restoring the SAML signing certificate safely, validating both trust sides, and preventing repeat outages."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-11T09:03:03-05:00"
+date: "2026-11-11T09:24:17-05:00"
 author:
   name: "MU.A"
 ogImage:

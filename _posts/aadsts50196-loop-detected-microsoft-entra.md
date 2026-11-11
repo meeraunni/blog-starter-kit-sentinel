@@ -2,7 +2,7 @@
 title: "AADSTS50196 Loop Detected: Microsoft Entra Fix Guide"
 excerpt: "Fix AADSTS50196 loop detected errors by isolating repeated token requests, repairing cache and retry logic, and validating Microsoft Entra sign-in evidence."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-11T17:04:34-05:00"
+date: "2026-11-11T17:10:55-05:00"
 author:
   name: "MU.A"
 ogImage:

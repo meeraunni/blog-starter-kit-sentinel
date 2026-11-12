@@ -2,7 +2,7 @@
 title: "AADSTS500212 Outbound Access Blocked: Microsoft Entra Fix"
 excerpt: "Fix AADSTS500212 by tracing the home tenant’s outbound cross-tenant policy, user and app scope, partner override, logs, and safe least-privilege recovery."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-12T09:03:07-05:00"
+date: "2026-11-12T09:31:42-05:00"
 author:
   name: "MU.A"
 ogImage:

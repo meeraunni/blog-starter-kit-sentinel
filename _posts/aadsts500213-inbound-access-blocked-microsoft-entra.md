@@ -2,7 +2,7 @@
 title: "AADSTS500213 Inbound Access Blocked: Microsoft Entra Fix"
 excerpt: "Fix AADSTS500213 by tracing the resource tenant’s inbound policy, external user and app scope, trust settings, logs, and least-privilege recovery."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-12T17:02:30-05:00"
+date: "2026-11-12T17:33:19-05:00"
 author:
   name: "MU.A"
 ogImage:

@@ -2,7 +2,7 @@
 title: "AADSTS53001 Device Not Domain Joined: Entra Fix Guide"
 excerpt: "Fix AADSTS53001 device not domain joined errors by tracing the Conditional Access policy, hybrid join state, device claim, and safe recovery path."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-13T17:02:26-05:00"
+date: "2026-11-13T17:27:48-05:00"
 author:
   name: "MU.A"
 ogImage:

@@ -2,7 +2,7 @@
 title: "AADSTS700084 SPA Refresh Token Expired: Entra Fix Guide"
 excerpt: "Fix AADSTS700084 SPA refresh token expired errors by restoring top-level interaction, repairing MSAL fallback, and validating the 24-hour token boundary."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-13T09:03:39-05:00"
+date: "2026-11-13T09:40:36-05:00"
 author:
   name: "MU.A"
 ogImage:

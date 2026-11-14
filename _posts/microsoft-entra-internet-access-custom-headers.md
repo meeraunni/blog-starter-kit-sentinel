@@ -2,7 +2,7 @@
 title: "Microsoft Entra Internet Access Custom Headers Guide"
 excerpt: "Deploy Microsoft Entra Internet Access custom headers safely: align TLS inspection, Web Filtering v2, SaaS IDs, security profiles, logs, and rollback."
 coverImage: "/assets/blog/cover.jpg"
-date: "2026-11-14T09:04:32-05:00"
+date: "2026-11-14T09:26:53-05:00"
 author:
   name: "MU.A"
 ogImage:
